@@ -1,9 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title> </title>
-    </head>
-    <body>
-        <h1>Index</h1>
-    </body>
+{% extends 'threecoloumn.html' %}
+<head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
+  {% endblock %}
+</head>
+  <body>
+    {% block maincontent %}
+      <div class='w220'>
+        <ul class='normlist'>
+          <li class='first'>Where</li>
+          <li class='second'>will you go?</li>
+          <li class='first'>What</li>
+          <li class='second'>will you do?</li>
+          <li class='first'>Who</li>
+          <li class='second'>will you be?</li>
+        </ul><!--normlist-->
+      </div><!--w220-->
+      <div class='w700 slider'>
+        <div class='slide-viewer'>
+          <div class='slide-group'>
+            <div class='slide slide-1'><img src="{{url_for('static', filename='images/one.jpeg')}}"/></div>
+            <div class='slide slide-2'><img src="{{url_for('static', filename='images/two.jpeg')}}"/></div>
+            <div class='slide slide-3'><img src="{{url_for('static', filename='images/three.jpeg')}}"/></div>
+            <div class='slide slide-4'><img src="{{url_for('static', filename='images/four.jpeg')}}"/></div>
+          </div><!--slide-group-->
+        </div><!--slide-viewer-->
+        <div class='slide-buttons'></div>
+      </div><!--w700 slider-->
+      <script src="{{url_for('static', filename='js/photoslider.js')}}"></script>
+    {% endblock %}
+    
+  </body>
 </html>

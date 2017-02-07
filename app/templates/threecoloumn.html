@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+<html>
+<head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/threecoloumnstyle.css')}}" type="text/css" rel="stylesheet"/>
+  {% endblock %}
+</head>
+<body>
+  {% block content %}
+    <div id='maincontent'>
+      {% block maincontent %}
+      {% endblock %}
+    </div><!--maincontent-->
+    <div class='c1'>
+      {% block c1 %}
+      {% endblock %}
+    </div><!--c1-->
+    <div class='c2'>
+      {% block c2 %}
+      {% endblock %}
+    </div><!--c2-->
+    <div class='c3'>
+      {% block c3 %}
+      {% endblock %}
+    </div><!--c3-->
+  {% endblock %}
+</body>
+</html>

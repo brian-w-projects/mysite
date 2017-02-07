@@ -1,0 +1,113 @@
+body{
+    width: 960px;
+    margin: 0px auto;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+#header, #content, #footer{
+    background-color: #efefef;
+}
+
+#content, #footer{
+    overflow: auto;
+    height: 100%;
+}
+
+#header{
+    padding: 10px 10px 15px 10px;
+}
+
+#footer{
+    clear: both;
+    text-align: center;
+}
+
+/*LOGO*/
+@font-face{
+    font-family: 'reckoner_bold';
+    src: url('../fonts/reckoner_bold.ttf')
+}
+
+#logo{
+    text-align: center;
+    font-family: 'reckoner_bold', Impact, fantasy;
+    font-size: 32pt;
+}
+
+h1{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+/*LOGO*/
+
+/*NAVBAR*/
+
+#nav{
+    height: 40px;
+}
+
+.loginbar{
+    float: right;
+    position: relative;
+}
+
+li{
+    font-family: sans-serif;
+    display: inline;
+}
+
+
+a:hover{
+    background-color: #000000;
+    color: #ffffff;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+    font-family: sans-serif;
+    padding: 5px;
+}
+
+/*NAVBAR*/
+
+/*SUBMENUS*/
+.submenu-container{
+    position: relative;
+    display: inline-block;
+}
+
+.submenu{
+    display: none;
+    position: absolute;
+    top:20px;
+    left: auto;
+    right:0px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.submenu a{
+    padding: 12px 16px;
+    display: block;
+}
+
+.s:hover~.submenu, .submenu:hover{
+    display: block;
+}
+
+/*SUBMENUS*/
+
+/*CUSTOM TEXT RECOKNER*/
+@font-face{
+    font-family: 'reckoner';
+    src: url('../fonts/reckoner.ttf')
+}
+
+.rec{
+    font-family: 'reckoner', Impact, fantasy;
+}
+
+/*CUSTOM TEXT RECOKNER*/
