@@ -3,14 +3,14 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SECRET_KEY = 'secret string'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
-    MAIL_USERNAME = 'BrianHasAnAnnoucement@gmail.com'
-    MAIL_PASSWORD = '9rHe^R@4pms$W3BT%hca'
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    ADMIN = 'njpsychopath@gmail.com'
+    ADMIN = os.environ.get("ADMIN")
 
     @staticmethod
     def init_app(app):
@@ -20,18 +20,18 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'db/data-dev.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'db/data-test.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 

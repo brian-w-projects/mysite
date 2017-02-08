@@ -1,0 +1,4 @@
+1. Finish authentication features on site, adapt from original project
+2. Integrate Celery to send emails
+
+3. Continue on and style other pages.

@@ -6,6 +6,7 @@ from ..models import Users
 from flask_login import login_required, current_user
 # from ..email import send_email
 from ..decorators import admin_required, permission_required
+from ..email import send_email
 
 @main.route('/')
 def index():
@@ -14,15 +15,13 @@ def index():
 @main.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
     form = SignUpForm(request.form)
-    if request.method == 'POST':
-        if form.validate():
-            user = Users.query.filter_by(username=form.username.data).first()
-            if user is None:
-                db.session.add(user)
-                db.session.commit()
-                return redirect(url_for('index.html'))
-        else:
-            print(form.errors)
-            render_template('subscribe.html', form=form)
-        
+    if request.method == 'POST' and form.validate():
+        check_user = Users.query.filter_by(username=form.username.data).first()
+        if check_user is None:
+            user = Users(username=form.username.data, email=form.email.data, password=form.password.data, updates=form.updates.data)
+            db.session.add(user)
+            db.session.commit()
+            token=user.generate_confirmation_token()
+            send_email(form.email.data, 'Confirm Your Account', 'auth/email/confirm', user=user, token=token)
+            return redirect(url_for('.index'))
     return render_template('subscribe.html', form=form)
