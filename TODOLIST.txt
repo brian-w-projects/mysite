@@ -1,3 +1,6 @@
 1. Integrate Celery to send emails
 
-4. Continue on and style other pages.
+1. Index shows posts when logged in
+2. User profile page, including edit password and updates 
+3. Logout Link on index
+4. About Link on Index

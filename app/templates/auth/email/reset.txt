@@ -1,0 +1,10 @@
+Hello {{user}},
+
+Your password has been reset to {{password}}
+
+Please log in immediately and change your password.
+
+{{url_for('auth.login', _external=True)}}
+
+Sincerely,
+The Recommend Me Team

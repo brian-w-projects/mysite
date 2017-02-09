@@ -11,6 +11,7 @@
   {% block maincontent %}
     <div class='w940'>
       <h2 class='rec'>Register</h2>
+      <p>Already a member? <a href="{{url_for('auth.login')}}">Login</a></p>
       <form method="POST">
         {{form.username.label(class='rec')}} {{form.username(class='entry')}}
           {% if form.errors['username'] %}

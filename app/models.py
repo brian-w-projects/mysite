@@ -5,7 +5,8 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
-
+import random
+random = random.SystemRandom()
 
 class Permission:
     FOLLOW = 0x01
@@ -94,6 +95,17 @@ class Users(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
+        
+    @staticmethod
+    def get_random_string(length=12,
+                      allowed_chars='abcdefghijklmnopqrstuvwxyz'
+                                    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
+        return ''.join(random.choice(allowed_chars) for i in range(length))
+ 
+    @staticmethod
+    def get_secret_key():
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        return Users.get_random_string(10, chars)
 
 
 class AnonymousUser(AnonymousUserMixin):

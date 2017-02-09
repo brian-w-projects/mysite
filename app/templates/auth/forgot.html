@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% extends 'auth/subscribe.html' %}
+<html>
+<head>
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <h2>Reset Password</h2>
+      <form method="POST">
+        {{form.username.label(class='rec')}} {{form.username(class='entry')}}
+        {% if form.errors['username'] %}
+          <span class='emailmessage'>&#10007 Must Enter Username</span>
+        {% endif %}
+        <br/>
+        {{form.csrf_token}}
+        {{form.submit(class='entry', id='submit')}}
+      </form>
+    </div>
+  {% endblock %}
+</body>
+</html>

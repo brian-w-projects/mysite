@@ -21,6 +21,8 @@
           {{form.csrf_token}}
           {{form.submit(class='entry', id='submit')}}
         </form>
+        <p>Forgot your username? <a href="{{url_for('auth.forgot_username')}}">Recover Username</a></p>
+        <p>Forgot your password? <a href="{{url_for('auth.forgot')}}">Reset Password</a></p>
         <p>Not a member? <a href="{{url_for('auth.subscribe')}}">Register Here</a></p>
     </div>
   {% endblock %}

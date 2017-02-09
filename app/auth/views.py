@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session
 from . import auth
-from .forms import SignUpForm, LoginForm
+from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models import Users
 from .. import db
@@ -34,6 +34,34 @@ def login():
             form.errors['password'] = 'Wrong Password'
     return render_template('auth/login.html', form=form)
 
+@auth.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    form = PasswordReset(request.form)
+    if request.method == 'POST' and form.validate():
+        check_user = Users.query.filter_by(username=form.username.data).first()
+        if check_user is not None:
+            reset_password = Users.get_secret_key()
+            check_user.password = reset_password
+            db.session.add(check_user)
+            db.session.commit()
+            send_email(check_user.email, 'Reset Your Password', 'auth/email/reset', user=check_user.username, password=reset_password)
+            return redirect(url_for('auth.login'))
+        else:
+            form.errors['username'] = 'Does Not Exist'
+    return render_template('auth/forgot.html', form=form)
+
+@auth.route('/forgot_username', methods=['GET', 'POST'])
+def forgot_username():
+    form = UsernameRecover(request.form)
+    if request.method == 'POST' and form.validate():
+        check_user = Users.query.filter_by(email=form.email.data).first()
+        if check_user is not None:
+            send_email(check_user.email, 'Your Username', 'auth/email/username', user=check_user.username)
+            return redirect(url_for('auth.login'))
+        else:
+            form.errors['email'] = 'Does Not Exist'
+    return render_template('auth/forgot_username.html', form=form)
+
 @auth.route('/logout')
 @login_required
 def logout():
@@ -53,11 +81,9 @@ def confirmationsent(username):
 @login_required
 def confirm(token):
     if current_user.confirmed:
-        print('Already Confirmed')
-        return redirect(url_for('main.index'))
-    if current_user.confirm(token):
-        print('Confirmed')
-        # You have confirmed
+        pass
+    elif current_user.confirm(token):
+        pass
     else:
         return redirect(url_for('auth.confirmationsent'))
     return(redirect(url_for('main.index')))

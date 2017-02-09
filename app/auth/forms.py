@@ -15,3 +15,11 @@ class LoginForm(FlaskForm):
     username = StringField('Username: ', validators=[validators.DataRequired()])
     password = PasswordField('Password: ', validators=[validators.DataRequired()])
     submit = SubmitField('Submit')
+    
+class PasswordReset(FlaskForm):
+    username = StringField('Username: ', validators=[validators.DataRequired()])
+    submit = SubmitField('Send Email')
+    
+class UsernameRecover(FlaskForm):
+    email = StringField('Email: ', validators=[validators.DataRequired()])
+    submit = SubmitField('Send Email')

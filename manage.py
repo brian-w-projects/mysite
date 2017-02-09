@@ -39,9 +39,9 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        Role.insert_roles()
+    # with app.app_context():
+    #     db.drop_all()
+    #     db.create_all()
+    #     Role.insert_roles()
 
     manager.run()
