@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% extends 'auth/subscribe.html' %}
+<html>
+<head>
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <h2 class='rec'>Register</h2>
+      <p>Hello {{current_user.username}}</p>
+      <p>
+        Please confirm you account by clicking the link in the e-mail sent to: 
+        {{current_user.email}}
+      </p>
+      <p>
+        <a href="{{url_for('auth.confirmationsent', username=current_user.username)}}">Resend Email</a>
+      </p>
+    </div>
+  {% endblock %}
+</body>
+</html>

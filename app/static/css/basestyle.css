@@ -40,6 +40,19 @@ h1{
 }
 /*LOGO*/
 
+/*SIGNIN*/
+.signin>p{
+    display: inline;
+}
+
+.signin{
+    width: 400px;
+    float: left;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+/*SIGNIN*/
+
 /*NAVBAR*/
 
 #nav{
@@ -111,3 +124,24 @@ a{
 }
 
 /*CUSTOM TEXT RECOKNER*/
+
+/*PICTURE FORMATTING*/
+.align-right{
+    float: right;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.align-center{
+    display: block;
+    margin: 0px auto;
+}
+
+.medium{
+    width: 280px;
+}
+
+.large{
+    width:400px;
+}
+/*PICTURE FORMATTING*/

@@ -32,7 +32,34 @@
         <div class='slide-buttons'></div>
       </div><!--w700 slider-->
       <script src="{{url_for('static', filename='js/photoslider.js')}}"></script>
+    <br/>
     {% endblock %}
-    
+    {% block c1 %}
+      <h3 class='rec'>Make Recs</h3>
+      <img src="{{url_for('static', filename='images/makerecs.jpg')}}" class='align-center medium'/>
+      <p>
+        We live in such an amazing world. It is time to get out and explore it! 
+        Make recommendations for the activites that inspire you, the adventures that
+        spark you and the products that motivate you. You'll be passing your passion
+        on to others around the world!
+      </p>
+    {% endblock %}
+    {% block c2 %}
+      <h3 class='rec'>Get Recs</h3>
+      <img src="{{url_for('static', filename='images/getrecs.jpg')}}" class='align-center medium'/>
+      <p>
+        Find recs from other people just like you. See what shapes and inspires the
+        life of others and share in their experience. Your next adventure is right
+        around the corner!
+      </p>
+    {% endblock %}
+    {% block c3 %}
+      <h3 class='rec'>Live Life</h3>
+      <img src="{{url_for('static', filename='images/livelife.jpg')}}" class='align-center medium'/>
+      <p>
+        Recs is the revoluationary platform that allows you to be you. Find your
+        inspiration and live it. Do it. Rec it. The only limit is you.
+      </p>
+    {% endblock %}
   </body>
 </html>

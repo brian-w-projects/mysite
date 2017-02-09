@@ -16,9 +16,17 @@
           <h1>Recommend Me</h1>
         </div><!--logo-->
         <div id='nav'>
+              <div class='signin'>
+                {% if current_user.is_authenticated %}
+                  <p>{{current_user.username}}</p>
+                  <p><a href="{{url_for('auth.logout')}}">Sign Out</a></p>
+                {% else %}
+                  <p><a href="{{url_for('auth.login')}}">Sign In</a></p>
+                {% endif %}
+              </div>
               <ul class='loginbar'>
                 <li><a href=''>Home</a></li>
-                <li><a href="{{url_for('main.subscribe')}}">My Recs</a></li>
+                <li><a href="">My Recs</a></li>
                 <div class='submenu-container'>
                   <li class='s'><a href=''>Search</a></li>
                   <div class='submenu'>

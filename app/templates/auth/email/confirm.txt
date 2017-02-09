@@ -2,7 +2,7 @@ Hello {{user.username}},
 
 Are you ready to Recommend Me? Click below to confirm your account!
 
-{{url_for('.index', token=token, _external=True)}}
+{{url_for('auth.confirm', token=token, _external=True)}}
 
 Sincerely,
 The Recommend Me Team
