@@ -44,6 +44,10 @@
           <span class='updatesmessage'></span>
         {{form.csrf_token}}
         <br/>
+        {{form.recaptcha}}
+          {%if form.errors['recaptcha'] %}
+            <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
+          {% endif %}
         {{form.submit(class='entry', id='submit')}}
       </form>
     </div><!--w940-->

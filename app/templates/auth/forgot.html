@@ -10,10 +10,14 @@
       <form method="POST">
         {{form.username.label(class='rec')}} {{form.username(class='entry')}}
         {% if form.errors['username'] %}
-          <span class='emailmessage'>&#10007 Must Enter Username</span>
+          <span class='usernamemessage'>&#10007 Must Enter Username</span>
         {% endif %}
         <br/>
         {{form.csrf_token}}
+        {{form.recaptcha}}
+          {%if form.errors['recaptcha'] %}
+            <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
+          {% endif %}
         {{form.submit(class='entry', id='submit')}}
       </form>
     </div>

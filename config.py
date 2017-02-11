@@ -11,6 +11,8 @@ class Config:
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
     ADMIN = os.environ.get("ADMIN")
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
 
     @staticmethod
     def init_app(app):
