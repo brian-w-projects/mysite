@@ -38,8 +38,8 @@
                   <li class='s'><a href=''>Settings</a></li>
                   <div class='submenu'>
                     <a href=''>About</a>
-                    <a href=''>My Settings</a>
-                    <a href=''>Logout</a>
+                    <a href="{{url_for('personal.update')}}">My Settings</a>
+                    <a href="{{url_for('auth.logout')}}">Sign Out</a>
                   </div><!--submenu-->
                 </div><!--submenu-container-->
               </ul>
