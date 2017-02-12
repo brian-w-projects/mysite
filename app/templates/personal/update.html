@@ -11,6 +11,10 @@
         <p>{{form.errors['updated']}}</p>
       {% endif %}
       <form method="POST">
+        {{form.about_me.label(class='rec')}}
+        <br/>
+        {{form.about_me(class='textentry')}}
+        <br/>
         <div class='fieldseterror'>
           <div class='fieldset'>
             {{form.password.label(class='rec')}} {{form.password(class='entry')}}
@@ -30,6 +34,8 @@
           {{form.updates.label(class='rec')}} {{form.updates(checked=False, class='entry')}}
         {% endif %}
         <span class='updatesmassage'></span>
+        <br/>
+        {{form.limit.label(class='rec')}} {{form.limit(class='entry')}}
         <br/>
         {{form.csrf_token}}
         <br/>

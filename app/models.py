@@ -15,6 +15,7 @@ class Permission:
     MODERATE_COMMENTS = 0x08
     ADMINISTER = 0x80
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -49,9 +50,10 @@ class Users(UserMixin, db.Model):
     updates = db.Column(db.Boolean, default=True)
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.INTEGER, db.ForeignKey('roles.id'))
+    display = db.Column(db.Integer, default=10)
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DATETIME(), default=datetime.utcnow)
-
+    posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
 
 
     def __init__(self, **kwargs):
@@ -120,3 +122,13 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
+
+class Recommendation(db.Model):
+    __tablename__ = 'recs'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
+    public = db.Column(db.Boolean, default=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    text = db.Column(db.Text)
+    likes = db.Column(db.Integer, default=0)

@@ -1,6 +1,8 @@
 1. Integrate Celery to send emails
 
-1. Index shows posts when logged in
-2. User profile page, including edit password and updates 
-3. Logout Link on index
-4. About Link on Index
+
+1. Edit Inidividual Recs
+2. Homepage for each User
+
+1. Recs show posts when logged in
+2. About Link on Index

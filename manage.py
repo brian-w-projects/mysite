@@ -43,5 +43,8 @@ if __name__ == '__main__':
     #     db.drop_all()
     #     db.create_all()
     #     Role.insert_roles()
+    #     user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True)
+    #     db.session.add(user)
+    #     db.session.commit()
 
     manager.run()

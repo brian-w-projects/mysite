@@ -57,3 +57,12 @@
     background: -o-linear-gradient(top, #a8cfce, #beeae9);
     background: -ms-linear-gradient(top, #a8cfce, #beeae9);
 }
+
+.textentry{
+    resize: none;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    width: 600px;
+    height: 200px;
+    
+}
