@@ -15,3 +15,12 @@ class PostForm(FlaskForm):
     public = BooleanField('Public: ')
     text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
     submit = SubmitField('Submit')
+
+class EditForm(FlaskForm):
+    title = StringField('TItle: ', validators=[validators.DataRequired()])
+    public = BooleanField('Public: ')
+    text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
+    delete = BooleanField('Delete: ')
+    delete_confirm = BooleanField('Delete Confirm: ')
+    submit = SubmitField('Submit')
+    

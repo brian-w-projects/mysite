@@ -26,7 +26,12 @@
               </div>
               <ul class='loginbar'>
                 <li><a href="{{url_for('main.index')}}">Home</a></li>
-                <li><a href="{{url_for('personal.post', limit=current_user.display)}}">My Recs</a></li>
+                {% if current_user.is_authenticated %}
+                  <li><a href="{{url_for('personal.post', limit=current_user.display)}}">My Recs</a></li>
+                {% else %}
+                  <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
+                {% endif %}
+                <li><a href="{{url_for('personal.profile')}}">My Profile</a></li>
                 <div class='submenu-container'>
                   <li class='s'><a href=''>Search</a></li>
                   <div class='submenu'>

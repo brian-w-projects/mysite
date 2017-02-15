@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% import 'personal/postmacro.html'  as postmacro %}
 {% extends 'auth/subscribe.html' %}
 <html>
 <head>
@@ -26,27 +27,8 @@
       </form>
     </div>
     <div class='listrecs'>
-      {% for rec in display %}
-        <div class='rec1'>
-          <h3 class='postTitle rec'>{{rec.title}}</h3>
-          <div class='postHeaderDiv'>
-            <p class='postHeader'>{{rec.author.username}}</p>
-            {% if rec.public %}
-              <p class='postHeader'>Public</p>
-            {% else %}
-              <p class='postHeader'>Private</p>
-            {% endif %}
-            {% if rec.author_id==current_user.id %}
-              <p class='postHeader'>Edit</p>
-            {% endif %}
-          <p class='postHeader'>{{moment(rec.timestamp).fromNow()}}</p>
-          <p class='postHeader rec'>{{rec.likes}}</p>
-          </div>
-          <p class='postText'>{{rec.text}}</p>
-        </div>
-        <br/>
-      {% endfor %}
-        <p class='loadMore rec'><a href="{{url_for('personal.post', limit=limit+10)}}">Load More</a></p>
+      {{postmacro.render_posts(display, current_user, moment)}}
+      <p class='loadMore rec'><a href="{{url_for('personal.post', limit=limit+10)}}">Load More</a></p>
     </div>
   {% endblock %}
 </body>

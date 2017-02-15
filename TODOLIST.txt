@@ -1,8 +1,11 @@
 1. Integrate Celery to send emails
 
 
-1. Edit Inidividual Recs
-2. Homepage for each User
+
+
+1. View Individual Recs (click on title?, ability to like)
+2. Style Profile Page
+
 
 1. Recs show posts when logged in
 2. About Link on Index

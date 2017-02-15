@@ -45,6 +45,8 @@ if __name__ == '__main__':
     #     Role.insert_roles()
     #     user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True)
     #     db.session.add(user)
+    #     user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
+    #     db.session.add(user2)
     #     db.session.commit()
 
     manager.run()
