@@ -12,6 +12,7 @@
     </div><!--w940-->
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
+      <p class='loadMore rec'><a href="{{url_for('personal.profile', id=user.id, limit=limit+10)}}">Load More</a></p>
     </div>
   {% endblock %}
 </body>

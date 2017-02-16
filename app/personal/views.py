@@ -51,15 +51,18 @@ def post(limit=10):
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')
-def profile(id=-1):
+@personal.route('/profile/<int:id>/<int:limit>')
+def profile(id=-1, limit=10):
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
+    if current_user.is_authenticated:
+        limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
     display_recs = Recommendation.query.filter_by(author_id=user.id).order_by(
-        Recommendation.timestamp.desc()).limit(100)
-    return render_template('personal/profile.html', user=user, display=display_recs)
+        Recommendation.timestamp.desc()).limit(limit)
+    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit)
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required

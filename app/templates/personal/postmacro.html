@@ -2,7 +2,7 @@
   {% for rec in display %}
     {% if rec.public or (current_user.is_authenticated and current_user.id == rec.author_id) %}
       <div class='rec1'>
-        <h3 class='postTitle rec'>{{rec.title}}</h3>
+        <h3 class='postTitle rec'><a href="{{url_for('main.highlight', id=rec.id)}}">{{rec.title}}</a></h3>
         <div class='postHeaderDiv'>
           <p class='postHeader'>{{rec.author.username}}</p>
           {% if rec.public %}

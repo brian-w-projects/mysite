@@ -2,10 +2,14 @@
 
 
 
+1. Style all personal pages Pages and highlight page
 
-1. View Individual Recs (click on title?, ability to like)
-2. Style Profile Page
 
 
 1. Recs show posts when logged in
+ - requires "you may be interested feature", perhaps done by checking 
+    recent titles by user and comparing for common elements from recent 
+    other posts
 2. About Link on Index
+3. Search On Index
+4. Surprise Me On Index
