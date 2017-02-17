@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% extends 'personal/post.html' %}
+<html>
+<head>
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <form method='POST'>
+        {{form.search.label(class='rec')}} {{form.search(class='entry')}}
+        <br/>
+        {{form.user.label(class='rec')}} {{form.user(class='entry')}}
+        <br/>
+        {{form.date.label(class='rec')}} {{form.date(class='entry')}} MM/DD/YYYY
+        <br/>
+        {{form.csrf_token}}
+        {{form.submit(class='entry', id='submit')}}
+      </form>
+    </div>
+    <div class='listrecs'>
+      {{postmacro.render_posts(display, current_user, moment)}}
+    </div>
+  {% endblock %}
+</body>
+</html>

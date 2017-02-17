@@ -57,7 +57,7 @@ def profile(id=-1, limit=10):
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
         return redirect(url_for('auth.login'))
-    if current_user.is_authenticated:
+    if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
     display_recs = Recommendation.query.filter_by(author_id=user.id).order_by(

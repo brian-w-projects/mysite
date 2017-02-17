@@ -2,7 +2,7 @@
 
 
 
-1. Style all personal pages Pages and highlight page
+1. Style all personal pages Pages and highlight page, search page
 
 
 
@@ -11,5 +11,3 @@
     recent titles by user and comparing for common elements from recent 
     other posts
 2. About Link on Index
-3. Search On Index
-4. Surprise Me On Index

@@ -1,7 +1,7 @@
 #!usr/bin/env python
 import os
 from app import create_app, db
-from app.models import Users, Role
+from app.models import Users, Role, Recommendation
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 from flask import request
@@ -10,11 +10,8 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
-# def make_shell_context():
-#     return dict(app=app, db=db, Users=Users, Tokens=Tokens, Role=Role, Post=Post)
-
 def make_shell_context():
-    return dict(app=app, db=db)
+    return dict(app=app, db=db, Users=Users, Role=Role, Recommendation=Recommendation)
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
