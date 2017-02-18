@@ -70,7 +70,7 @@ li{
 }
 
 
-a:hover{
+#nav a:hover{
     background-color: #000000;
     color: #ffffff;
 }
@@ -121,6 +121,7 @@ a{
 
 .rec{
     font-family: 'reckoner', Impact, fantasy;
+    font-size: 24px;
 }
 
 /*CUSTOM TEXT RECOKNER*/
@@ -145,3 +146,33 @@ a{
     width:400px;
 }
 /*PICTURE FORMATTING*/
+
+/*WIDTH DIVISIONS*/
+
+.w700{
+    width: 700px;
+    float: left;
+    margin: 10px;
+}
+
+.w220{
+    width: 220px;
+    float: left;
+    margin: 10px;
+}
+
+.w940{
+    margin: 0px auto;
+    width: 940px;
+}
+
+.w940-center{
+    margin: 0px 100px;
+}
+/*WIDTH DIVISIONS*/
+
+/*MAIN CONTENT */
+h2{
+    text-align: center;
+}
+/*MAIN CONTENT */

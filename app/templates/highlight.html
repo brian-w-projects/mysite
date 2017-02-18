@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-{% import 'personal/postmacro.html' as postmacro %}
-{% extends 'personal/post.html' %}
+{% extends 'onecoloumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}

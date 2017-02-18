@@ -10,12 +10,25 @@
 }
 
 .postTitle{
-    margin-top: 5px;
+    padding-top: 5px;
+    margin-top: 0px;
     margin-bottom: 5px;
     border-bottom: 2px solid black;
     text-align: center;
     
 }
+
+.postTitle:hover{
+    background-color: #000000;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/*OVERRIDE NAVBAR LINKS*/
+.listrecs a{
+    padding: 0;
+}
+/*OVERRIDE NAVBAR LINKS*/
 
 .postHeaderDiv{
     margin-top: 5px;
@@ -36,9 +49,25 @@
     padding: 10px;
 }
 
+/*LOAD MORE BAR */
 .loadMore{
     margin-top: 5px;
     margin-bottom: 5px;
     border: 2px solid black;
     text-align: center;
+    font-size: larger;
 }
+
+.loadMore:hover{
+    background-color: #000000;
+    color: #ffffff;
+    cursor: pointer;
+}
+/*LOAD MORE BAR */
+
+/*EDIT LINK*/
+.postEdit:hover{
+    font-weight: bolder;
+    cursor: pointer;
+}
+/*EDIT LINK*/

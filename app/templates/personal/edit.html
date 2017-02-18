@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-{% extends 'personal/post.html' %}
+{% extends 'onecoloumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -10,15 +14,15 @@
       <form method='POST'>
         {{form.title.label(class='rec')}} {{form.title(class='entry')}}
         <br/>
-        {{form.public.label(class='rec')}} {{form.public(class='entry', default=form.public.data)}}
+        {{form.public.label(class='rec')}} {{form.public(class='click', default=form.public.data)}}
         <br/>
         {{form.text(class='textentry')}}
         <br/>
         <div class='fieldseterror'>
           <div class='fieldset'>
-            {{form.delete.label(class='rec')}} {{form.delete(class='entry')}}
+            {{form.delete.label(class='rec')}} {{form.delete(class='click')}}
             <br/>
-            {{form.delete_confirm.label(class='rec')}} {{form.delete_confirm(class='entry')}}
+            {{form.delete_confirm.label(class='rec')}} {{form.delete_confirm(class='click')}}
           </div><!--fieldset-->
         </div><!--fieldseterror-->
         <div class='realign'></div>

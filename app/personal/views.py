@@ -39,7 +39,7 @@ def post(limit=10):
     display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
         Recommendation.timestamp.desc()).limit(limit)
     if request.method == 'POST':
-        if form.validate() and current_user.can(Permission.WRITE_ARTICLES):
+        if form.validate():
             post = Recommendation(title = form.title.data, public = form.public.data, text = form.text.data, author_id=current_user.id)
             db.session.add(post)
             db.session.commit()

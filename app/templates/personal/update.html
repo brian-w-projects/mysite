@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-{% extends 'auth/subscribe.html' %}
+{% extends 'onecoloumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -29,9 +33,9 @@
         </div><!--fieldseterror-->
         <div class='realign'></div>
         {% if current_user.updates %}
-          {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='entry')}}
+          {{form.updates.label(class='click')}} {{form.updates(checked=True, class='entry')}}
         {% else %}
-          {{form.updates.label(class='rec')}} {{form.updates(checked=False, class='entry')}}
+          {{form.updates.label(class='click')}} {{form.updates(checked=False, class='entry')}}
         {% endif %}
         <span class='updatesmassage'></span>
         <br/>

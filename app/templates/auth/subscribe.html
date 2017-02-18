@@ -5,6 +5,7 @@
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/subscribestyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -40,7 +41,7 @@
             <span class='tokenmessage'>&#10007 A valid token is required for registration</span>
           {% endif %}
         <br/>
-        {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='entry')}}
+        {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='click')}}
           <span class='updatesmessage'></span>
         {{form.csrf_token}}
         <br/>

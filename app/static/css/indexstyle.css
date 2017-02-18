@@ -7,19 +7,6 @@
     margin: 0px auto;
 }
 
-.w700{
-    width: 700px;
-    float: left;
-    margin: 10px;
-}
-
-.w220{
-    width: 220px;
-    float: left;
-    margin: 10px;
-}
-
-
 /*MAIN CONTENT TAG LINE*/
 @font-face{
     font-family: 'reckoner';

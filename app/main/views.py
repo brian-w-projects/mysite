@@ -21,7 +21,8 @@ def index():
                     display_recs.append(to_add)
                 if len(display_recs) >= 50:
                     break
-    return render_template('index.html', display = sample(display_recs,5))
+        display_recs = sample(display_recs, 5)
+    return render_template('index.html', display = display_recs)
 
 @main.route('/highlight/<int:id>')
 def highlight(id):
