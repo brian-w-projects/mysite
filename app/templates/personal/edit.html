@@ -5,31 +5,38 @@
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/editstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2>{{current_user.username}}</h2>
-      <form method='POST'>
-        {{form.title.label(class='rec')}} {{form.title(class='entry')}}
-        <br/>
-        {{form.public.label(class='rec')}} {{form.public(class='click', default=form.public.data)}}
-        <br/>
-        {{form.text(class='textentry')}}
-        <br/>
-        <div class='fieldseterror'>
+      <div class='w940-center'>
+        <h2 class='rec'>{{current_user.username}}</h2>
+        {% if form.errors['missing'] != '' %}
+          <p>There was an error updating your Rec</p>
+        {% endif %}
+        {% if form.errors['delete'] %}
+          <p>You must check both delete boxes</p>
+        {% endif %}
+        <form method='POST'>
+          {{form.title.label(class='rec')}} {{form.title(class='entry')}}
+          <br/>
+          {{form.public.label(class='rec')}} {{form.public(class='click', default=form.public.data)}}
+          <br/>
+          {{form.text(class='textentry')}}
+          <br/>
           <div class='fieldset'>
             {{form.delete.label(class='rec')}} {{form.delete(class='click')}}
             <br/>
             {{form.delete_confirm.label(class='rec')}} {{form.delete_confirm(class='click')}}
           </div><!--fieldset-->
-        </div><!--fieldseterror-->
-        <div class='realign'></div>
-        {{form.csrf_token}}
-        {{form.submit(class='entry', id='submit')}}
-      </form>
-    </div>
+          <div class='realign'></div>
+          {{form.csrf_token}}
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

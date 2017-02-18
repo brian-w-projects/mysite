@@ -1,13 +1,25 @@
 1. Integrate Celery to send emails
+2. Slowdown on index due to exsessive queries
 
 
 
-1. Style all personal pages Pages and highlight page, search page
+1. Style:
+    Personal
+        Profile
+        Update
+    Auth
+        Confirmationsent
+        forgot
+        forgot_username
+        login
+        subscribe
+        unconfirmed
+    Main
+        Error
+        Highlight
+        Search
+        Surprise
 
 
 
-1. Recs show posts when logged in
- - requires "you may be interested feature", perhaps done by checking 
-    recent titles by user and comparing for common elements from recent 
-    other posts
-2. About Link on Index
+1. About Link on Index

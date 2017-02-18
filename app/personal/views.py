@@ -71,19 +71,23 @@ def edit(post_id):
     if display_recs.author_id != current_user.id:
         abort(404)
     form = EditForm(request.form)
-    if request.method == 'POST' and form.validate():
-        if form.delete.data == True and form.delete_confirm.data == True:
-            db.session.delete(display_recs)
-            db.session.commit()
+    form.errors['missing'] = ''
+    if request.method == 'POST':
+        if form.validate():
+            if form.delete.data == True and form.delete_confirm.data == True:
+                db.session.delete(display_recs)
+                db.session.commit()
+            else:
+                display_recs.title = form.title.data
+                display_recs.public = form.public.data
+                display_recs.timestamp = datetime.utcnow()
+                display_recs.text = form.text.data
+                db.session.add(display_recs)
+                db.session.commit()
+            return redirect(url_for('personal.profile'))
         else:
-            display_recs.title = form.title.data
-            display_recs.public = form.public.data
-            display_recs.timestamp = datetime.utcnow()
-            display_recs.text = form.text.data
-            db.session.add(display_recs)
-            db.session.commit()
-        return redirect(url_for('personal.profile'))
+            form.errors['missing'] = 'Error'
     form.title.data = display_recs.title
     form.public.data = display_recs.public
     form.text.data = display_recs.text
-    return render_template('personal/edit.html', form = form)
+    return render_template('personal/edit.html', form=form)

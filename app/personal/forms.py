@@ -20,7 +20,7 @@ class EditForm(FlaskForm):
     title = StringField('TItle: ', validators=[validators.DataRequired()])
     public = BooleanField('Public: ')
     text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
-    delete = BooleanField('Delete: ')
+    delete = BooleanField('Delete: ', validators=[validators.EqualTo('delete_confirm')])
     delete_confirm = BooleanField('Delete Confirm: ')
     submit = SubmitField('Submit')
     
