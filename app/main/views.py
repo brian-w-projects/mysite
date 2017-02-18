@@ -6,12 +6,22 @@ from ..models import Users, Recommendation, Permission
 from flask_login import login_required, current_user
 from ..decorators import admin_required, permission_required
 from ..email import send_email
-from random import randint
+from random import randint, sample
 from datetime import datetime, timedelta
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    display_recs = []
+    if current_user.is_authenticated:
+        initial_grab = Recommendation.query.filter_by(public=True)\
+            .order_by(Recommendation.timestamp.desc())
+        for my_rec in initial_grab.filter_by(author_id=current_user.id).limit(10):
+            for to_add in initial_grab.filter(Recommendation.title.contains(my_rec.title)):
+                if to_add.author_id != current_user.id:
+                    display_recs.append(to_add)
+                if len(display_recs) >= 50:
+                    break
+    return render_template('index.html', display = sample(display_recs,5))
 
 @main.route('/highlight/<int:id>')
 def highlight(id):
@@ -38,7 +48,7 @@ def search():
         if form.user.data != '':
             me = Users.query.filter_by(username=form.user.data).first()
             display_recs = display_recs.filter_by(author_id=me.id)
-        if form.date.data != '':
+        if form.date.data != None:
             search_date = form.date.data + timedelta(days=1)
             display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
         display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(current_user.display)

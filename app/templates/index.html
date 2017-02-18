@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 {% extends 'threecoloumn.html' %}
+{% import 'personal/postmacro.html'  as postmacro %}
 <head>
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
   <body>
@@ -32,7 +34,11 @@
         <div class='slide-buttons'></div>
       </div><!--w700 slider-->
       <script src="{{url_for('static', filename='js/photoslider.js')}}"></script>
-    <br/>
+      <br/>
+      <br/>
+      <div class='listrecs'>
+        {{postmacro.render_posts(display, current_user, moment)}}
+      </div>
     {% endblock %}
     {% block c1 %}
       <h3 class='rec'>Make Recs</h3>

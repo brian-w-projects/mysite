@@ -15,11 +15,10 @@
           {% endif %}
         <p class='postHeader'>{{moment(rec.timestamp).format('MMMM Do YYYY')}}</p>
         <p class='postHeader rec'>{{rec.likes}}</p>
-        </div>
+        </div><!--postheaderdiv-->
         <p class='postText'>{{rec.text}}</p>
-      </div>
+      </div><!--rec1-->
       <br/>
     {% endif %}
   {% endfor %}
-</div>
 {% endmacro %}
