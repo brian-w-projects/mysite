@@ -11,11 +11,6 @@
         login
         subscribe
         unconfirmed
-    Main
-        Error
-        Highlight
-        Search
-        Surprise
 
 
 

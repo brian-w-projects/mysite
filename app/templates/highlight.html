@@ -5,12 +5,13 @@
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/highlightstyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2 class='rec'><a href="{{url_for('personal.profile', id=display[0].author.id)}}">{{display[0].author.username}}</a></h2>
+      <h2><a class='rec highlight-name' href="{{url_for('personal.profile', id=display[0].author.id)}}">{{display[0].author.username}}</a></h2>
     </div>
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}

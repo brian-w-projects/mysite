@@ -31,7 +31,7 @@ def highlight(id):
 
 @main.route('/surprise/')
 def surprise(limit=10):
-    if limit == 10 and current_user.is_authenticated:
+    if current_user.is_authenticated:
         limit = current_user.display
     temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)
     display_recs = [possible for possible in temp if randint(1,3) == 2]

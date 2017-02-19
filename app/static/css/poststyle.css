@@ -42,7 +42,7 @@
     display: inline-block;
     margin-top: 5px;
     margin-bottom: 5px;
-    padding-right: 30px;
+    margin-right: 30px;
 }
 
 .postText{
@@ -67,7 +67,9 @@
 
 /*EDIT LINK*/
 .postEdit:hover{
-    font-weight: bolder;
+    background-color: #000000;
+    color: #ffffff;
     cursor: pointer;
 }
+
 /*EDIT LINK*/

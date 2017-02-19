@@ -60,7 +60,7 @@ def profile(id=-1, limit=10):
     if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
-    info = Recommendation.query.filter_by(author_id=user.id).order_by(
+    info = Recommendation.query.filter_by(public=True).filter_by(author_id=user.id).order_by(
         Recommendation.timestamp.desc())
     display_recs = info.limit(limit)
     total = info.count()
