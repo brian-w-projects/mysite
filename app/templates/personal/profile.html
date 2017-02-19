@@ -5,19 +5,25 @@
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2>{{user.username}}</h2>
-      <p>{{user.about_me}}</p>
-      <p>Member Since: {{moment(user.member_since).format('MMMM Do YYYY')}}</p>
+        <h2 class='rec'>{{user.username}}</h2>
+        <div class='profile-left'>
+          <p>{{user.about_me}}</p>
+        </div><!--profile-left-->
+        <div class='profile-right'>
+          <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
+          <p>Posts: {{total}}</p>
+        </div><!--profile-right-->
     </div><!--w940-->
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
-      <p class='loadMore rec'><a href="{{url_for('personal.profile', id=user.id, limit=limit+10)}}">Load More</a></p>
-    </div>
+      <a href="{{url_for('personal.profile', id=user.id, limit=limit+10)}}"><p class='loadMore'>Load More</p></a>
+    </div><!--listrecs-->
   {% endblock %}
 </body>
 </html>

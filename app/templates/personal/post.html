@@ -14,7 +14,7 @@
       <div class='w940-center'>
         <h2 class='rec'>Make a Rec</h2>
         {% if form.errors['missing'] != '' %}
-          <p>There was an error posting your Rec</p>
+          <p>&#10007 There was an error posting your Rec</p>
         {% endif %}
         <form method="POST">
           {{form.title.label(class='rec')}} {{form.title(class='entry')}}

@@ -1,0 +1,21 @@
+.profile-left{
+    width: 620px;
+    float: left;
+}
+
+.profile-right{
+    width: 300px;
+    float: left;
+}
+
+.profile-left>p, .profile-right>p{
+    margin: 10px;
+}
+
+.w940{
+    border: 1px solid black;
+    overflow: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+}

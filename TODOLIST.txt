@@ -4,9 +4,6 @@
 
 
 1. Style:
-    Personal
-        Profile
-        Update
     Auth
         Confirmationsent
         forgot
@@ -23,3 +20,5 @@
 
 
 1. About Link on Index
+2. Fix redirect problems. Implement proper error messages and redirect for all
+    pages with post features.

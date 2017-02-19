@@ -7,7 +7,7 @@ class ChangeForm(FlaskForm):
     password = PasswordField('Password: ', validators=[validators.EqualTo('password_confirm')])
     password_confirm = PasswordField('Confirm: ', validators=[])
     updates = BooleanField('I would like to receive updates: ')
-    limit = SelectField('Rec Display Amount: ', choices=[('', ''), ('10', '10'), ('20', '20'), ('50', '50')])
+    limit = SelectField('Rec Display Amount: ', choices=[('10', '10'), ('20', '20'), ('50', '50')])
     submit = SubmitField('Update')
 
 class PostForm(FlaskForm):

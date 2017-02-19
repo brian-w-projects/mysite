@@ -10,42 +10,40 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2 class='rec'>Update Profile</h2>
-      {% if form.errors['updated'] != '' %}
-        <p>{{form.errors['updated']}}</p>
-      {% endif %}
-      <form method="POST">
-        {{form.about_me.label(class='rec')}}
-        <br/>
-        {{form.about_me(class='textentry')}}
-        <br/>
-        <div class='fieldseterror'>
-          <div class='fieldset'>
-            {{form.password.label(class='rec')}} {{form.password(class='entry')}}
-            <br/>
-            {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
-          </div><!--fieldset-->
-          {% if form.errors['password'] %}
-            <span class='passwordmessage'>&#10007 Must be at least 8 characters</span>
-            <br/>
-            <span class='passwordmessage2'>&#10007 Passwords Must Match</span>
-          {% endif %}
-        </div><!--fieldseterror-->
-        <div class='realign'></div>
-        {% if current_user.updates %}
-          {{form.updates.label(class='click')}} {{form.updates(checked=True, class='entry')}}
-        {% else %}
-          {{form.updates.label(class='click')}} {{form.updates(checked=False, class='entry')}}
+      <div class='w940-center'>
+        <h2 class='rec'>Update Profile</h2>
+        {% if session['updated'] %}
+          <p>{{session['updated']}}</p>
         {% endif %}
-        <span class='updatesmassage'></span>
-        <br/>
-        {{form.limit.label(class='rec')}} {{form.limit(class='entry')}}
-        <br/>
-        {{form.csrf_token}}
-        <br/>
-        {{form.submit(class='entry', id='submit')}}
-      </form>
-    </div>
+        <form method="POST">
+          {{form.about_me.label(class='rec')}}
+          <br/>
+          {{form.about_me(class='textentry')}}
+          <br/>
+          <div class='fieldseterror'>
+            <div class='fieldset'>
+              {{form.password.label(class='rec')}} {{form.password(class='entry')}}
+              <br/>
+              {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
+            </div><!--fieldset-->
+            {% if form.errors['password'] %}
+              <span class='passwordmessage'>&#10007 Must be at least 8 characters</span>
+              <br/>
+              <span class='passwordmessage2'>&#10007 Passwords Must Match</span>
+            {% endif %}
+          </div><!--fieldseterror-->
+          <div class='realign'></div>
+          {{form.updates.label(class='rec')}} {{form.updates(checked=current_user.updates, class='click')}}
+          <span class='updatesmassage'></span>
+          <br/>
+          {{form.limit.label(class='rec')}} {{form.limit(class='entry')}}
+          <br/>
+          {{form.csrf_token}}
+          <br/>
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

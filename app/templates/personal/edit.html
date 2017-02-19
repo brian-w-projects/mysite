@@ -14,10 +14,10 @@
       <div class='w940-center'>
         <h2 class='rec'>{{current_user.username}}</h2>
         {% if form.errors['missing'] != '' %}
-          <p>There was an error updating your Rec</p>
+          <p>&#10007 There was an error updating your Rec</p>
         {% endif %}
         {% if form.errors['delete'] %}
-          <p>You must check both delete boxes</p>
+          <p>&#10007 You must check both delete boxes</p>
         {% endif %}
         <form method='POST'>
           {{form.title.label(class='rec')}} {{form.title(class='entry')}}

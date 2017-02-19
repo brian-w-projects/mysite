@@ -11,23 +11,23 @@ from datetime import datetime
 @login_required
 def update():
     form = ChangeForm(request.form)
-    form.errors['updated'] = ''
-    if request.method == 'POST' and form.validate():
-        if form.password.data != '':
-            if len(form.password.data) >= 8:
-                current_user.password = form.password.data
-            else:
-                form.errors['password'] = 'Errors'
-        current_user.updates = form.updates.data
-        if form.limit.data != '':
+    if request.method == 'POST':
+        session['updated'] = 'There has been an error updating your profile'
+        if form.validate():
+            if form.password.data != '':
+                if len(form.password.data) >= 8:
+                    current_user.password = form.password.data
+                else:
+                    form.errors['password'] = 'Errors'
+            current_user.updates = form.updates.data
             current_user.display=int(form.limit.data)
-        if form.about_me.data != '':
             current_user.about_me = form.about_me.data
-        db.session.add(current_user)
-        db.session.commit()
-        form.errors['updated'] = 'Your profile has been successfully updated'
+            db.session.add(current_user)
+            db.session.commit()
+            session['updated'] = 'Your profile has been successfully updated'
         return redirect(url_for('personal.update'))
     form.about_me.data = current_user.about_me
+    form.limit.data= str(current_user.display)
     return render_template('personal/update.html', form=form)
     
 @personal.route('/post', methods=['GET', 'POST'])
@@ -60,9 +60,11 @@ def profile(id=-1, limit=10):
     if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
-    display_recs = Recommendation.query.filter_by(author_id=user.id).order_by(
-        Recommendation.timestamp.desc()).limit(limit)
-    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit)
+    info = Recommendation.query.filter_by(author_id=user.id).order_by(
+        Recommendation.timestamp.desc())
+    display_recs = info.limit(limit)
+    total = info.count()
+    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit, total=total)
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
