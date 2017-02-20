@@ -2,7 +2,7 @@
 {% extends 'onecoloumn.html' %}
 <html>
 <head>
-    {% block head %}
+  {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
@@ -10,21 +10,24 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2>Recover Username</h2>
-      <form method='POST'>
-        {{form.email.label(class='rec')}} {{form.email(class='entry')}}
-        {% if form.errors['email'] %}
-          <span class='emailmessage'>&#10007 Must Enter Email</span>
-        {% endif %}
-        <br/>
-        {{form.csrf_token}}
-        {{form.recaptcha}}
-          {%if form.errors['recaptcha'] %}
-            <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
+      <div class='w940-center'>
+        <h2 class='rec'>Recover Username</h2>
+        <form method='POST'>
+          {{form.email.label(class='rec')}} {{form.email(class='entry')}}
+          {% if form.errors['email'] %}
+            <span class='emailmessage'>&#10007 Must Enter Email</span>
           {% endif %}
-        {{form.submit(class='entry', id='submit')}}
-      </form>      
-    </div>
+          <br/>
+          {{form.recaptcha}}
+            {%if form.errors['recaptcha'] %}
+              <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
+            {% endif %}
+          <br/>
+          {{form.csrf_token}}
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

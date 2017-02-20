@@ -10,25 +10,27 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
+      <div class='w940-center'>
         <h2 class='rec'>Log In</h2>
         <form method="POST">
           {{form.username.label(class='rec')}} {{form.username(class='entry')}}
-            {% if form.errors['username'] %}
-              <span class='usernamemessage'>&#10007 Must Enter Username</span>
-            {% endif %}
+          {% if form.errors['username'] %}
+            <span class='usernamemessage'>&#10007 Must Enter Username</span>
+          {% endif %}
           <br/>
           {{form.password.label(class='rec')}} {{form.password(class='entry')}}
-            {% if form.errors['password'] %}
-              <span class='passwordmessage'>&#10007 Must Enter Password</span>
-            {% endif %}
+          {% if form.errors['password'] %}
+            <span class='passwordmessage'>&#10007 Must Enter Password</span>
+          {% endif %}
           <br/>
           {{form.csrf_token}}
           {{form.submit(class='entry', id='submit')}}
         </form>
-        <p>Forgot your username? <a href="{{url_for('auth.forgot_username')}}">Recover Username</a></p>
-        <p>Forgot your password? <a href="{{url_for('auth.forgot')}}">Reset Password</a></p>
-        <p>Not a member? <a href="{{url_for('auth.subscribe')}}">Register Here</a></p>
-    </div>
+        <p>Forgot your username? <a class='special-link' href="{{url_for('auth.forgot_username', _scheme='https', _external=True)}}">Recover Username</a></p>
+        <p>Forgot your password? <a class='special-link' href="{{url_for('auth.forgot', _scheme='https', _external=True)}}">Reset Password</a></p>
+        <p>Not a member? <a class='special-link' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">Register Here</a></p>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

@@ -2,7 +2,7 @@
 {% extends 'onecoloumn.html' %}
 <html>
 <head>
-  {% head %}
+  {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
@@ -10,21 +10,24 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2>Reset Password</h2>
-      <form method="POST">
-        {{form.username.label(class='rec')}} {{form.username(class='entry')}}
-        {% if form.errors['username'] %}
-          <span class='usernamemessage'>&#10007 Must Enter Username</span>
-        {% endif %}
-        <br/>
-        {{form.csrf_token}}
-        {{form.recaptcha}}
+      <div class='w940-center'>
+        <h2 class='rec'>Reset Password</h2>
+        <form method="POST">
+          {{form.username.label(class='rec')}} {{form.username(class='entry')}}
+          {% if form.errors['username'] %}
+            <span class='usernamemessage'>&#10007 Must Enter Username</span>
+          {% endif %}
+          <br/>
+          {{form.recaptcha(class='recaptcha')}}
           {%if form.errors['recaptcha'] %}
             <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
           {% endif %}
-        {{form.submit(class='entry', id='submit')}}
-      </form>
-    </div>
+          <br/>
+          {{form.csrf_token}}
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

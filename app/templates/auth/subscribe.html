@@ -11,46 +11,49 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2 class='rec'>Register</h2>
-      <p>Already a member? <a href="{{url_for('auth.login')}}">Login</a></p>
-      <form method="POST">
-        {{form.username.label(class='rec')}} {{form.username(class='entry')}}
-          {% if form.errors['username'] %}
-            <span class='usernamemessage'>&#10007 Must Enter Username</span>
-          {% endif %}
-        <br/>
-        {{form.email.label(class='rec')}} {{form.email(class='entry')}}
-          {%if form.errors['email'] %}
-            <span class='emailmessage'>&#10007 Must Enter Email</span>
-          {% endif %}
-        <div class='fieldseterror'>
-            <div class='fieldset'>
-              {{form.password.label(class='rec')}} {{form.password(class='entry')}}
-              <br/>
-              {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
-            </div><!--fieldset-->
-            {% if form.errors['password'] %}
-              <span class='passwordmessage'>&#10007 Must be at least 8 characters</span>
-              <br/>
-              <span class='passwordmessage2'>&#10007 Passwords Must Match</span>
+      <div class='w940-center'>
+        <h2 class='rec'>Register</h2>
+        <p>Already a member? <a class='special-link' href="{{url_for('auth.login', _scheme='https', _external=True)}}">Login</a></p>
+        <form method="POST">
+          {{form.username.label(class='rec')}} {{form.username(class='entry')}}
+            {% if form.errors['username'] %}
+              <span class='usernamemessage'>&#10007 Must Enter Username</span>
             {% endif %}
-        </div><!--fieldsetserror-->
-        <div class='realign'></div>
-        {{form.token.label(class='rec')}} {{form.token(class='entry')}}
-          {% if form.errors['token'] %}
-            <span class='tokenmessage'>&#10007 A valid token is required for registration</span>
-          {% endif %}
-        <br/>
-        {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='click')}}
-          <span class='updatesmessage'></span>
-        {{form.csrf_token}}
-        <br/>
-        {{form.recaptcha}}
-          {%if form.errors['recaptcha'] %}
-            <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
-          {% endif %}
-        {{form.submit(class='entry', id='submit')}}
-      </form>
+          <br/>
+          {{form.email.label(class='rec')}} {{form.email(class='entry')}}
+            {%if form.errors['email'] %}
+              <span class='emailmessage'>&#10007 Must Enter Email</span>
+            {% endif %}
+          <div class='fieldseterror'>
+              <div class='fieldset'>
+                {{form.password.label(class='rec')}} {{form.password(class='entry')}}
+                <br/>
+                {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
+              </div><!--fieldset-->
+              {% if form.errors['password'] %}
+                <span class='passwordmessage'>&#10007 Must be at least 8 characters</span>
+                <br/>
+                <span class='passwordmessage2'>&#10007 Passwords Must Match</span>
+              {% endif %}
+          </div><!--fieldsetserror-->
+          <div class='realign'></div>
+          {{form.token.label(class='rec')}} {{form.token(class='entry')}}
+            {% if form.errors['token'] %}
+              <span class='tokenmessage'>&#10007 A valid token is required for registration</span>
+            {% endif %}
+          <br/>
+          {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='click')}}
+            <span class='updatesmessage'></span>
+          <br/>
+          {{form.recaptcha}}
+            {%if form.errors['recaptcha'] %}
+              <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
+            {% endif %}
+          <br/>
+          {{form.csrf_token}}
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
     </div><!--w940-->
   {% endblock %}
 </body>

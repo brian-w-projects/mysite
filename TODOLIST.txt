@@ -3,17 +3,6 @@
 
 
 
-1. Style:
-    Auth
-        Confirmationsent
-        forgot
-        forgot_username
-        login
-        subscribe
-        unconfirmed
-
-
-
 1. About Link on Index
 2. Fix redirect problems. Implement proper error messages and redirect for all
     pages with post features.

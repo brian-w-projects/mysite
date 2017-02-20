@@ -176,3 +176,10 @@ h2{
     text-align: center;
 }
 /*MAIN CONTENT */
+
+/*SPECIAL LINK HIGHLIGHTING*/
+.special-link:hover{
+    background-color: #000000;
+    color: #ffffff;
+}
+/*SPECIAL LINK HIGHLIGHTING*/

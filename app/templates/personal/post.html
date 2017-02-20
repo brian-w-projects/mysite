@@ -30,7 +30,7 @@
     </div><!--w940-->
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
-      <a href="{{url_for('personal.post', limit=limit+10)}}"><p class='loadMore'>Load More</p></a>
+      <a href="{{url_for('personal.post', limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
     </div><!--listrecs-->
   {% endblock %}
 </body>

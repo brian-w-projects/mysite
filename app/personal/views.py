@@ -25,7 +25,7 @@ def update():
             db.session.add(current_user)
             db.session.commit()
             session['updated'] = 'Your profile has been successfully updated'
-        return redirect(url_for('personal.update'))
+        return redirect(url_for('personal.update', _scheme='https', _external=True))
     form.about_me.data = current_user.about_me
     form.limit.data= str(current_user.display)
     return render_template('personal/update.html', form=form)
@@ -44,7 +44,7 @@ def post(limit=10):
             db.session.add(post)
             db.session.commit()
             form.errors['missing'] = ''
-            return redirect(url_for('personal.post', limit=limit))
+            return redirect(url_for('personal.post', limit=limit, _scheme='https', _external=True))
         else:
             form.errors['missing'] = 'Missing Info'
     return render_template('personal/post.html', form=form, display=display_recs, limit=limit)
@@ -56,7 +56,7 @@ def profile(id=-1, limit=10):
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login', _scheme='https', _external=True))
     if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
@@ -86,7 +86,7 @@ def edit(post_id):
                 display_recs.text = form.text.data
                 db.session.add(display_recs)
                 db.session.commit()
-            return redirect(url_for('personal.profile'))
+            return redirect(url_for('personal.profile', _scheme='https', _external=True))
         else:
             form.errors['missing'] = 'Error'
     form.title.data = display_recs.title

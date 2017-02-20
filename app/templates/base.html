@@ -7,6 +7,7 @@
     {% block head %}
       <meta charset='utf-8'>
       <title>Recommend Me</title>
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
       <link href="{{url_for('static', filename='css/basestyle.css')}}" type='text/css' rel='stylesheet'/>
     {% endblock %}
   </head>
@@ -20,32 +21,32 @@
               <div class='signin'>
                 {% if current_user.is_authenticated %}
                   <p>{{current_user.username}}</p>
-                  <p><a href="{{url_for('auth.logout')}}">Sign Out</a></p>
+                  <p><a href="{{url_for('auth.logout', _scheme='https', _external=True)}}">Sign Out</a></p>
                 {% else %}
-                  <p><a href="{{url_for('auth.login')}}">Sign In</a></p>
+                  <p><a href="{{url_for('auth.login', _scheme='https', _external=True)}}">Sign In</a></p>
                 {% endif %}
               </div>
               <ul class='loginbar'>
-                <li><a href="{{url_for('main.index')}}">Home</a></li>
+                <li><a href="{{url_for('main.index', _scheme='https', _external=True)}}">Home</a></li>
                 {% if current_user.is_authenticated %}
-                  <li><a href="{{url_for('personal.post', limit=current_user.display)}}">My Recs</a></li>
+                  <li><a href="{{url_for('personal.post', limit=current_user.display, _scheme='https', _external=True)}}">My Recs</a></li>
                 {% else %}
-                  <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
+                  <li><a href="{{url_for('personal.post', _scheme='https', _external=True)}}">My Recs</a></li>
                 {% endif %}
-                <li><a href="{{url_for('personal.profile')}}">My Profile</a></li>
+                <li><a href="{{url_for('personal.profile', _scheme='https', _external=True)}}">My Profile</a></li>
                 <div class='submenu-container'>
-                  <li class='s'><a href="{{url_for('main.search')}}">Search</a></li>
+                  <li class='s'><a href="{{url_for('main.search', _scheme='https', _external=True)}}">Search</a></li>
                   <div class='submenu'>
-                    <a href="{{url_for('main.search')}}">Search</a>
-                    <a href="{{url_for('main.surprise')}}">Surprise Me</a>
+                    <a href="{{url_for('main.search', _scheme='https', _external=True)}}">Search</a>
+                    <a href="{{url_for('main.surprise', _scheme='https', _external=True)}}">Surprise Me</a>
                   </div><!--submenu-->
                 </div><!--submenu-container-->
                 <div class='submenu-container'>
                   <li class='s'><a href=''>Settings</a></li>
                   <div class='submenu'>
                     <a href=''>About</a>
-                    <a href="{{url_for('personal.update')}}">My Settings</a>
-                    <a href="{{url_for('auth.logout')}}">Sign Out</a>
+                    <a href="{{url_for('personal.update', _scheme='https', _external=True)}}">My Settings</a>
+                    <a href="{{url_for('auth.logout', _scheme='https', _external=True)}}">Sign Out</a>
                   </div><!--submenu-->
                 </div><!--submenu-container-->
               </ul>

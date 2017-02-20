@@ -6,10 +6,12 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2 class='rec'>Register</h2>
-      <p> A confirmation link has been sent to {{current_user.email}}.</p>
-      <p> Please check your e-mail to confirm your account.</p>
-    </div>
+      <div class='w940-center'>
+        <h2 class='rec'>Register</h2>
+        <p> A confirmation link has been sent to {{current_user.email}}.</p>
+        <p> Please check your e-mail to confirm your account.</p>
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>
