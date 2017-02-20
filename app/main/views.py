@@ -24,6 +24,12 @@ def index():
         display_recs = sample(display_recs, 5)
     return render_template('index.html', display = display_recs)
 
+@main.route('/about')
+def about():
+    temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(50)
+    display_recs = [possible for possible in temp if randint(1,3) == 2]
+    return render_template('about.html', display=display_recs[:5])
+
 @main.route('/highlight/<int:id>')
 def highlight(id):
     display_recs = [Recommendation.query.filter_by(id=id).first_or_404()]

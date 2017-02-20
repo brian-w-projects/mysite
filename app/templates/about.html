@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% extends 'threecoloumn.html' %}
+<html>
+<head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+  {% endblock %} 
+</head>
+<body>
+  {% block maincontent %}
+    <h2 class='rec'>Go on and have an adventure. When you are done, Rec it to everyone.</p>
+    <img src="{{url_for('static', filename='images/aboutrec.jpg')}}" class='align-center splash'/>
+    <h2>
+        <a class='special-link rec' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
+            Ready to Start? Register Here
+        </a>
+    </h2>
+  {% endblock %}
+  {% block c1 %}
+    <h3 class='rec'>Step 1</h3>
+    <p>
+      Have an adventure and Rec it for everyone to see. Your adventure can be
+      anything. Travel to a new location! Try a new restaurant! Experience a
+      new technology. Whatever it is, you can Rec it!
+    </p>
+  {% endblock %}
+  {% block c2 %}
+    <h3 class='rec'>Step 2</h3>
+    <p>
+      Find Recs that inspire you to have a new adventure. Find the people whose
+      journeys amaze you. Connect with users around the world. Find others
+      who Rec the same things you Rec. 
+    </p>
+  {% endblock %}
+  {% block c3 %}
+    <h3 class='rec'>Step 3</h3>
+    <p>
+      Live a better life! Find the adventure inside you. Your Recs can be public
+      or private so be sure to Rec everything! 
+    </p>
+  {% endblock %}
+  {% block post %}
+    <div class='w940'>
+      <div class='w940-center'>
+        <h2 class='rec'>Check out some recent Recs</h2>
+      </div><!--w940-center-->
+    </div><!--w940-->
+    <div class='listrecs'>
+      {{postmacro.render_posts(display, current_user, moment)}}
+    </div><!--listrecs-->
+  {% endblock %}
+</body>
+</html>

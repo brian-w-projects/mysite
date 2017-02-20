@@ -44,7 +44,7 @@
                 <div class='submenu-container'>
                   <li class='s'><a href=''>Settings</a></li>
                   <div class='submenu'>
-                    <a href=''>About</a>
+                    <a href="{{url_for('main.about', _scheme='https', _external=True)}}">About</a>
                     <a href="{{url_for('personal.update', _scheme='https', _external=True)}}">My Settings</a>
                     <a href="{{url_for('auth.logout', _scheme='https', _external=True)}}">Sign Out</a>
                   </div><!--submenu-->

@@ -3,6 +3,12 @@
 
 
 
-1. About Link on Index
-2. Fix redirect problems. Implement proper error messages and redirect for all
+1. Fix redirect problems. Implement proper error messages and redirect for all
     pages with post features.
+2. Moderator Tools
+    - Ability to Edit/Delete Posts
+    - Special Page with Recs to check, with checkbox to 'OK', 'Delete', or 'Privatize'
+      - Send messages to Users about Deleted or Privatized Messages
+3. Administrator Tools
+    - Special Page with stats 
+    - Special page with info on Moderators
