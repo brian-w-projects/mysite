@@ -12,16 +12,11 @@
     <div class='w940'>
       <div class='w940-center'>
         <h2 class='rec'>Log In</h2>
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
           {{form.username.label(class='rec')}} {{form.username(class='entry')}}
-          {% if form.errors['username'] %}
-            <span class='usernamemessage'>&#10007 Must Enter Username</span>
-          {% endif %}
           <br/>
           {{form.password.label(class='rec')}} {{form.password(class='entry')}}
-          {% if form.errors['password'] %}
-            <span class='passwordmessage'>&#10007 Must Enter Password</span>
-          {% endif %}
           <br/>
           {{form.csrf_token}}
           {{form.submit(class='entry', id='submit')}}

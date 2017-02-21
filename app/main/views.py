@@ -21,7 +21,8 @@ def index():
                     display_recs.append(to_add)
                 if len(display_recs) >= 50:
                     break
-        display_recs = sample(display_recs, 5)
+        if len(display_recs) >=5:
+            display_recs = sample(display_recs, 5)
     return render_template('index.html', display = display_recs)
 
 @main.route('/about')
@@ -59,4 +60,7 @@ def search():
             search_date = form.date.data + timedelta(days=1)
             display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
         display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(current_user.display)
+        if display_recs.count() == 0:
+            flash(u'\u2717 No recs found')
+        # return redirect(url_for('main.search', _scheme='https', _external=True))
     return render_template('search.html', form=form, display=display_recs)

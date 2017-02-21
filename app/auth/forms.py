@@ -20,6 +20,7 @@ class LoginForm(FlaskForm):
     
 class PasswordReset(FlaskForm):
     username = StringField('Username: ', validators=[validators.DataRequired()])
+    email = StringField('Email: ', validators=[validators.DataRequired(), validators.Email()])
     recaptcha = RecaptchaField()
     submit = SubmitField('Send Email')
     

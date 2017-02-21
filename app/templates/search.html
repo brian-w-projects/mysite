@@ -12,6 +12,8 @@
   {% block maincontent %}
     <div class='w940'>
       <div class='w940-center'>
+        <h2 class='rec'>Search</h2>
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method='POST'>
           {{form.search.label(class='rec')}} {{form.search(class='entry', id='tags')}}
           <br/>

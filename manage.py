@@ -46,5 +46,8 @@ if __name__ == '__main__':
     #     user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
     #     db.session.add(user2)
     #     db.session.commit()
+        # user2 = Users(username='asdf', email='ekjhlhjkxample@example.com', password='123456789', confirmed=True)
+        # db.session.add(user2)
+        # db.session.commit()
 
     manager.run()

@@ -11,7 +11,16 @@
 <body>
   {% block maincontent %}
     <div class='w940'>
+      <div class='w940-center'>
+        <h2 class='rec'>Profile</h2>
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
+      </div><!--w940-center-->
+      <div class='profile-box'>
         <h2 class='rec'>{{user.username}}</h2>
+        {% if current_user.id == user.id %}
+          <p class='profile-edit'><a class='postEdit' href="{{url_for('personal.update', _scheme='https', _external=True)}}">Edit</a></p>
+        {% endif %}           
+        <div></div>
         <div class='profile-left'>
           <p>{{user.about_me}}</p>
         </div><!--profile-left-->
@@ -19,6 +28,7 @@
           <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
           <p>Posts: {{total}}</p>
         </div><!--profile-right-->
+      </div><!--profile-box-->
     </div><!--w940-->
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}

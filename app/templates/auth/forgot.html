@@ -12,16 +12,13 @@
     <div class='w940'>
       <div class='w940-center'>
         <h2 class='rec'>Reset Password</h2>
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
           {{form.username.label(class='rec')}} {{form.username(class='entry')}}
-          {% if form.errors['username'] %}
-            <span class='usernamemessage'>&#10007 Must Enter Username</span>
-          {% endif %}
+          <br/>
+          {{form.email.label(class='rec')}} {{form.email(class='entry')}}
           <br/>
           {{form.recaptcha(class='recaptcha')}}
-          {%if form.errors['recaptcha'] %}
-            <span class='recaptcha'>&#10007 Confirm Recaptcha</span>
-          {% endif %}
           <br/>
           {{form.csrf_token}}
           {{form.submit(class='entry', id='submit')}}

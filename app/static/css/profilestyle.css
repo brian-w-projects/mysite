@@ -12,10 +12,16 @@
     margin: 10px;
 }
 
-.w940{
+.profile-box{
     border: 1px solid black;
     overflow: auto;
     border-radius: 10px;
     margin-bottom: 20px;
     background-color: #fafafa;
+}
+
+.profile-edit{
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }

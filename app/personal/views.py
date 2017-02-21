@@ -37,18 +37,20 @@ def update():
 @login_required
 def post(limit=10):
     form = PostForm(request.form)
-    form.errors['missing'] = ''
-    display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
-        Recommendation.timestamp.desc()).limit(limit)
     if request.method == 'POST':
         if form.validate():
             post = Recommendation(title = form.title.data, public = form.public.data, text = form.text.data, author_id=current_user.id)
             db.session.add(post)
             db.session.commit()
-            form.errors['missing'] = ''
-            return redirect(url_for('personal.post', limit=limit, _scheme='https', _external=True))
+            flash(u'\u2713 Your rec has been posted!')
         else:
-            form.errors['missing'] = 'Missing Info'
+            if 'title' in form.errors and form.errors['title']:
+                flash(u'\u2717 Recs must contain a title')
+            if 'text' in form.errors and form.errors['text']:
+                flash(u'\u2717 Recs must contain text')
+        return redirect(url_for('personal.post', limit=limit, _scheme='https', _external=True))
+    display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
+        Recommendation.timestamp.desc()).limit(limit)
     return render_template('personal/post.html', form=form, display=display_recs, limit=limit)
 
 @personal.route('/profile')
@@ -71,16 +73,17 @@ def profile(id=-1, limit=10):
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit(post_id):
+    form = EditForm(request.form)
     display_recs = Recommendation.query.filter_by(id=post_id).first_or_404()
     if display_recs.author_id != current_user.id:
-        abort(404)
-    form = EditForm(request.form)
-    form.errors['missing'] = ''
+        abort(403)
     if request.method == 'POST':
         if form.validate():
             if form.delete.data == True and form.delete_confirm.data == True:
                 db.session.delete(display_recs)
                 db.session.commit()
+                flash(u'\u2713 Your rec has been deleted')
+                return redirect(url_for('personal.profile', _scheme='https', _external=True))
             else:
                 display_recs.title = form.title.data
                 display_recs.public = form.public.data
@@ -88,9 +91,16 @@ def edit(post_id):
                 display_recs.text = form.text.data
                 db.session.add(display_recs)
                 db.session.commit()
-            return redirect(url_for('personal.profile', _scheme='https', _external=True))
+                flash(u'\u2713 Your rec has been edited')
         else:
+            if 'title' in form.errors and form.errors['title']:
+                flash(u'\u2717 Recs must contain a title')
+            if 'text' in form.errors and form.errors['text']:
+                flash(u'\u2717 Recs must contain text')
+            if 'delete' in form.errors and form.errors['delete']:
+                flash(u'\u2717 Check both boxes to delete this rec')
             form.errors['missing'] = 'Error'
+        return redirect(url_for('personal.edit', post_id=post_id, _scheme='https', _external=True))
     form.title.data = display_recs.title
     form.public.data = display_recs.public
     form.text.data = display_recs.text

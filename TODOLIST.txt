@@ -1,17 +1,17 @@
 1. Integrate Celery to send emails
 2. Slowdown on index due to exsessive queries
+3. Learn Ajax to make redirect on Search work
 
 
 
-1. Fix redirect problems. Implement proper error messages and redirect for all
-    pages with post features.
-2. Moderator Tools
+1. Moderator Tools
     - Ability to Edit/Delete Posts
     - Special Page with Recs to check, with checkbox to 'OK', 'Delete', or 'Privatize'
       - Send messages to Users about Deleted or Privatized Messages
-3. Administrator Tools
+2. Administrator Tools
     - Special Page with stats 
     - Special page with info on Moderators
 
 Problems:
 - Goes from Secure to non-secure when using @login_required
+
