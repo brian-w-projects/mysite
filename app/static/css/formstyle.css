@@ -58,5 +58,37 @@
     border-radius: 10px;
     width: 600px;
     height: 200px;
-    
 }
+
+/*FLASH STYLE*/
+.flash-border{
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.flash-message{
+    margin: 0 0 0 10px;
+    padding: 5px;
+}
+
+.flash-messages{
+    width: 600px;
+    float: left;
+}
+
+.flash-close{
+    float: right;
+}
+
+.flash-close p{
+    margin-top: 0px;
+}
+/*FLASH STYLE*/
+
+/*TEXT AREA FORMATTING*/
+.chars-format{
+    margin-left: 20px;
+    display: inline;
+}
+/*TEXT AREA FORMATTING*/

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 {% extends 'onecoloumn.html' %}
 <html>
 <head>
@@ -12,29 +13,20 @@
     <div class='w940'>
       <div class='w940-center'>
         <h2 class='rec'>Update Profile</h2>
-        {% if session['updated'] %}
-          <p>{{session['updated']}}</p>
-        {% endif %}
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
           {{form.about_me.label(class='rec')}}
+          <p class='chars-format'>Characters Left: <span class='chars-left'></span></p>
           <br/>
           {{form.about_me(class='textentry')}}
           <br/>
-          <div class='fieldseterror'>
             <div class='fieldset'>
               {{form.password.label(class='rec')}} {{form.password(class='entry')}}
               <br/>
               {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
             </div><!--fieldset-->
-            {% if form.errors['password'] %}
-              <span class='passwordmessage'>&#10007 Must be at least 8 characters</span>
-              <br/>
-              <span class='passwordmessage2'>&#10007 Passwords Must Match</span>
-            {% endif %}
-          </div><!--fieldseterror-->
           <div class='realign'></div>
           {{form.updates.label(class='rec')}} {{form.updates(checked=current_user.updates, class='click')}}
-          <span class='updatesmassage'></span>
           <br/>
           {{form.limit.label(class='rec')}} {{form.limit(class='entry')}}
           <br/>
@@ -44,6 +36,7 @@
         </form>
       </div><!--w940-center-->
     </div><!--w940-->
+    <script src="{{url_for('static', filename='js/updatejs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

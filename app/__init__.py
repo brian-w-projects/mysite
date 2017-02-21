@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
@@ -10,7 +10,9 @@ moment = Moment()
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
-login_manager.login_view = 'auth.login'
+# login_manager.login_view = 'auth.login'
+login_manager.login_view = 'https://mysite-brianwprojects.c9users.io/auth/login'
+
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -30,6 +32,5 @@ def create_app(config_name):
     
     from .personal import personal as personal_blueprint
     app.register_blueprint(personal_blueprint, url_prefix='/personal')
-
 
     return app

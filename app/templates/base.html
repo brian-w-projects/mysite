@@ -2,7 +2,8 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'personal/postmacro.html' as postmacro %}
+  {% import 'macros/postmacro.html' as postmacro %}
+  {% import 'macros/flashmacro.html' as flashmacro %}
   <head>
     {% block head %}
       <meta charset='utf-8'>

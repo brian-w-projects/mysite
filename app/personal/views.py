@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, abort
+from flask import render_template, request, redirect, url_for, session, abort, flash
 from . import personal
 from .forms import ChangeForm, PostForm, EditForm
 from flask_login import login_user, logout_user, login_required, current_user
@@ -12,19 +12,21 @@ from datetime import datetime
 def update():
     form = ChangeForm(request.form)
     if request.method == 'POST':
-        session['updated'] = 'There has been an error updating your profile'
         if form.validate():
-            if form.password.data != '':
-                if len(form.password.data) >= 8:
-                    current_user.password = form.password.data
-                else:
-                    form.errors['password'] = 'Errors'
+            current_user.password = form.password.data
             current_user.updates = form.updates.data
             current_user.display=int(form.limit.data)
             current_user.about_me = form.about_me.data
             db.session.add(current_user)
             db.session.commit()
-            session['updated'] = 'Your profile has been successfully updated'
+            flash(u'\u2713 Your profile has been successfully updated')
+        else:
+            if form.errors['about_me']:
+                flash(u'\u2717 About Me may only be 500 characters')
+            if 0 < len(form.password.data) < 8:
+                flash(u'\u2717 Passwords must be at least 8 characters')
+            if form.password.data != form.password_confirm.data:
+                flash(u'\u2717 Passwords Must Match')
         return redirect(url_for('personal.update', _scheme='https', _external=True))
     form.about_me.data = current_user.about_me
     form.limit.data= str(current_user.display)
@@ -56,7 +58,7 @@ def profile(id=-1, limit=10):
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
-        return redirect(url_for('auth.login', _scheme='https', _external=True))
+        return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
     if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
@@ -93,3 +95,4 @@ def edit(post_id):
     form.public.data = display_recs.public
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
+

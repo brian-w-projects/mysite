@@ -3,8 +3,8 @@ from wtforms import StringField, PasswordField, SubmitField, TextAreaField, Bool
 from wtforms import validators
 
 class ChangeForm(FlaskForm):
-    about_me = TextAreaField('About Me: ')
-    password = PasswordField('Password: ', validators=[validators.EqualTo('password_confirm')])
+    about_me = TextAreaField('About Me: ', validators=[validators.Length(max=500)])
+    password = PasswordField('Password: ', validators=[validators.Optional(), validators.EqualTo('password_confirm'), validators.Length(min=8)])
     password_confirm = PasswordField('Confirm: ', validators=[])
     updates = BooleanField('I would like to receive updates: ')
     limit = SelectField('Rec Display Amount: ', choices=[('10', '10'), ('20', '20'), ('50', '50')])
