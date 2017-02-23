@@ -5,10 +5,8 @@
 
 
 
-1. Allow people to edit comments
-2. Allow comment posted to delete comments
-3. Allow people to see all their comments
-5. Let people know when someone has commented on their post
+1. Allow people to see all their comments
+2. Let people know when someone has commented on their post
 
 
 1. Moderator Tools

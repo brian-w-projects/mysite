@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% extends 'onecoloumn.html' %}
+<html>
+<head>
+  {% block head %}
+    {{super()}}
+    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/highlightstyle.css')}}" type='text/css', rel='stylesheet'/>
+  {% endblock %}
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <h2><a class='rec highlight-name' href="{{url_for('personal.profile', id=display[0].author.id, _scheme='https', _external=True)}}">{{display[0].author.username}}</a></h2>
+      {{ flashmacro.render_flash(get_flashed_messages()) }}
+    </div>
+    <div class='listrecs'>
+      {{postmacro.render_posts(display, current_user, moment)}}
+    </div><!--listrecs-->
+    <div class='listcomments'>
+      {{commentmacro.render_posts(d_c, current_user, moment, display)}}
+    </div><!--listcomments-->
+    <div class='w940'>
+      <div class='w940-center'>
+        <form method='POST'>
+          {{form.delete.label(class='rec')}} {{form.delete(class='entry')}}
+          <br/>
+          {{form.csrf_token}}
+          {{form.submit(class='entry', id='submit')}}
+        </form>
+      </div><!--w940-center-->
+    </div><!--w940-->
+  {% endblock %}
+</body>
+</html>
