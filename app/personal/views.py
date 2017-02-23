@@ -39,7 +39,11 @@ def post(limit=10):
     form = PostForm(request.form)
     if request.method == 'POST':
         if form.validate():
-            post = Recommendation(title = form.title.data, public = form.public.data, text = form.text.data, author_id=current_user.id)
+            if form.public.data:
+                ver=1
+            else:
+                ver=0
+            post = Recommendation(title = form.title.data, public = form.public.data, text = form.text.data, author_id=current_user.id, verification=ver)
             db.session.add(post)
             db.session.commit()
             flash(u'\u2713 Your rec has been posted!')
@@ -89,6 +93,10 @@ def edit(post_id):
                 display_recs.public = form.public.data
                 display_recs.timestamp = datetime.utcnow()
                 display_recs.text = form.text.data
+                if form.public.data:
+                    display_recs.verification = 1
+                else:
+                    display_recs.verification = 0
                 db.session.add(display_recs)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')

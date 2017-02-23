@@ -41,6 +41,36 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
 
+class Comments(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    comment_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comment_by_user = db.Column(db.String, db.ForeignKey('users.username'))
+    posted_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    comment = db.Column(db.Text)
+    
+    @staticmethod
+    def generate_comments(count=1000):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count=Users.query.count()
+        rec_count=Recommendation.query.count()
+        for i in range(count):
+            u = Users.query.offset(randint(0, user_count - 1)).first()
+            r = Recommendation.query.offset(randint(0, rec_count-1)).first()
+            c = Comments(comment_by=u.id,
+                comment_by_user=u.username,
+                posted_on=r.id,
+                timestamp=forgery_py.date.date(True),
+                comment=forgery_py.lorem_ipsum.sentences(randint(2,8)))
+            r.likes += 1
+            db.session.add(r)
+            db.session.add(c)
+            db.session.commit()
+
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
@@ -54,6 +84,10 @@ class Users(UserMixin, db.Model):
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DATETIME(), default=datetime.utcnow)
     posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
+    commented_on = db.relationship('Comments', foreign_keys=[Comments.comment_by],
+        backref=db.backref('comm', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan')
 
 
     def __init__(self, **kwargs):
@@ -152,6 +186,12 @@ class Recommendation(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     text = db.Column(db.Text)
     likes = db.Column(db.Integer, default=0)
+    verification = db.Column(db.Integer) 
+    # verificaiton = 0->private, 1->public and unchecked, 2->OKayed
+    comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
+        backref=db.backref('posted', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan')
     
     @staticmethod
     def generate_recs(count=1000):
@@ -162,12 +202,17 @@ class Recommendation(db.Model):
         user_count=Users.query.count()
         for i in range(count):
             u = Users.query.offset(randint(0, user_count - 1)).first()
-            
+            pub = randint(0,10)<8
+            if pub:
+                ver = 1
+            else:
+                ver = 0
             r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
-                public=randint(0,10)<8,
+                public=pub,
                 timestamp=forgery_py.date.date(True),
                 author=u,
-                text=forgery_py.lorem_ipsum.sentences(randint(2,8)))
+                text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
+                verification=ver)
             
             db.session.add(r)
             db.session.commit()

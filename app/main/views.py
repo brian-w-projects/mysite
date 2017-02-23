@@ -1,8 +1,8 @@
 from flask import render_template, session, redirect, url_for, request, abort, flash
 from . import main
-from .forms import SearchForm
+from .forms import SearchForm, CommentForm
 from .. import db
-from ..models import Users, Recommendation, Permission
+from ..models import Users, Recommendation, Permission, Comments
 from flask_login import login_required, current_user
 from ..decorators import admin_required, permission_required
 from ..email import send_email
@@ -14,16 +14,23 @@ def index():
     display_recs = []
     if current_user.is_authenticated:
         initial_grab = Recommendation.query.filter_by(public=True)\
-            .order_by(Recommendation.timestamp.desc())
-        for my_rec in initial_grab.filter_by(author_id=current_user.id).limit(10):
-            for to_add in initial_grab.filter(Recommendation.title.contains(my_rec.title)):
-                if to_add.author_id != current_user.id:
-                    display_recs.append(to_add)
-                if len(display_recs) >= 50:
-                    break
+            .filter(Recommendation.author_id != current_user.id)\
+            .order_by(Recommendation.timestamp.desc())\
+            .limit(100)
+        my_list = current_user.posts.order_by(Recommendation.timestamp.desc()).limit(10)
+        for my_rec in my_list:
+            for to_add in initial_grab.from_self().filter(Recommendation.title.contains(my_rec.title)):
+                display_recs.append(to_add)
+            if len(display_recs) >= 50:
+                break
         if len(display_recs) >=5:
             display_recs = sample(display_recs, 5)
-    return render_template('index.html', display = display_recs)
+        elif len(display_recs) == 0:
+            temp = Recommendation.query.filter_by(public=True)\
+            .filter(Recommendation.author_id != current_user.id)\
+            .order_by(Recommendation.timestamp.desc()).limit(50)
+            display_recs = [possible for possible in temp if randint(1,3) == 2]
+    return render_template('index.html', display = display_recs[:5])
 
 @main.route('/about')
 def about():
@@ -31,10 +38,28 @@ def about():
     display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('about.html', display=display_recs[:5])
 
-@main.route('/highlight/<int:id>')
-def highlight(id):
+@main.route('/highlight/<int:id>', methods=['GET', 'POST'])
+@main.route('/highlight/<int:id>/<int:limit>', methods=['GET', 'POST'])
+def highlight(id,limit=10):
+    if limit == 10 and current_user.is_authenticated:
+        limit=current_user.display
+    form = CommentForm(request.form)
     display_recs = [Recommendation.query.filter_by(id=id).first_or_404()]
-    return render_template('highlight.html', display=display_recs)
+    display_comments = display_recs[0].comments.order_by(Comments.timestamp.desc()).limit(limit)
+    if request.method == 'POST':
+        if not current_user.is_authenticated:
+            abort(403)
+        if form.validate():
+            to_add = Comments(comment_by=current_user.id, comment_by_user=current_user.username, posted_on=id, comment=form.text.data)
+            db.session.add(to_add)
+            display_recs[0].likes += 1
+            db.session.add(display_recs[0])
+            db.session.commit()
+            flash(u'\u2713 Your comment has been successfully posted')
+        else:
+            flash(u'\u2717 Comment cannot be empty')
+        return redirect(url_for('main.highlight', id=id, _scheme='https', _external=True))
+    return render_template('highlight.html', display=display_recs, d_c=display_comments, form=form, limit=limit)
 
 @main.route('/surprise/')
 def surprise(limit=10):

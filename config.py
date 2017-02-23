@@ -13,7 +13,6 @@ class Config:
     ADMIN = os.environ.get("ADMIN")
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
-    # SERVER_NAME = 'mysite-brianwprojects.c9users.io'
 
     @staticmethod
     def init_app(app):

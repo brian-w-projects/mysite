@@ -5,6 +5,7 @@
   {% block head %}
     {{super()}}
     <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css', rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/highlightstyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
@@ -12,10 +13,30 @@
   {% block maincontent %}
     <div class='w940'>
       <h2><a class='rec highlight-name' href="{{url_for('personal.profile', id=display[0].author.id, _scheme='https', _external=True)}}">{{display[0].author.username}}</a></h2>
+      {{ flashmacro.render_flash(get_flashed_messages()) }}
     </div>
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
-    </div>
+    </div><!--listrecs-->
+    <div class='listcomments'>
+      {{commentmacro.render_posts(d_c, current_user, moment, display)}}
+      <a href="{{url_for('main.highlight', id=display[0].id, limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
+    </div><!--listcomments-->
+    <div class='w940'>
+      <div class='w940-center'>
+        {% if current_user.is_authenticated %}
+          <h2 class='rec'>Comment</h2>
+          <form method='POST'>
+            {{form.text.label(class='rec')}}
+            <br/>
+            {{form.text(class='textentry')}}
+            <br/>
+            {{form.csrf_token}}
+            {{form.submit(class='entry', id='submit')}}
+          </form>
+        {% endif %}
+      </div><!--w940-center-->
+    </div><!--w940-->
   {% endblock %}
 </body>
 </html>

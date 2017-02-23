@@ -32,5 +32,8 @@ def create_app(config_name):
     
     from .personal import personal as personal_blueprint
     app.register_blueprint(personal_blueprint, url_prefix='/personal')
+    
+    from .mod import mod as mod_blueprint
+    app.register_blueprint(mod_blueprint, url_prefix='/mod')
 
     return app

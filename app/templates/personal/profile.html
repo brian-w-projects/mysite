@@ -27,6 +27,7 @@
         <div class='profile-right'>
           <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
           <p>Posts: {{total}}</p>
+          <p>Comments: {{current_user.commented_on.count()}}</p>
         </div><!--profile-right-->
       </div><!--profile-box-->
     </div><!--w940-->

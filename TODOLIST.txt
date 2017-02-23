@@ -1,7 +1,14 @@
 1. Integrate Celery to send emails
 2. Slowdown on index due to exsessive queries
 3. Learn Ajax to make redirect on Search work
+4. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
 
+
+
+1. Allow people to edit comments
+2. Allow comment posted to delete comments
+3. Allow people to see all their comments
+5. Let people know when someone has commented on their post
 
 
 1. Moderator Tools

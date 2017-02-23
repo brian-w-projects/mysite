@@ -1,7 +1,7 @@
 #!usr/bin/env python
 import os
 from app import create_app, db
-from app.models import Users, Role, Recommendation
+from app.models import Users, Role, Recommendation, Comments
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 from flask import request, redirect, url_for
@@ -43,11 +43,15 @@ if __name__ == '__main__':
     #     Role.insert_roles()
     #     user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True)
     #     db.session.add(user)
+    #     upgrade = Users.query.filter_by(username='njpsychopath').first()
+    #     upgrade.role_id=2
+    #     db.session.add(upgrade)
     #     user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
     #     db.session.add(user2)
+    #     Users.generate_users()
+    #     Recommendation.generate_recs(250)
+    #     Comments.generate_comments(3000)
     #     db.session.commit()
-        # user2 = Users(username='asdf', email='ekjhlhjkxample@example.com', password='123456789', confirmed=True)
-        # db.session.add(user2)
-        # db.session.commit()
+
 
     manager.run()

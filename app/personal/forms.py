@@ -17,10 +17,9 @@ class PostForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class EditForm(FlaskForm):
-    title = StringField('TItle: ', validators=[validators.DataRequired()])
+    title = StringField('Title: ', validators=[validators.DataRequired()])
     public = BooleanField('Public: ')
     text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
     delete = BooleanField('Delete: ', validators=[validators.EqualTo('delete_confirm')])
     delete_confirm = BooleanField('Delete Confirm: ')
     submit = SubmitField('Submit')
-    
