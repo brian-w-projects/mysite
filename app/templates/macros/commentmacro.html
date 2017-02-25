@@ -11,6 +11,7 @@
         {% if current_user.is_authenticated and current_user.id == com.comment_by %}
           <a href="{{url_for('main.comment_edit', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
         {% endif %}
+        <a href="{{url_for('main.highlight', id=com.posted_on, _scheme='https', _external=True)}}"><p class=' rec postHeader postEdit'>Rec</p></a>
       </div><!--postHeaderDiv-->
       <p class='postText'>{{com.comment}}</p>
     </div><!--rec1-->

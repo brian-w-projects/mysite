@@ -185,7 +185,7 @@ class Recommendation(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     text = db.Column(db.Text)
-    likes = db.Column(db.Integer, default=0)
+    new_comment = db.Column(db.Boolean, default=False)
     verification = db.Column(db.Integer) 
     # verificaiton = 0->private, 1->public and unchecked, 2->OKayed
     comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],

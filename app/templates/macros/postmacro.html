@@ -15,6 +15,9 @@
             <a href="{{url_for('personal.edit', post_id=rec.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
           {% endif %}
         <p class='postHeader rec'>Comments: {{rec.comments.count()}}</p>
+        {% if current_user.id == rec.author_id and rec.new_comment == True %}
+          <p class='postHeader rec'>New Comment!</p>
+        {% endif %}
         </div><!--postheaderdiv-->
         <p class='postText'>{{rec.text}}</p>
       </div><!--rec1-->

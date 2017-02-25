@@ -46,12 +46,18 @@ def highlight(id,limit=10):
     form = CommentForm(request.form)
     display_recs = [Recommendation.query.filter_by(id=id).first_or_404()]
     display_comments = display_recs[0].comments.order_by(Comments.timestamp.desc()).limit(limit)
+    if current_user.is_authenticated and display_recs[0].author_id == current_user.id:
+        display_recs[0].new_comment = False
+        db.session.add(display_recs[0])
+        db.session.commit()
     if request.method == 'POST':
         if not current_user.is_authenticated:
             abort(403)
         if form.validate():
             to_add = Comments(comment_by=current_user.id, comment_by_user=current_user.username, posted_on=id, comment=form.text.data)
+            display_recs[0].new_comment = True
             db.session.add(to_add)
+            db.session.add(display_recs[0])
             db.session.commit()
             flash(u'\u2713 Your comment has been successfully posted')
         else:

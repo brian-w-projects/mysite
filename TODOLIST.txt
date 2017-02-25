@@ -1,11 +1,7 @@
 1. Integrate Celery to send emails
-2. Slowdown on index due to exsessive queries
-3. Learn Ajax to make redirect on Search work
-4. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
+2. Learn Ajax to make redirect on Search work
+3. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
 
-
-
-1. Let people know when someone has commented on their post
 
 
 1. Moderator Tools
@@ -18,4 +14,3 @@
 
 Problems:
 - Goes from Secure to non-secure when using @login_required
-
