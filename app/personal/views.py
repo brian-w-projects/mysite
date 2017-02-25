@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, session, abort, f
 from . import personal
 from .forms import ChangeForm, PostForm, EditForm
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission
+from ..models import Users, Recommendation, Permission, Comments
 from .. import db
 from ..email import send_email
 from datetime import datetime
@@ -68,11 +68,9 @@ def profile(id=-1, limit=10):
     if limit==10 and current_user.is_authenticated:
         limit=current_user.display
     user = Users.query.filter_by(id=id).first_or_404()
-    info = Recommendation.query.filter_by(public=True).filter_by(author_id=user.id).order_by(
-        Recommendation.timestamp.desc())
-    display_recs = info.limit(limit)
-    total = info.count()
-    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit, total=total)
+    display_recs = user.posts.order_by(Recommendation.timestamp.desc()).limit(limit)
+    display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
+    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit, d_c=display_comments)
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required

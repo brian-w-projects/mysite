@@ -52,8 +52,6 @@ def highlight(id,limit=10):
         if form.validate():
             to_add = Comments(comment_by=current_user.id, comment_by_user=current_user.username, posted_on=id, comment=form.text.data)
             db.session.add(to_add)
-            display_recs[0].likes += 1
-            db.session.add(display_recs[0])
             db.session.commit()
             flash(u'\u2713 Your comment has been successfully posted')
         else:
@@ -95,8 +93,6 @@ def comment_edit(id):
         if form.validate():
             if form.delete.data:
                 db.session.delete(display_comments[0])
-                display_recs[0].likes -= 1
-                db.session.add(display_recs[0])
                 db.session.commit()
                 flash(u'\u2713 Comment deleted')
                 return redirect(url_for('main.highlight', id=display_recs[0].id, _scheme='https', _external=True))

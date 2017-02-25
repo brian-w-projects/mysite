@@ -5,8 +5,7 @@
 
 
 
-1. Allow people to see all their comments
-2. Let people know when someone has commented on their post
+1. Let people know when someone has commented on their post
 
 
 1. Moderator Tools

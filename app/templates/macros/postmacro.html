@@ -14,7 +14,7 @@
           {% if current_user.is_authenticated and rec.author_id==current_user.id %}
             <a href="{{url_for('personal.edit', post_id=rec.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
           {% endif %}
-        <p class='postHeader rec'>Comments: {{rec.likes}}</p>
+        <p class='postHeader rec'>Comments: {{rec.comments.count()}}</p>
         </div><!--postheaderdiv-->
         <p class='postText'>{{rec.text}}</p>
       </div><!--rec1-->

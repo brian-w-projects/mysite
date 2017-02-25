@@ -6,6 +6,7 @@
     {{super()}}
     <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -26,15 +27,25 @@
         </div><!--profile-left-->
         <div class='profile-right'>
           <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
-          <p>Posts: {{total}}</p>
+          <p>Posts: {{user.posts.count()}}</p>
           <p>Comments: {{current_user.commented_on.count()}}</p>
         </div><!--profile-right-->
       </div><!--profile-box-->
+      <div class='buttondiv'>
+        <button class='rec change' id='submit'>Comments</button>
+      </div><!--buttondiv-->
     </div><!--w940-->
+    <br/>
+    <br/>
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
       <a href="{{url_for('personal.profile', id=user.id, limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
     </div><!--listrecs-->
+    <div class='listcomments hide'>
+      {{commentmacro.render_posts(d_c, current_user, moment, display)}}
+      <a href="{{url_for('personal.profile', id=user.id, limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
+    </div><!--listcomments-->
+    <script src="{{url_for('static', filename='js/profilejs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

@@ -10,8 +10,10 @@ body{
 
 #content, #footer{
     overflow: auto;
+    overflow-y: hidden;
     height: 100%;
 }
+
 
 #header{
     padding: 10px 10px 15px 10px;
