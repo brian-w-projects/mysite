@@ -3,6 +3,8 @@
 3. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
 
 
+1. Hovering over submit moves elements around. Issue with border?
+
 
 1. Moderator Tools
     - Ability to Edit/Delete Posts

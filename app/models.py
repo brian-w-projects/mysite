@@ -83,6 +83,8 @@ class Users(UserMixin, db.Model):
     display = db.Column(db.Integer, default=10)
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DATETIME(), default=datetime.utcnow)
+    last_login = db.Column(db.DATETIME(), default=datetime.utcnow)
+    invalid_logins = db.Column(db.Integer, default=0)
     posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
     commented_on = db.relationship('Comments', foreign_keys=[Comments.comment_by],
         backref=db.backref('comm', lazy='joined'),
@@ -156,7 +158,8 @@ class Users(UserMixin, db.Model):
                 password=forgery_py.lorem_ipsum.word(),
                 confirmed=True,
                 about_me=forgery_py.lorem_ipsum.sentences(randint(3,5)),
-                member_since=forgery_py.date.date(True))
+                member_since=forgery_py.date.date(True),
+                last_login=forgery_py.date.date(True))
             db.session.add(u)
             try:
                 db.session.commit()

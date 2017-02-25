@@ -4,6 +4,7 @@ from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models import Users
 from .. import db
+from datetime import datetime
 from ..email import send_email
 
 
@@ -44,9 +45,23 @@ def login():
     if request.method == 'POST':
         if form.validate():
             check_user = Users.query.filter_by(username=form.username.data).first()
+            if check_user.invalid_logins >= 5:
+                flash(u'\u2717 Account has been locked. Please reset password')
+                return redirect(url_for('auth.forgot', _scheme='https', _external=True))
             if check_user is not None and check_user.verify_password(form.password.data):
                 login_user(check_user)
+                check_user.invalid_logins = 0
+                check_user.last_login = datetime.utcnow()
+                db.session.add(check_user)
+                db.session.commit()
                 return redirect(request.args.get('next') or url_for('main.index', _scheme='https', _external=True))
+            elif check_user is not None:
+                check_user.invalid_logins += 1
+                db.session.add(check_user)
+                db.session.commit()
+                if check_user.invalid_logins >= 5:
+                    flash(u'\u2717 Account has been locked. Please reset password')
+                    return redirect(url_for('auth.forgot', _scheme='https', _external=True))
         flash(u'\u2717 Invalid Login')
         return redirect(url_for('auth.login', _scheme='https', _external=True))
     return render_template('auth/login.html', form=form)
@@ -60,6 +75,7 @@ def forgot():
             if check_user is not None:
                 reset_password = Users.get_secret_key()
                 check_user.password = reset_password
+                check_user.invalid_logins = 0
                 db.session.add(check_user)
                 db.session.commit()
                 send_email(check_user.email, 'Reset Your Password', 'auth/email/reset', user=check_user.username, password=reset_password)

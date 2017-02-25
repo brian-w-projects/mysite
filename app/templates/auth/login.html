@@ -19,7 +19,7 @@
           {{form.password.label(class='rec')}} {{form.password(class='entry')}}
           <br/>
           {{form.csrf_token}}
-          {{form.submit(class='entry', id='submit')}}
+          {{form.submit(class='rec entry', id='submit')}}
         </form>
         <p>Forgot your username? <a class='special-link' href="{{url_for('auth.forgot_username', _scheme='https', _external=True)}}">Recover Username</a></p>
         <p>Forgot your password? <a class='special-link' href="{{url_for('auth.forgot', _scheme='https', _external=True)}}">Reset Password</a></p>
