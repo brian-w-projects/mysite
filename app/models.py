@@ -190,7 +190,7 @@ class Recommendation(db.Model):
     text = db.Column(db.Text)
     new_comment = db.Column(db.Boolean, default=False)
     verification = db.Column(db.Integer) 
-    # verificaiton = 0->private, 1->public and unchecked, 2->OKayed
+    # verification = 0->private, 1->public and unchecked, 2->OKayed
     comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',

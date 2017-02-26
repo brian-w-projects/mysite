@@ -1,10 +1,10 @@
-{% macro render_posts(d_c, current_user, moment, display) %}
+{% macro render_posts(d_c, current_user, moment) %}
   {% for com in d_c %}
     <div class='rec1'>
       <div class='postHeaderDiv'>
         <a href="{{url_for('personal.profile', id=com.comment_by, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>{{com.comment_by_user}}</p></a>
         <p class='postHeader'>{{moment(com.timestamp).format('MMMM Do YYYY')}}</p>
-        {% if current_user.is_authenticated and display[0].author_id==current_user.id %}
+        {% if current_user.is_authenticated and current_user.posts.filter_by(id=com.posted_on).first() %}
             <!--modify with new link to delete comments-->
             <a href="{{url_for('main.comment_delete', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Delete</p></a>
         {% endif %}

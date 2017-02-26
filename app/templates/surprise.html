@@ -15,6 +15,11 @@
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
     </div>
+    <div class='w940-center'>
+      <a><p id='ajax' class='loadMore'>Load More</p></a>
+    </div><!--w940-center-->
+    <script>var limitVar = {{limit}}</script>
+    <script src="{{url_for('static', filename='js/surprisejs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

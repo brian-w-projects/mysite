@@ -38,11 +38,21 @@ def about():
     display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('about.html', display=display_recs[:5])
 
+@main.route('/_highlight')
+def highlight_ajax():
+    limit = request.args.get('limit', 5, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    id = request.args.get('id')
+    display_comments = Comments.query.filter_by(posted_on=id)\
+        .order_by(Comments.timestamp.desc()).offset(offset).limit(limit)
+    return render_template('ajax/commentajax.html', d_c = display_comments)
+
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
-@main.route('/highlight/<int:id>/<int:limit>', methods=['GET', 'POST'])
-def highlight(id,limit=10):
-    if limit == 10 and current_user.is_authenticated:
+def highlight(id):
+    if current_user.is_authenticated:
         limit=current_user.display
+    else:
+        limit=10
     form = CommentForm(request.form)
     display_recs = [Recommendation.query.filter_by(id=id).first_or_404()]
     display_comments = display_recs[0].comments.order_by(Comments.timestamp.desc()).limit(limit)
@@ -63,7 +73,7 @@ def highlight(id,limit=10):
         else:
             flash(u'\u2717 Comment cannot be empty')
         return redirect(url_for('main.highlight', id=id, _scheme='https', _external=True))
-    return render_template('highlight.html', display=display_recs, d_c=display_comments, form=form, limit=limit)
+    return render_template('highlight.html', display=display_recs, d_c=display_comments, form=form)
 
 @main.route('/highlight/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -76,8 +86,6 @@ def comment_delete(id):
     if request.method == 'POST':
         if form.validate():
             db.session.delete(display_comments[0])
-            display_recs[0].likes -= 1
-            db.session.add(display_recs[0])
             db.session.commit()
             flash(u'\u2713 Comment has been deleted')
             return redirect(url_for('main.highlight', id=display_recs[0].id, _scheme='https', _external=True))
@@ -113,15 +121,21 @@ def comment_edit(id):
             return redirect(url_for('main.comment_edit', id=id, _scheme='https', _external=True))
     form.text.data = display_comments[0].comment
     return render_template('commentedit.html', form=form, display=display_recs, d_c=display_comments)
-    
 
-@main.route('/surprise/')
+@main.route('/_surprise')
+def surprise_ajax():
+    limit = request.args.get('limit', 5, type=int)
+    temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)
+    display_recs = [possible for possible in temp if randint(1,3) == 2]
+    return render_template('ajax/postajax.html', display = display_recs[:limit])
+
+@main.route('/surprise')
 def surprise(limit=10):
     if current_user.is_authenticated:
         limit = current_user.display
     temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)
     display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('surprise.html', display=display_recs[:limit])
+    return render_template('surprise.html', display=display_recs[:limit], limit=limit)
     
 @main.route('/search', methods=['GET', 'POST'])
 @login_required

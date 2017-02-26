@@ -19,9 +19,11 @@
       {{postmacro.render_posts(display, current_user, moment)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {{commentmacro.render_posts(d_c, current_user, moment, display)}}
-      <a href="{{url_for('main.highlight', id=display[0].id, limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
+      {{commentmacro.render_posts(d_c, current_user, moment)}}
     </div><!--listcomments-->
+    <div class='w940-center'>
+      <a><p id='ajax' class='loadMore'>Load More</p></a>
+    </div><!--w940-center-->
     <div class='w940'>
       <div class='w940-center'>
         {% if current_user.is_authenticated %}
@@ -37,6 +39,18 @@
         {% endif %}
       </div><!--w940-center-->
     </div><!--w940-->
+    <script>
+      {% if current_user.is_authenticated %}
+        var offsetVar = {{current_user.display}};
+        var limitVar = {{current_user.display}};
+      {% else %}
+        var offsetVar = 10;
+        var limitVar = 10;
+      {% endif %}
+      var idVar = {{display[0].id}};
+      var goto = "{{url_for('main.highlight_ajax')}}";
+      </script>
+    <script src="{{url_for('static', filename='js/highlightjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

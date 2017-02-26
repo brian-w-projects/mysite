@@ -31,11 +31,18 @@ def update():
     form.about_me.data = current_user.about_me
     form.limit.data= str(current_user.display)
     return render_template('personal/update.html', form=form)
-    
+
+@personal.route('/_post')
+def post_ajax():
+    limit = request.args.get('limit', 5, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
+        Recommendation.timestamp.desc()).offset(offset).limit(limit)
+    return render_template('ajax/postajax.html', display = display_recs)
+
 @personal.route('/post', methods=['GET', 'POST'])
-@personal.route('/post/<int:limit>', methods=['GET', 'POST'])
 @login_required
-def post(limit=10):
+def post():
     form = PostForm(request.form)
     if request.method == 'POST':
         if form.validate():
@@ -52,25 +59,44 @@ def post(limit=10):
                 flash(u'\u2717 Recs must contain a title')
             if 'text' in form.errors and form.errors['text']:
                 flash(u'\u2717 Recs must contain text')
-        return redirect(url_for('personal.post', limit=limit, _scheme='https', _external=True))
+        return redirect(url_for('personal.post', _scheme='https', _external=True))
     display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
-        Recommendation.timestamp.desc()).limit(limit)
-    return render_template('personal/post.html', form=form, display=display_recs, limit=limit)
+        Recommendation.timestamp.desc()).limit(current_user.display)
+    return render_template('personal/post.html', form=form, display=display_recs)
+
+@personal.route('/_profileCom')
+def profileCom_ajax():
+    limit = request.args.get('limit', 5, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    id = request.args.get('id', 0, type=int)
+    display_comments = Comments.query.filter_by(comment_by=id)\
+        .order_by(Comments.timestamp.desc()).offset(offset).limit(limit)
+    return render_template('ajax/commentajax.html', d_c = display_comments)
+
+@personal.route('/_profile')
+def profile_ajax():
+    limit = request.args.get('limit', 5, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    id = request.args.get('id', 0, type=int)
+    display_recs = Recommendation.query.filter_by(author_id=id).order_by(
+        Recommendation.timestamp.desc()).offset(offset).limit(limit)
+    return render_template('ajax/postajax.html', display = display_recs)
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')
-@personal.route('/profile/<int:id>/<int:limit>')
-def profile(id=-1, limit=10):
+def profile(id=-1):
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
         return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
-    if limit==10 and current_user.is_authenticated:
+    if current_user.is_authenticated:
         limit=current_user.display
+    else:
+        limit=10
     user = Users.query.filter_by(id=id).first_or_404()
     display_recs = user.posts.order_by(Recommendation.timestamp.desc()).limit(limit)
     display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
-    return render_template('personal/profile.html', user=user, display=display_recs, limit=limit, d_c=display_comments)
+    return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required

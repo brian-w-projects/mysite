@@ -1,4 +1,11 @@
 /* global $ */
+/* global gotoP */
+/* global gotoC */
+/* global limitVar */
+/* global offsetVar */
+/* global limitCom */
+/* global offsetCom */
+/* global id */
 
 $(function(){
     $('#submit').on('click', function(){
@@ -15,5 +22,36 @@ $(function(){
             $('.listrecs').removeClass('hide');
         }
         
+    });
+    
+    $('#ajax').bind('click', function(){
+        if($('#submit').text() == 'Comments')
+        {
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json;charset=UTF-8',
+                url: gotoP,
+                datatype:'json',
+                data: {'limit':limitVar, 'offset': offsetVar, 'id': id},
+                success: function(x){
+                    $('.listrecs').append(x);
+                    offsetVar += limitVar;
+                }
+            });
+        }
+        else
+        {
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json;charset=UTF-8',
+                url: gotoC,
+                datatype:'json',
+                data: {'limit':limitCom, 'offset': offsetCom, 'id': id},
+                success: function(x){
+                    $('.listcomments').append(x);
+                    offsetCom += limitCom;
+                }
+            });
+        }
     });
 });

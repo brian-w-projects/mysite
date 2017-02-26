@@ -1,0 +1,11 @@
+{{moment.include_jquery()}}
+{{moment.include_moment()}}
+{% import 'macros/postmacro.html' as postmacro %}
+{% import 'macros/flashmacro.html' as flashmacro %}
+{% import 'macros/commentmacro.html' as commentmacro %}
+
+{% block maincontent %}
+  <div class='listcomments'>
+    {{commentmacro.render_posts(d_c, current_user, moment)}}
+  </div>
+{% endblock %}

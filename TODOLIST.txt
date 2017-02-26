@@ -3,6 +3,9 @@
 3. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
 
 
+1. Integrate Ajax into Search functionality. Remove Search from @login_required?
+
+
 1. Hovering over submit moves elements around. Issue with border?
 
 

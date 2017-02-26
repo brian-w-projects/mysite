@@ -28,8 +28,12 @@
     </div><!--w940-->
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
-      <a href="{{url_for('personal.post', limit=limit+10, _scheme='https', _external=True)}}"><p class='loadMore'>Load More</p></a>
     </div><!--listrecs-->
+    <div class='w940-center'>
+      <a><p id='ajax' class='loadMore'>Load More</p></a>
+    </div><!--w940-center-->
+    <script>var offsetVar = {{current_user.display}}; var limitVar = {{current_user.display}}</script>
+    <script src="{{url_for('static', filename='js/postjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>
