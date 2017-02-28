@@ -1,11 +1,10 @@
-{{moment.include_jquery()}}
-{{moment.include_moment()}}
 {% import 'macros/postmacro.html' as postmacro %}
-{% import 'macros/flashmacro.html' as flashmacro %}
-{% import 'macros/commentmacro.html' as commentmacro %}
+{{moment.include_moment()}}
 
 {% block maincontent %}
-  <div class='listrecs'>
-    {{postmacro.render_posts(display, current_user, moment)}}
-  </div>
+    {% if display.count() > 0 %}
+        {{postmacro.render_posts(display, current_user, moment)}}
+    {% else %}
+        <p>Nothing</p>
+    {% endif %}
 {% endblock %}

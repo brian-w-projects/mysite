@@ -1,9 +1,15 @@
 1. Integrate Celery to send emails
-2. Learn Ajax to make redirect on Search work
-3. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
+2. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
 
 
-1. Integrate Ajax into Search functionality. Remove Search from @login_required?
+Search Ajax Issues:
+- Dates are passed as string, can't verify correct formatting. Change to date selection?
+- Loadmore showing all the time
+- Remove flash and display "no results"
+    - "Nothing" is supplied by postajax when no more posts to load. Style and remove load more
+    - Make simliar changes to comments
+
+
 
 
 1. Hovering over submit moves elements around. Issue with border?

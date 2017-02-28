@@ -8,6 +8,7 @@ from ..decorators import admin_required, permission_required
 from ..email import send_email
 from random import randint, sample
 from datetime import datetime, timedelta
+from sqlalchemy.sql.expression import func, select
 
 @main.route('/')
 def index():
@@ -125,9 +126,9 @@ def comment_edit(id):
 @main.route('/_surprise')
 def surprise_ajax():
     limit = request.args.get('limit', 5, type=int)
-    temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)
-    display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('ajax/postajax.html', display = display_recs[:limit])
+    temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)\
+        .from_self().order_by(func.random()).limit(limit)
+    return render_template('ajax/postajax.html', display = temp)
 
 @main.route('/surprise')
 def surprise(limit=10):
@@ -136,24 +137,54 @@ def surprise(limit=10):
     temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(5*limit)
     display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('surprise.html', display=display_recs[:limit], limit=limit)
+
+@main.route('/_search', methods=['POST'])
+def search_ajax():
+    display_recs = Recommendation.query.filter_by(public=True)
+    search = request.form['search']
+    user = request.form['user']
+    # date = datetime.strptime(request.form['date'], '%m/%d/%Y')
+    session['search'] = search
+    session['user'] = user
+    # session['date'] = date
+    if current_user.is_authenticated:
+        limit = current_user.display
+    else:
+        limit = 10
+    if search != '':
+        display_recs = display_recs.filter(Recommendation.title.contains(search))
+    if user != '':
+        me = Users.query.filter_by(username=user).first()
+        display_recs = display_recs.filter_by(author_id=me.id)
+    # if date != '':
+    #     search_date = form.date.data + timedelta(days=1)
+    #     display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
+    display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(limit)
+    return render_template('ajax/postajax.html', display = display_recs)
     
-@main.route('/search', methods=['GET', 'POST'])
-@login_required
+
+@main.route('/_additional_results')
+def more_ajax():
+    display_recs = Recommendation.query.filter_by(public=True)
+    limit = request.args.get('limit', 10, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    search = session['search']
+    user = session['user']
+    # date = session['date']
+    if search != '':
+        display_recs = display_recs.filter(Recommendation.title.contains(search))
+    if user != '':
+        me = Users.query.filter_by(username=user).first()
+        display_recs = display_recs.filter_by(author_id=me.id)
+    # if date != '':
+    #     search_date = form.date.data + timedelta(days=1)
+    #     display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
+    display_recs = display_recs.order_by(Recommendation.timestamp.desc()).offset(offset).limit(limit)
+    return render_template('ajax/postajax.html', display = display_recs)
+    
+
+@main.route('/search')
 def search():
-    form = SearchForm(request.form)
     display_recs = []
-    if request.method == 'POST':
-        display_recs = Recommendation.query.filter_by(public=True)
-        if form.search.data != '':
-            display_recs = display_recs.filter(Recommendation.title.contains(form.search.data))
-        if form.user.data != '':
-            me = Users.query.filter_by(username=form.user.data).first()
-            display_recs = display_recs.filter_by(author_id=me.id)
-        if form.date.data != None:
-            search_date = form.date.data + timedelta(days=1)
-            display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
-        display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(current_user.display)
-        if display_recs.count() == 0:
-            flash(u'\u2717 No recs found')
-        # return redirect(url_for('main.search', _scheme='https', _external=True))
+    form = SearchForm(request.form)
     return render_template('search.html', form=form, display=display_recs)

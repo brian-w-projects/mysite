@@ -15,7 +15,7 @@
         <h2 class='rec'>Search</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method='POST'>
-          {{form.search.label(class='rec')}} {{form.search(class='entry', id='tags')}}
+          {{form.search.label(class='rec')}} {{form.search(class='entry search', id='tags')}}
           <br/>
           {{form.user.label(class='rec')}} {{form.user(class='entry')}}
           <br/>
@@ -27,8 +27,23 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {{postmacro.render_posts(display, current_user, moment)}}
+      
     </div>
+    <div class='w940-center'>
+      <a><p id='ajax' class='loadMore'>Load More</p></a>
+    </div><!--w940-center-->
+    <script>
+      {% if current_user.is_authenticated %}
+        var limitVar = {{current_user.display}};
+        var offsetVar = {{current_user.display}};
+      {% else %}
+        var limitVar = 10;
+        var offsetVar = 10;
+      {% endif %}
+      var goto = "{{url_for('main.search_ajax')}}"
+      var gotoM = "{{url_for('main.more_ajax')}}"
+    </script>
+    <script src="{{url_for('static', filename='js/searchjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>
