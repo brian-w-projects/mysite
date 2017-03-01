@@ -1,10 +1,8 @@
 {% import 'macros/postmacro.html' as postmacro %}
 {{moment.include_moment()}}
 
-{% block maincontent %}
-    {% if display.count() > 0 %}
-        {{postmacro.render_posts(display, current_user, moment)}}
-    {% else %}
-        <p>Nothing</p>
-    {% endif %}
-{% endblock %}
+{% if display.count() > 0 %}
+    {{postmacro.render_posts(display, current_user, moment)}}
+{% else %}
+    <p class='empty'>No Results</p>    
+{% endif %}

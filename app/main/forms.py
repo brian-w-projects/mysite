@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, TextAreaField, BooleanField
+from wtforms import StringField, SubmitField, DateField, TextAreaField, BooleanField, SelectField
 from wtforms import validators
 
 class SearchForm(FlaskForm):
+    type = SelectField('Search For: ', choices=[('Recs', 'Recs'), ('Comments', 'Comments')])
     search = StringField('Search Term: ')
     user = StringField('Search User: ')
     date = DateField('Search Date: ', format='%m/%d/%Y')

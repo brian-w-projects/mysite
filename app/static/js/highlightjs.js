@@ -15,6 +15,9 @@ $(function(){
             success: function(x){
                 $('.listcomments').append(x);
                 offsetVar += limitVar;
+               if($('.emptyCom').length){
+                        $('.loadMore').css('display', 'none');
+                }
             }
         });
     });

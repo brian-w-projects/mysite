@@ -4,6 +4,8 @@
 {% import 'macros/flashmacro.html' as flashmacro %}
 {% import 'macros/commentmacro.html' as commentmacro %}
 
-{% block maincontent %}
+{% if d_c.count() > 0 %}
     {{commentmacro.render_posts(d_c, current_user, moment)}}
-{% endblock %}
+{% else %}
+    <p class='emptyCom'>No Results</p>
+{% endif %}

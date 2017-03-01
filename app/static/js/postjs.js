@@ -14,6 +14,9 @@ $(function(){
            success: function(x){
                $('.listrecs').append(x);
                offsetVar += limitVar;
+               if($('.empty').length){
+                   $('.loadMore').css('display', 'none');
+               }
            }
         });
     });

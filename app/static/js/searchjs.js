@@ -13,10 +13,15 @@ $(function(){
            url: goto,
            data: $('form').serialize(),
            success: function(x){
-            //   $('.listrecs').replaceWith(x);
-            
-            $('.listrecs').html(x);
-               offsetVar = limitVar;
+                $('.listrecs').html(x);
+                offsetVar = limitVar;
+               if($('.empty').length){
+                   $('.loadMore').css('display', 'none');
+               }
+               else{
+                    $('.loadMore').css('display', 'block');
+               }
+               
            }
         });
     });
@@ -31,8 +36,12 @@ $(function(){
            success: function(x){
                $('.listrecs').append(x);
                offsetVar += limitVar;
+               if($('.empty').length || $('.emptyCom').length){
+                   $('.loadMore').css('display', 'none');
+               }
            }
         });
     });
+    
+    $( "#datepicker" ).datepicker();
 });
-

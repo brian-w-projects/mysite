@@ -140,47 +140,79 @@ def surprise(limit=10):
 
 @main.route('/_search', methods=['POST'])
 def search_ajax():
-    display_recs = Recommendation.query.filter_by(public=True)
+    type = request.form['type']
     search = request.form['search']
     user = request.form['user']
-    # date = datetime.strptime(request.form['date'], '%m/%d/%Y')
+    if request.form['date'] != '':
+        date = datetime.strptime(request.form['date'], '%m/%d/%Y')
+    else:
+        date = ''
     session['search'] = search
     session['user'] = user
-    # session['date'] = date
+    session['date'] = date
+    session['type'] = type
     if current_user.is_authenticated:
         limit = current_user.display
     else:
         limit = 10
-    if search != '':
-        display_recs = display_recs.filter(Recommendation.title.contains(search))
-    if user != '':
-        me = Users.query.filter_by(username=user).first()
-        display_recs = display_recs.filter_by(author_id=me.id)
-    # if date != '':
-    #     search_date = form.date.data + timedelta(days=1)
-    #     display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
-    display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(limit)
-    return render_template('ajax/postajax.html', display = display_recs)
+    
+    if type == 'Recs':
+        display_recs = Recommendation.query.filter_by(public=True)
+        if search != '':
+            display_recs = display_recs.filter(Recommendation.title.contains(search))
+        if user != '':
+            me = Users.query.filter_by(username=user).first()
+            display_recs = display_recs.filter_by(author_id=me.id)
+        if date != '':
+            date = date + timedelta(days=1)
+            display_recs = display_recs.filter(Recommendation.timestamp <= date)
+        display_recs = display_recs.order_by(Recommendation.timestamp.desc()).limit(limit)
+        return render_template('ajax/postajax.html', display = display_recs)
+    else:
+        display_comments = Comments.query
+        if search != '':
+            display_comments = display_comments.filter(Comments.comment.contains(search))
+        if user != '':
+            display_comments = display_comments.filter_by(comment_by_user=user)
+        if date != '':
+            date = date + timedelta(days=1)
+            display_comments = display_comments.filter(Comments.timestamp <= date)
+        display_comments = display_comments.order_by(Comments.timestamp.desc()).limit(limit)
+        return render_template('ajax/commentajax.html', d_c = display_comments)
     
 
 @main.route('/_additional_results')
 def more_ajax():
-    display_recs = Recommendation.query.filter_by(public=True)
     limit = request.args.get('limit', 10, type=int)
     offset = request.args.get('offset', 0, type=int)
+    type = session['type']
     search = session['search']
     user = session['user']
-    # date = session['date']
-    if search != '':
-        display_recs = display_recs.filter(Recommendation.title.contains(search))
-    if user != '':
-        me = Users.query.filter_by(username=user).first()
-        display_recs = display_recs.filter_by(author_id=me.id)
-    # if date != '':
-    #     search_date = form.date.data + timedelta(days=1)
-    #     display_recs = display_recs.filter(Recommendation.timestamp.between(search_date, datetime.utcnow()))
-    display_recs = display_recs.order_by(Recommendation.timestamp.desc()).offset(offset).limit(limit)
-    return render_template('ajax/postajax.html', display = display_recs)
+    date = session['date']
+    
+    if type == 'Recs':
+        display_recs = Recommendation.query.filter_by(public=True)
+        if search != '':
+            display_recs = display_recs.filter(Recommendation.title.contains(search))
+        if user != '':
+            me = Users.query.filter_by(username=user).first()
+            display_recs = display_recs.filter_by(author_id=me.id)
+        if date != '':
+            date = date + timedelta(days=1)
+            display_recs = display_recs.filter(Recommendation.timestamp <= date)
+        display_recs = display_recs.order_by(Recommendation.timestamp.desc()).offset(offset).limit(limit)
+        return render_template('ajax/postajax.html', display = display_recs)
+    else:
+        display_comments = Comments.query
+        if search != '':
+            display_comments = display_comments.filter(Comments.comment.contains(search))
+        if user != '':
+            display_comments = display_comments.filter_by(comment_by_user=user)
+        if date != '':
+            date = date + timedelta(days=1)
+            display_comments = display_comments.filter(Comments.timestamp <= date)
+        display_comments = display_comments.order_by(Comments.timestamp.desc()).offset(offset).limit(limit)
+        return render_template('ajax/commentajax.html', d_c = display_comments)
     
 
 @main.route('/search')

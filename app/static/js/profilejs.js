@@ -36,6 +36,9 @@ $(function(){
                 success: function(x){
                     $('.listrecs').append(x);
                     offsetVar += limitVar;
+                   if($('.empty').length){
+                        $('.loadMore').css('display', 'none');
+                    }
                 }
             });
         }
@@ -50,6 +53,9 @@ $(function(){
                 success: function(x){
                     $('.listcomments').append(x);
                     offsetCom += limitCom;
+                   if($('.emptyCom').length){
+                        $('.loadMore').css('display', 'none');
+                    }
                 }
             });
         }
