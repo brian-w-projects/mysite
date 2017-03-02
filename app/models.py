@@ -41,6 +41,13 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
 
+class Followers(db.Model):
+    __tablename__ = 'followers'
+    id = db.Column(db.Integer, primary_key=True)
+    follower = db.Column(db.Integer, db.ForeignKey('users.id'))
+    following = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
 class Comments(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
@@ -86,6 +93,10 @@ class Users(UserMixin, db.Model):
     last_login = db.Column(db.DATETIME(), default=datetime.utcnow)
     invalid_logins = db.Column(db.Integer, default=0)
     posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
+    following = db.relationship('Followers', backref='user', 
+        foreign_keys=[Followers.follower], lazy='dynamic')
+    followed_by = db.relationship('Followers', backref='who', lazy='dynamic',
+        foreign_keys=[Followers.following])
     commented_on = db.relationship('Comments', foreign_keys=[Comments.comment_by],
         backref=db.backref('comm', lazy='joined'),
         lazy='dynamic',

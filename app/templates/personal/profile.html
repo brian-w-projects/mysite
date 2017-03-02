@@ -20,6 +20,10 @@
         <h2 class='rec'>{{user.username}}</h2>
         {% if current_user.id == user.id %}
           <p class='profile-edit'><a class='postEdit' href="{{url_for('personal.update', _scheme='https', _external=True)}}">Edit</a></p>
+        {% elif current_user.is_authenticated and current_user.following.filter_by(following=user.id).count() != 0 %}
+          <button class='rec change' id='follow'>Following</button>
+        {% elif current_user.is_authenticated %}
+          <button class='rec change' id='follow'>Follow</button>
         {% endif %}           
         <div></div>
         <div class='profile-left'>
@@ -29,6 +33,8 @@
           <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
           <p>Posts: {{user.posts.count()}}</p>
           <p>Comments: {{user.commented_on.count()}}</p>
+          <p>Followers: <span class='f_count'>{{user.followed_by.count()}}</span></p>
+          <p>Following: {{user.following.count()}}</p>
         </div><!--profile-right-->
       </div><!--profile-box-->
       <div class='buttondiv'>
@@ -44,7 +50,10 @@
       {{commentmacro.render_posts(d_c, current_user, moment)}}
     </div><!--listcomments-->
     <div class='w940-center'>
-      <a><p id='ajax' class='loadMore'>Load More</p></a>
+      <a><p class='ajax loadMore'>Load More</p></a>
+    </div><!--w940-center-->
+      <div class='w940-center'>
+      <a><p class='ajax hide loadMoreCom'>Load More</p></a>
     </div><!--w940-center-->
     <script>
       {% if current_user.is_authenticated %}
@@ -61,6 +70,7 @@
       var id = {{id}};
       var gotoP = "{{url_for('personal.profile_ajax')}}";
       var gotoC = "{{url_for('personal.profileCom_ajax')}}";
+      var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/profilejs.js')}}"></script>
   {% endblock %}

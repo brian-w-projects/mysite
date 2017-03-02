@@ -2,10 +2,11 @@ from flask import render_template, request, redirect, url_for, session, abort, f
 from . import personal
 from .forms import ChangeForm, PostForm, EditForm
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission, Comments
+from ..models import Users, Recommendation, Permission, Comments, Followers
 from .. import db
 from ..email import send_email
 from datetime import datetime
+import json
 
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required
@@ -63,6 +64,21 @@ def post():
     display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
         Recommendation.timestamp.desc()).limit(current_user.display)
     return render_template('personal/post.html', form=form, display=display_recs)
+
+@personal.route('/_follow')
+@login_required
+def follow_ajax():
+    id = request.args.get('id')
+    if request.args.get('follow') == 'Follow':
+        addition = Followers(follower=current_user.id, following=id)
+        db.session.add(addition)
+        db.session.commit()
+        return json.dumps({'added':True}), 200, {'ContentType':'application/json'} 
+    else:
+        to_delete = current_user.following.filter_by(following=id).first()
+        db.session.delete(to_delete)
+        db.session.commit()
+        return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
 
 @personal.route('/_profileCom')
 def profileCom_ajax():
