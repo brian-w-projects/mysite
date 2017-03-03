@@ -114,6 +114,23 @@ def profile(id=-1):
     display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
     return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
 
+@personal.route('/_following')
+@login_required
+def following_ajax():
+    offset = request.args.get('offset', 0, type=int)
+    following = [x.who.id for x in current_user.following]
+    display_recs = Recommendation.query.filter(Recommendation.author_id.in_(following))\
+        .order_by(Recommendation.timestamp.desc()).offset(offset).limit(current_user.display)
+    return render_template('ajax/postajax.html', display = display_recs)   
+
+@personal.route('/following')
+@login_required
+def following():
+    following = [x.who.id for x in current_user.following]
+    display_recs = Recommendation.query.filter(Recommendation.author_id.in_(following))\
+        .order_by(Recommendation.timestamp.desc()).limit(current_user.display)
+    return render_template('personal/following.html', display=display_recs)
+
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit(post_id):

@@ -4,7 +4,8 @@
 
 
 
-1. Friends/Followers
+1. Click link to see followers/following on profile. 
+2. MAJOR REFACTORING
 
 1. Moderator Tools
     - Ability to Edit/Delete Posts

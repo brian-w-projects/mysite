@@ -2,3 +2,9 @@
     background-color: #000000;
     color: #ffffff;
 }
+
+.highlight-button{
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}

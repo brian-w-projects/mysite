@@ -13,6 +13,13 @@
   {% block maincontent %}
     <div class='w940'>
       <h2><a class='rec highlight-name' href="{{url_for('personal.profile', id=display[0].author.id, _scheme='https', _external=True)}}">{{display[0].author.username}}</a></h2>
+      {% if current_user.id != display[0].author_id %}
+        {% if current_user.following.filter_by(following=display[0].author_id).count() != 0 %}
+            <button class='rec change highlight-button' id='follow'>Following</button>
+        {% else %}
+            <button class='rec change highlight-button' id='follow'>Follow</button>
+        {% endif %}    
+      {% endif %}
       {{ flashmacro.render_flash(get_flashed_messages()) }}
     </div>
     <div class='listrecs'>
@@ -48,8 +55,10 @@
         var limitVar = 10;
       {% endif %}
       var idVar = {{display[0].id}};
+      var id = {{display[0].author_id}};
       var goto = "{{url_for('main.highlight_ajax')}}";
-      </script>
+      var gotoF = "{{url_for('personal.follow_ajax')}}";
+    </script>
     <script src="{{url_for('static', filename='js/highlightjs.js')}}"></script>
   {% endblock %}
 </body>
