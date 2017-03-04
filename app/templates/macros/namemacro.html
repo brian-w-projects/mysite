@@ -1,0 +1,45 @@
+{% macro render_names(display_names, moment) %}
+  {% if display_names.count() != 0 %}
+    {% for name in display_names %}
+      <div class='name'>
+        <button class='rec change to_check' id='{{name.following}}'>Following</button>
+        <a href="{{url_for('personal.profile', id=name.following, _scheme='https', _external=True)}}">
+          <p class='loadMore'>
+            {{name.who.username}}
+            <br/>
+            {{moment(name.timestamp).fromNow()}}
+            <br/>
+          </p>
+        </a>
+      </div><!--name-->
+      <br/>
+    {% endfor %}
+  {% else %}
+    <p>You aren't following anyone! Go to a user's profile to start following them.</p>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_names2(display_names, current_user, moment) %}
+  {% if display_names.count() != 0 %}
+    {% for name in display_names %}
+      <div class='name'>
+        <a href="{{url_for('personal.profile', id=name.follower, _scheme='https', _external=True)}}">
+          <p class='loadMore'>
+            {{name.user.username}}
+            <br/>
+            {{moment(name.timestamp).fromNow()}}
+            <br/>
+            {% if current_user.following.filter_by(following=name.follower).count() != 0 %}
+              You are following this user.
+            {% else %}
+              You are NOT following this user.
+            {% endif %}
+          </p>
+        </a>
+      </div><!--name-->
+      <br/>
+    {% endfor %}
+  {% else %}
+    <p>Nobody is following you! Post some Recs to get followers.</p>
+  {% endif %}
+{% endmacro %}

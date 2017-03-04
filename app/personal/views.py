@@ -14,7 +14,8 @@ def update():
     form = ChangeForm(request.form)
     if request.method == 'POST':
         if form.validate():
-            current_user.password = form.password.data
+            if form.password.data != '':
+                current_user.password = form.password.data
             current_user.updates = form.updates.data
             current_user.display=int(form.limit.data)
             current_user.about_me = form.about_me.data
@@ -22,7 +23,7 @@ def update():
             db.session.commit()
             flash(u'\u2713 Your profile has been successfully updated')
         else:
-            if form.errors['about_me']:
+            if 'about_me' in form.errors:
                 flash(u'\u2717 About Me may only be 500 characters')
             if 0 < len(form.password.data) < 8:
                 flash(u'\u2717 Passwords must be at least 8 characters')
@@ -171,3 +172,14 @@ def edit(post_id):
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
+@personal.route('/relationships')
+@login_required
+def relationships():
+    to_return = current_user.following.order_by(Followers.timestamp.desc())
+    return render_template('personal/relationships.html', display_names=to_return)
+
+@personal.route('/relationships2')
+@login_required
+def relationships2():
+    to_return = current_user.followed_by.order_by(Followers.timestamp.desc())
+    return render_template('personal/relationships2.html', display_names=to_return)

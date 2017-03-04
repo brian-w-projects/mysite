@@ -33,8 +33,16 @@
           <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
           <p>Posts: {{user.posts.count()}}</p>
           <p>Comments: {{user.commented_on.count()}}</p>
-          <p>Followers: <span class='f_count'>{{user.followed_by.count()}}</span></p>
-          <p>Following: {{user.following.count()}}</p>
+          <p>
+            <a class='profile-links' href="{{url_for('personal.relationships2', _scheme='https', _external=True)}}">
+              Followers: <span class='f_count'>{{user.followed_by.count()}}</span>
+            </a>
+          </p>
+          <p>
+            <a class='profile-links' href="{{url_for('personal.relationships', _scheme='https', _external=True)}}">
+              Following: {{user.following.count()}}
+            </a>
+          </p>
         </div><!--profile-right-->
       </div><!--profile-box-->
       <div class='buttondiv'>

@@ -5,6 +5,7 @@
   {% import 'macros/postmacro.html' as postmacro %}
   {% import 'macros/flashmacro.html' as flashmacro %}
   {% import 'macros/commentmacro.html' as commentmacro %}
+  {% import 'macros/namemacro.html' as namemacro %}
   <head>
     {% block head %}
       <meta charset='utf-8'>
@@ -34,7 +35,14 @@
                 <li><a href="{{url_for('main.index', _scheme='https', _external=True)}}">Home</a></li>
                 <li><a href="{{url_for('personal.post', _scheme='https', _external=True)}}">My Recs</a></li>
                 <li><a href="{{url_for('personal.profile', _scheme='https', _external=True)}}">My Profile</a></li>
-                <li><a href="{{url_for('personal.following', _scheme='https', _external=True)}}">My Inspiration</a></li>
+                <div class='submenu-container'>
+                  <li class='s'><a href="{{url_for('personal.following', _scheme='https', _external=True)}}">My Inspiration</a></li>
+                  <div class='submenu'>
+                    <a href="{{url_for('personal.following', _scheme='https', _external=True)}}">My Inspiration</a>
+                    <a href="{{url_for('personal.relationships', _scheme='https', _external=True)}}">Following</a>
+                    <a href="{{url_for('personal.relationships2', _scheme='https', _external=True)}}">Followers</a>
+                  </div><!--submenu-->
+                </div><!--submenu-container-->
                 <div class='submenu-container'>
                   <li class='s'><a href="{{url_for('main.search', _scheme='https', _external=True)}}">Search</a></li>
                   <div class='submenu'>

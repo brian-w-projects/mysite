@@ -42,17 +42,18 @@ if __name__ == '__main__':
     #     db.drop_all()
     #     db.create_all()
     #     Role.insert_roles()
-    #     user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True)
-    #     db.session.add(user)
-    #     upgrade = Users.query.filter_by(username='njpsychopath').first()
+    #     user = Users(username='a', email='njpsfgsdychopath@gmail.com', password='123456789', confirmed=True)
+        # db.session.add(user)
+        # upgrade = Users.query.filter_by(username='njpsychopath').first()
+        # upgrade.password = '123456789'
     #     upgrade.role_id=2
     #     db.session.add(upgrade)
-    #     user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
+    #     user2 = Users(username='b', email='exdsfample@example.com', password='123456789', confirmed=True)
     #     db.session.add(user2)
     #     Users.generate_users()
     #     Recommendation.generate_recs(250)
     #     Comments.generate_comments(3000)
-    #     db.session.commit()
+        # db.session.commit()
 
 
     manager.run()
