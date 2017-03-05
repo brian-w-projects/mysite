@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% extends 'onecoloumn.html' %}
+{% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -26,7 +26,7 @@
         var limitVar = {{current_user.display}};
         var goto = "{{url_for('personal.following_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/followingjs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/personal/followingjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

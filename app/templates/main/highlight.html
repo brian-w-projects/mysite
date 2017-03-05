@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-{% extends 'onecoloumn.html' %}
+{% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/highlightstyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/main/highlightstyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
       <h2><a class='rec highlight-name' href="{{url_for('personal.profile', id=display[0].author.id, _scheme='https', _external=True)}}">{{display[0].author.username}}</a></h2>
-      {% if current_user.id != display[0].author_id %}
+      {% if current_user.is_authenticated and current_user.id != display[0].author_id %}
         {% if current_user.following.filter_by(following=display[0].author_id).count() != 0 %}
             <button class='rec change highlight-button' id='follow'>Following</button>
         {% else %}
@@ -59,7 +59,7 @@
       var goto = "{{url_for('main.highlight_ajax')}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/highlightjs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/main/highlightjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

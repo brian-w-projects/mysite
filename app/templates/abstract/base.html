@@ -10,10 +10,9 @@
     {% block head %}
       <meta charset='utf-8'>
       <title>Recommend Me</title>
-      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-      <link href="{{url_for('static', filename='css/basestyle.css')}}" type='text/css' rel='stylesheet'/>
-      <link href="{{url_for('static', filename='css/flashstyle.css')}}" type='text/css' rel='stylesheet'/>
-      <script type=text/javascript>$SCRIPT_ROOT={{request.script_root|tojson|safe}};</script>
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+      <link href="{{url_for('static', filename='css/abstract/basestyle.css')}}" type='text/css' rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/macros/flashstyle.css')}}" type='text/css' rel='stylesheet'/>
     {% endblock %}
   </head>
   <body>

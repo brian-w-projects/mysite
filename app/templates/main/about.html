@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-{% extends 'threecoloumn.html' %}
+{% extends 'abstract/threecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %} 
 </head>
 <body>
   {% block maincontent %}
     <h2 class='rec'>Go on and have an adventure. When you are done, Rec it to everyone.</p>
-    <img src="{{url_for('static', filename='images/aboutrec.jpg')}}" class='align-center splash'/>
+    <img src="{{url_for('static', filename='images/main/aboutrec.jpg')}}" class='align-center splash'/>
     <h2>
         <a class='special-link rec' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
             Ready to Start? Register Here

@@ -27,7 +27,7 @@ body{
 /*LOGO*/
 @font-face{
     font-family: 'reckoner_bold';
-    src: url('../fonts/reckoner_bold.ttf')
+    src: url('../../fonts/reckoner_bold.ttf')
 }
 
 #logo{
@@ -118,7 +118,7 @@ a{
 /*CUSTOM TEXT RECOKNER*/
 @font-face{
     font-family: 'reckoner';
-    src: url('../fonts/reckoner.ttf')
+    src: url('../../fonts/reckoner.ttf')
 }
 
 .rec{

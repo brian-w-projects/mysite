@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-{% extends 'onecoloumn.html' %}
+{% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/personal/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -80,7 +80,7 @@
       var gotoC = "{{url_for('personal.profileCom_ajax')}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/profilejs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/personal/profilejs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

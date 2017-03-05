@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-{% extends 'onecoloumn.html' %}
+{% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/formstyle.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/jquery-ui.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/searchstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/speciality/jquery-ui.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/main/searchstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -47,8 +47,8 @@
       var goto = "{{url_for('main.search_ajax')}}"
       var gotoM = "{{url_for('main.more_ajax')}}"
     </script>
-    <script src="{{url_for('static', filename='js/searchjs.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jquery-ui.js')}}"></script>
+    <script src="{{url_for('static', filename='js/main/searchjs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
   {% endblock %}
 </body>
 </html>

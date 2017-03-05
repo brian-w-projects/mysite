@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-{% extends 'onecoloumn.html' %}
-{% import 'macros/modmacro.html' as modmacro %}
+{% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>

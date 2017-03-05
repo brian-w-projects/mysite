@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-{% extends 'threecoloumn.html' %}
+{% extends 'abstract/threecolumn.html' %}
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/speciality/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/main/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
   <body>
@@ -24,15 +24,15 @@
       <div class='w700 slider'>
         <div class='slide-viewer'>
           <div class='slide-group'>
-            <div class='slide slide-1'><img src="{{url_for('static', filename='images/one.jpeg')}}"/></div>
-            <div class='slide slide-2'><img src="{{url_for('static', filename='images/two.jpeg')}}"/></div>
-            <div class='slide slide-3'><img src="{{url_for('static', filename='images/three.jpeg')}}"/></div>
-            <div class='slide slide-4'><img src="{{url_for('static', filename='images/four.jpeg')}}"/></div>
+            <div class='slide slide-1'><img src="{{url_for('static', filename='images/speciality/one.jpeg')}}"/></div>
+            <div class='slide slide-2'><img src="{{url_for('static', filename='images/speciality/two.jpeg')}}"/></div>
+            <div class='slide slide-3'><img src="{{url_for('static', filename='images/speciality/three.jpeg')}}"/></div>
+            <div class='slide slide-4'><img src="{{url_for('static', filename='images/speciality/four.jpeg')}}"/></div>
           </div><!--slide-group-->
         </div><!--slide-viewer-->
         <div class='slide-buttons'></div>
       </div><!--w700 slider-->
-      <script src="{{url_for('static', filename='js/photoslider.js')}}"></script>
+      <script src="{{url_for('static', filename='js/speciality/photoslider.js')}}"></script>
       <br/>
       <br/>
       <div class='listrecs'>
@@ -41,7 +41,7 @@
     {% endblock %}
     {% block c1 %}
       <h3 class='rec'>Make Recs</h3>
-      <img src="{{url_for('static', filename='images/makerecs.jpg')}}" class='align-center medium'/>
+      <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align-center medium'/>
       <p>
         We live in such an amazing world. It is time to get out and explore it! 
         Make recommendations for the activites that inspire you, the adventures that
@@ -51,7 +51,7 @@
     {% endblock %}
     {% block c2 %}
       <h3 class='rec'>Get Recs</h3>
-      <img src="{{url_for('static', filename='images/getrecs.jpg')}}" class='align-center medium'/>
+      <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align-center medium'/>
       <p>
         Find recs from other people just like you. See what shapes and inspires the
         life of others and share in their experience. Your next adventure is right
@@ -60,7 +60,7 @@
     {% endblock %}
     {% block c3 %}
       <h3 class='rec'>Live Life</h3>
-      <img src="{{url_for('static', filename='images/livelife.jpg')}}" class='align-center medium'/>
+      <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align-center medium'/>
       <p>
         Recs is the revoluationary platform that allows you to be you. Find your
         inspiration and live it. Do it. Rec it. The only limit is you.
