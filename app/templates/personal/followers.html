@@ -2,11 +2,6 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
-  {% block head %}
-    {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css', rel='stylesheet'/>
-  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -18,7 +13,7 @@
     </div><!--w940-->
     <div class='listrecs'>
       {{namemacro.render_names2(display_names, current_user, moment)}}
-    </div>
+    </div><!--listrecs-->
   {% endblock %}
 </body>
 </html>

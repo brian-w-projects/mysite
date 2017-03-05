@@ -2,16 +2,16 @@
   {% for com in d_c %}
     <div class='rec1'>
       <div class='postHeaderDiv'>
-        <a href="{{url_for('personal.profile', id=com.comment_by, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>{{com.comment_by_user}}</p></a>
+        <a href="{{url_for('personal.profile', id=com.comment_by, _scheme='https', _external=True)}}"><p class='postHeader special-link'>{{com.comment_by_user}}</p></a>
         <p class='postHeader'>{{moment(com.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}</p>
         {% if current_user.is_authenticated and current_user.posts.filter_by(id=com.posted_on).first() %}
             <!--modify with new link to delete comments-->
-            <a href="{{url_for('main.comment_delete', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Delete</p></a>
+            <a href="{{url_for('main.comment_delete', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader special-link'>Delete</p></a>
         {% endif %}
         {% if current_user.is_authenticated and current_user.id == com.comment_by %}
-          <a href="{{url_for('main.comment_edit', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
+          <a href="{{url_for('main.comment_edit', id=com.id, _scheme='https', _external=True)}}"><p class='postHeader special-link'>Edit</p></a>
         {% endif %}
-        <a href="{{url_for('main.highlight', id=com.posted_on, _scheme='https', _external=True)}}"><p class=' rec postHeader postEdit'>Rec</p></a>
+        <a href="{{url_for('main.highlight', id=com.posted_on, _scheme='https', _external=True)}}"><p class=' rec postHeader special-link'>Rec</p></a>
       </div><!--postHeaderDiv-->
       <p class='postText'>{{com.comment}}</p>
     </div><!--rec1-->

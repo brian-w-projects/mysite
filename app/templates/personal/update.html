@@ -2,10 +2,6 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
-  {% block head %}
-    {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css' rel='stylesheet'/>
-  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -19,19 +15,20 @@
           <br/>
           {{form.about_me(class='textentry')}}
           <br/>
-            <div class='fieldset'>
-              {{form.password.label(class='rec')}} {{form.password(class='entry')}}
-              <br/>
-              {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
-            </div><!--fieldset-->
+          <div class='fieldset'>
+            {{form.password.label(class='rec')}} {{form.password(class='entry')}}
+            <br/>
+            {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
+          </div><!--fieldset-->
           <div class='realign'></div>
-          {{form.updates.label(class='rec')}} {{form.updates(checked=current_user.updates, class='click')}}
+          {{form.updates.label(class='rec')}} {{form.updates(checked=current_user.updates,
+            class='click')}}
           <br/>
           {{form.limit.label(class='rec')}} {{form.limit(class='entry')}}
           <br/>
           {{form.csrf_token}}
           <br/>
-          {{form.submit(class='rec entry', id='submit')}}
+          {{form.submit(class='rec', id='submit')}}
         </form>
       </div><!--w940-center-->
     </div><!--w940-->

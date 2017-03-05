@@ -1,3 +1,4 @@
+/*TEXT ENTRY FORM ELEMENTS*/
 .entry{
     margin: 20px;
     font-size: 120%;
@@ -12,23 +13,30 @@
     margin-bottom: 19px;
     border-bottom: 2px solid black;
 }
+/*TEXT ENTRY FORM ELEMENTS*/
 
+/*CLICK ENTRY FORM ELEMENTS */
 .click{
     margin: 20px;
 }
+/*CLICK ENTRY FORM ELEMENTS */
 
-.fieldset{
-    float: left;
-    width: 400px;
+/*TEXT AREA FORM ELEMENTS*/
+.textentry{
+    resize: none;
     border: 1px solid #000000;
     border-radius: 10px;
-    text-align: right;
+    width: 600px;
+    height: 200px;
 }
 
-.realign{
-    clear:both;
+.chars-format{
+    margin-left: 20px;
+    display: inline;
 }
+/*TEXT AREA FORM ELEMENTS*/
 
+/*SUBMISSION BUTTON ELEMENTS*/
 #submit, #follow, .to_check{
     color: #444444;
     text-shadow: 0px 1px 1px #fff;
@@ -52,19 +60,19 @@
     background: -o-linear-gradient(top, #a8cfce, #beeae9);
     background: -ms-linear-gradient(top, #a8cfce, #beeae9);
 }
+/*SUBMISSION BUTTON ELEMENTS*/
 
-.textentry{
-    resize: none;
+/*FIELD SET ELEMENTS */
+.fieldset{
+    float: left;
+    width: 400px;
     border: 1px solid #000000;
     border-radius: 10px;
-    width: 600px;
-    height: 200px;
+    text-align: right;
 }
 
-
-/*TEXT AREA FORMATTING*/
-.chars-format{
-    margin-left: 20px;
-    display: inline;
+.realign{
+    clear:both;
 }
-/*TEXT AREA FORMATTING*/
+/*FIELD SET ELEMENTS */
+

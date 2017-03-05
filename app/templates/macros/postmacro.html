@@ -4,7 +4,7 @@
       <div class='rec1'>
         <a href="{{url_for('main.highlight', id=rec.id, _scheme='https', _external=True)}}"><h3 class='postTitle'>{{rec.title}}</h3></a>
         <div class='postHeaderDiv'>
-          <a href="{{url_for('personal.profile', id=rec.author_id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>{{rec.author.username}}</p></a>
+          <a href="{{url_for('personal.profile', id=rec.author_id, _scheme='https', _external=True)}}"><p class='postHeader special-link'>{{rec.author.username}}</p></a>
           {% if rec.public %}
             <p class='postHeader'>Public</p>
           {% else %}
@@ -12,7 +12,7 @@
           {% endif %}
         <p class='postHeader'>{{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}</p>
           {% if current_user.is_authenticated and rec.author_id==current_user.id %}
-            <a href="{{url_for('personal.edit', post_id=rec.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
+            <a href="{{url_for('personal.edit', post_id=rec.id, _scheme='https', _external=True)}}"><p class='postHeader special-link'>Edit</p></a>
           {% endif %}
         <p class='postHeader rec'>Comments: {{rec.comments.count()}}</p>
         {% if current_user.id == rec.author_id and rec.new_comment == True %}

@@ -4,8 +4,6 @@
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css', rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/personal/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
@@ -18,14 +16,17 @@
       </div><!--w940-center-->
       <div class='profile-box'>
         <h2 class='rec'>{{user.username}}</h2>
-        {% if current_user.id == user.id %}
-          <p class='profile-edit'><a class='postEdit' href="{{url_for('personal.update', _scheme='https', _external=True)}}">Edit</a></p>
-        {% elif current_user.is_authenticated and current_user.following.filter_by(following=user.id).count() != 0 %}
-          <button class='rec change' id='follow'>Following</button>
-        {% elif current_user.is_authenticated %}
-          <button class='rec change' id='follow'>Follow</button>
-        {% endif %}           
-        <div></div>
+        <button class='rec width-set' id='follow'>
+          {% if current_user.id == user.id %}
+            Edit
+          {% elif current_user.is_authenticated and 
+            current_user.following.filter_by(following=user.id).count() != 0 %}
+            Following
+          {% else %}
+            Follow
+          {% endif %}           
+        </button>
+        <div class='realign'></div>
         <div class='profile-left'>
           <p>{{user.about_me}}</p>
         </div><!--profile-left-->
@@ -34,19 +35,21 @@
           <p>Posts: {{user.posts.count()}}</p>
           <p>Comments: {{user.commented_on.count()}}</p>
           <p>
-            <a class='profile-links' href="{{url_for('personal.relationships2', _scheme='https', _external=True)}}">
+            <a class='profile-link special-link' 
+              href="{{url_for('personal.followers', _scheme='https', _external=True)}}">
               Followers: <span class='f_count'>{{user.followed_by.count()}}</span>
             </a>
           </p>
           <p>
-            <a class='profile-links' href="{{url_for('personal.relationships', _scheme='https', _external=True)}}">
+            <a class='profile-link special-link' 
+              href="{{url_for('personal.following', _scheme='https', _external=True)}}">
               Following: {{user.following.count()}}
             </a>
           </p>
         </div><!--profile-right-->
       </div><!--profile-box-->
       <div class='buttondiv'>
-        <button class='rec change' id='submit'>Comments</button>
+        <button class='rec width-set' id='submit'>Comments</button>
       </div><!--buttondiv-->
     </div><!--w940-->
     <br/>
@@ -54,31 +57,21 @@
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
     </div><!--listrecs-->
-    <div class='listcomments hide'>
+    <div class='listcomments'>
       {{commentmacro.render_posts(d_c, current_user, moment)}}
     </div><!--listcomments-->
     <div class='w940-center'>
-      <a><p class='ajax loadMore'>Load More</p></a>
+      <a><p class='ajax loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->
       <div class='w940-center'>
-      <a><p class='ajax hide loadMoreCom'>Load More</p></a>
+      <a><p class='ajax loadMoreCom special-link'>Load More</p></a>
     </div><!--w940-center-->
     <script>
-      {% if current_user.is_authenticated %}
-        var offsetCom = {{current_user.display}}; 
-        var offsetVar = {{current_user.display}}; 
-        var limitVar = {{current_user.display}};
-        var limitCom = {{current_user.display}};
-      {% else %}
-        var offsetCom = 10; 
-        var offsetVar = 10;
-        var limitVar = 10;
-        var limitCom = 10;
-      {% endif %}
       var id = {{id}};
       var gotoP = "{{url_for('personal.profile_ajax')}}";
       var gotoC = "{{url_for('personal.profileCom_ajax')}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
+      var gotoE = "{{url_for('personal.update')}}";
     </script>
     <script src="{{url_for('static', filename='js/personal/profilejs.js')}}"></script>
   {% endblock %}

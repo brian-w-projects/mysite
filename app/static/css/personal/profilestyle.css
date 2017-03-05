@@ -1,3 +1,12 @@
+/*PROFILE BOX*/
+.profile-box{
+    border: 1px solid black;
+    overflow: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+}
+
 .profile-left{
     width: 620px;
     float: left;
@@ -13,38 +22,17 @@
     padding-left: 5px;
 }
 
-.profile-box{
-    border: 1px solid black;
-    overflow: auto;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    background-color: #fafafa;
-}
-
-.profile-edit{
-    text-align: center;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.profile-links{
+.profile-link{
     font-family: Georgia, 'Times New Roman', serif;
     padding-left: 0px;
     
 }
+/*PROFILE BOX*/
 
-.profile-links:hover{
-    background-color: #000000;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-.hide{
-    display: none;
-}
-
-.change{
+/*BUTTON SIZING*/
+.width-set{
     width: 100px;
     display: block;
     margin: 0 auto;
 }
+/*BUTTON SIZING*/

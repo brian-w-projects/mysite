@@ -2,75 +2,75 @@
 /* global gotoP */
 /* global gotoC */
 /* global gotoF */
-/* global limitVar */
-/* global offsetVar */
-/* global limitCom */
-/* global offsetCom */
+/* global gotoE */
 /* global id */
 
 $(function(){
+    $('.loadMoreCom').hide();
+    $('.listcomments').hide();
     
     $('#follow').on('click', function(){
-        $.ajax({
+        if($(this).text().trim() == 'Edit'){
+            window.location.href = gotoE;
+        }
+        else{
+            $.ajax({
                 type: 'GET',
                 contentType: 'application/json;charset=UTF-8',
                 url: gotoF,
                 datatype:'json',
-                data: {'id': id, 'follow':$('#follow').text()},
+                data: {'id': id, 'follow': $(this).text().trim() == 'Follow'},
                 success: function(x){
                     var y = $.parseJSON(x);
                     if(y['added'] == true)
                     {
                         $('#follow').text('Following');
-                        var original = parseInt($('.f_count').text())+1;
-                        $('.f_count').html(original);
+                        $('.f_count').html(parseInt($('.f_count').text())+1);
                     }
                     else
                     {
                         $('#follow').text('Follow');
-                        var original = parseInt($('.f_count').text())-1;
-                        $('.f_count').html(original);
+                        $('.f_count').html(parseInt($('.f_count').text())-1);
                     }
-                    
                 }
             });
+        }
     });
     
     $('#submit').on('click', function(){
-        if($(this).text() == 'Comments')
-        {
+        if($(this).text() == 'Comments'){
             $(this).text('Recs');
-            $('.listrecs').addClass('hide');
-            $('.loadMore').addClass('hide');
-            $('.listcomments').removeClass('hide');
-            $('.loadMoreCom').removeClass('hide');
+            $('.listrecs').hide();
+            $('.loadMore').hide();
+            $('.listcomments').show();
+            if(!$('.emptyCom').length){
+                $('.loadMoreCom').show();
+            }
             
         }
-        else
-        {
+        else{
             $(this).text('Comments');
-            $('.listcomments').addClass('hide');
-            $('.loadMoreCom').addClass('hide');
-            $('.listrecs').removeClass('hide');
-            $('.loadMore').removeClass('hide');
+            $('.listcomments').hide();
+            $('.loadMoreCom').hide();
+            $('.listrecs').show();
+            if(!$('.empty').length){
+                $('.loadMore').show();
+            }
         }
-        
     });
     
     $('.ajax').bind('click', function(){
-        if($('#submit').text() == 'Comments')
-        {
+        if($('#submit').text() == 'Comments'){
             $.ajax({
                 type: 'GET',
                 contentType: 'application/json;charset=UTF-8',
                 url: gotoP,
                 datatype:'json',
-                data: {'limit':limitVar, 'offset': offsetVar, 'id': id},
+                data: {'id': id},
                 success: function(x){
                     $('.listrecs').append(x);
-                    offsetVar += limitVar;
                    if($('.empty').length){
-                        $('.loadMore').css('display', 'none');
+                        $('.loadMore').hide();
                     }
                 }
             });
@@ -82,12 +82,11 @@ $(function(){
                 contentType: 'application/json;charset=UTF-8',
                 url: gotoC,
                 datatype:'json',
-                data: {'limit':limitCom, 'offset': offsetCom, 'id': id},
+                data: {'id': id},
                 success: function(x){
                     $('.listcomments').append(x);
-                    offsetCom += limitCom;
                    if($('.emptyCom').length){
-                        $('.loadMoreCom').css('display', 'none');
+                        $('.loadMoreCom').hide();
                     }
                 }
             });

@@ -8,130 +8,6 @@ from ..email import send_email
 from datetime import datetime
 import json
 
-@personal.route('/update', methods=['GET', 'POST'])
-@login_required
-def update():
-    form = ChangeForm(request.form)
-    if request.method == 'POST':
-        if form.validate():
-            if form.password.data != '':
-                current_user.password = form.password.data
-            current_user.updates = form.updates.data
-            current_user.display=int(form.limit.data)
-            current_user.about_me = form.about_me.data
-            db.session.add(current_user)
-            db.session.commit()
-            flash(u'\u2713 Your profile has been successfully updated')
-        else:
-            if 'about_me' in form.errors:
-                flash(u'\u2717 About Me may only be 500 characters')
-            if 0 < len(form.password.data) < 8:
-                flash(u'\u2717 Passwords must be at least 8 characters')
-            if form.password.data != form.password_confirm.data:
-                flash(u'\u2717 Passwords Must Match')
-        return redirect(url_for('personal.update', _scheme='https', _external=True))
-    form.about_me.data = current_user.about_me
-    form.limit.data= str(current_user.display)
-    return render_template('personal/update.html', form=form)
-
-@personal.route('/_post')
-def post_ajax():
-    limit = request.args.get('limit', 5, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
-        Recommendation.timestamp.desc()).offset(offset).limit(limit)
-    return render_template('ajax/postajax.html', display = display_recs)
-
-@personal.route('/post', methods=['GET', 'POST'])
-@login_required
-def post():
-    form = PostForm(request.form)
-    if request.method == 'POST':
-        if form.validate():
-            if form.public.data:
-                ver=1
-            else:
-                ver=0
-            post = Recommendation(title = form.title.data, public = form.public.data, text = form.text.data, author_id=current_user.id, verification=ver)
-            db.session.add(post)
-            db.session.commit()
-            flash(u'\u2713 Your rec has been posted!')
-        else:
-            if 'title' in form.errors and form.errors['title']:
-                flash(u'\u2717 Recs must contain a title')
-            if 'text' in form.errors and form.errors['text']:
-                flash(u'\u2717 Recs must contain text')
-        return redirect(url_for('personal.post', _scheme='https', _external=True))
-    display_recs = Recommendation.query.filter_by(author_id=current_user.id).order_by(
-        Recommendation.timestamp.desc()).limit(current_user.display)
-    return render_template('personal/post.html', form=form, display=display_recs)
-
-@personal.route('/_follow')
-@login_required
-def follow_ajax():
-    id = request.args.get('id')
-    if request.args.get('follow') == 'Follow':
-        addition = Followers(follower=current_user.id, following=id)
-        db.session.add(addition)
-        db.session.commit()
-        return json.dumps({'added':True}), 200, {'ContentType':'application/json'} 
-    else:
-        to_delete = current_user.following.filter_by(following=id).first()
-        db.session.delete(to_delete)
-        db.session.commit()
-        return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
-
-@personal.route('/_profileCom')
-def profileCom_ajax():
-    limit = request.args.get('limit', 5, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    id = request.args.get('id', 0, type=int)
-    display_comments = Comments.query.filter_by(comment_by=id)\
-        .order_by(Comments.timestamp.desc()).offset(offset).limit(limit)
-    return render_template('ajax/commentajax.html', d_c = display_comments)
-
-@personal.route('/_profile')
-def profile_ajax():
-    limit = request.args.get('limit', 5, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    id = request.args.get('id', 0, type=int)
-    display_recs = Recommendation.query.filter_by(author_id=id).order_by(
-        Recommendation.timestamp.desc()).offset(offset).limit(limit)
-    return render_template('ajax/postajax.html', display = display_recs)
-
-@personal.route('/profile')
-@personal.route('/profile/<int:id>')
-def profile(id=-1):
-    if id == -1 and current_user.is_authenticated:
-        id = current_user.id
-    elif id == -1 and not current_user.is_authenticated:
-        return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
-    if current_user.is_authenticated:
-        limit=current_user.display
-    else:
-        limit=10
-    user = Users.query.filter_by(id=id).first_or_404()
-    display_recs = user.posts.order_by(Recommendation.timestamp.desc()).limit(limit)
-    display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
-    return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
-
-@personal.route('/_following')
-@login_required
-def following_ajax():
-    offset = request.args.get('offset', 0, type=int)
-    following = [x.who.id for x in current_user.following]
-    display_recs = Recommendation.query.filter(Recommendation.author_id.in_(following))\
-        .order_by(Recommendation.timestamp.desc()).offset(offset).limit(current_user.display)
-    return render_template('ajax/postajax.html', display = display_recs)   
-
-@personal.route('/following')
-@login_required
-def following():
-    following = [x.who.id for x in current_user.following]
-    display_recs = Recommendation.query.filter(Recommendation.author_id.in_(following))\
-        .order_by(Recommendation.timestamp.desc()).limit(current_user.display)
-    return render_template('personal/following.html', display=display_recs)
-
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit(post_id):
@@ -159,27 +35,174 @@ def edit(post_id):
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')
         else:
-            if 'title' in form.errors and form.errors['title']:
+            if 'title' in form.errors:
                 flash(u'\u2717 Recs must contain a title')
-            if 'text' in form.errors and form.errors['text']:
+            if 'text' in form.errors:
                 flash(u'\u2717 Recs must contain text')
-            if 'delete' in form.errors and form.errors['delete']:
+            if 'delete' in form.errors:
                 flash(u'\u2717 Check both boxes to delete this rec')
-            form.errors['missing'] = 'Error'
         return redirect(url_for('personal.edit', post_id=post_id, _scheme='https', _external=True))
     form.title.data = display_recs.title
     form.public.data = display_recs.public
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
-@personal.route('/relationships')
+@personal.route('/followers')
 @login_required
-def relationships():
-    to_return = current_user.following.order_by(Followers.timestamp.desc())
-    return render_template('personal/relationships.html', display_names=to_return)
-
-@personal.route('/relationships2')
-@login_required
-def relationships2():
+def followers():
     to_return = current_user.followed_by.order_by(Followers.timestamp.desc())
-    return render_template('personal/relationships2.html', display_names=to_return)
+    return render_template('personal/followers.html', display_names=to_return)
+
+@personal.route('/_follow')
+@login_required
+def follow_ajax():
+    id = request.args.get('id')
+    if request.args.get('follow') == 'true':
+        addition = Followers(follower=current_user.id, following=id)
+        db.session.add(addition)
+        db.session.commit()
+        return json.dumps({'added':True}), 200, {'ContentType':'application/json'} 
+    else:
+        to_delete = current_user.following.filter_by(following=id).first()
+        db.session.delete(to_delete)
+        db.session.commit()
+        return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
+
+@personal.route('/following')
+@login_required
+def following():
+    to_return = current_user.following.order_by(Followers.timestamp.desc())
+    return render_template('personal/following.html', display_names=to_return)
+
+@personal.route('/_inspiration')
+@login_required
+def inspiration_ajax():
+    session['offset'] += current_user.display
+    following = [x.who.id for x in current_user.following]
+    display_recs = Recommendation.query\
+        .filter(Recommendation.author_id.in_(following))\
+        .order_by(Recommendation.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(current_user.display)
+    return render_template('ajax/postajax.html', display = display_recs)   
+
+@personal.route('/inspiration')
+@login_required
+def inspiration():
+    session['offset'] = 0
+    following = [x.who.id for x in current_user.following]
+    display_recs = Recommendation.query\
+        .filter(Recommendation.author_id.in_(following))\
+        .order_by(Recommendation.timestamp.desc())\
+        .limit(current_user.display)
+    return render_template('personal/inspiration.html', display=display_recs)
+
+@personal.route('/_post')
+@login_required
+def post_ajax():
+    session['offset'] += current_user.display
+    display_recs = Recommendation.query\
+        .filter_by(author_id=current_user.id)\
+        .order_by(Recommendation.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(current_user.display)
+    return render_template('ajax/postajax.html', display = display_recs)
+
+@personal.route('/post', methods=['GET', 'POST'])
+@login_required
+def post():
+    session['offset'] = 0
+    form = PostForm(request.form)
+    if request.method == 'POST':
+        if form.validate():
+            ver = form.public.data
+            post = Recommendation(title = form.title.data, public = form.public.data, 
+                text = form.text.data, author_id=current_user.id, verification=ver)
+            db.session.add(post)
+            db.session.commit()
+            flash(u'\u2713 Your rec has been posted!')
+        else:
+            if 'title' in form.errors:
+                flash(u'\u2717 Recs must contain a title')
+            if 'text' in form.errors:
+                flash(u'\u2717 Recs must contain text')
+        return redirect(url_for('personal.post', _scheme='https', _external=True))
+    display_recs = Recommendation.query\
+        .filter_by(author_id=current_user.id)\
+        .order_by(Recommendation.timestamp.desc())\
+        .limit(current_user.display)
+    return render_template('personal/post.html', form=form, display=display_recs)
+
+@personal.route('/_profileCom')
+def profileCom_ajax():
+    id = request.args.get('id')
+    if current_user.is_authenticated:
+        limit = current_user.display
+    else:
+        limit = 10
+    session['offsetCom'] += limit
+    display_comments = Comments.query\
+        .filter_by(comment_by=id)\
+        .order_by(Comments.timestamp.desc())\
+        .offset(session['offsetCom'])\
+        .limit(limit)
+    return render_template('ajax/commentajax.html', d_c = display_comments)
+
+@personal.route('/_profile')
+def profile_ajax():
+    id = request.args.get('id')
+    if current_user.is_authenticated:
+        limit = current_user.display
+    else:
+        limit = 10
+    session['offset'] += limit
+    display_recs = Recommendation.query\
+        .filter_by(author_id=id)\
+        .order_by(Recommendation.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(limit)
+    return render_template('ajax/postajax.html', display = display_recs)
+
+@personal.route('/profile')
+@personal.route('/profile/<int:id>')
+def profile(id=-1):
+    session['offset'] = 0
+    session['offsetCom'] = 0
+    if id == -1 and current_user.is_authenticated:
+        id = current_user.id
+    elif id == -1 and not current_user.is_authenticated:
+        return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
+    if current_user.is_authenticated:
+        limit=current_user.display
+    else:
+        limit=10
+    user = Users.query.filter_by(id=id).first_or_404()
+    display_recs = user.posts.order_by(Recommendation.timestamp.desc()).limit(limit)
+    display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
+    return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
+
+@personal.route('/update', methods=['GET', 'POST'])
+@login_required
+def update():
+    form = ChangeForm(request.form)
+    if request.method == 'POST':
+        if form.validate():
+            if form.password.data != '':
+                current_user.password = form.password.data
+            current_user.updates = form.updates.data
+            current_user.display=int(form.limit.data)
+            current_user.about_me = form.about_me.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash(u'\u2713 Your profile has been successfully updated')
+        else:
+            if 'about_me' in form.errors:
+                flash(u'\u2717 About Me may only be 500 characters')
+            if 0 < len(form.password.data) < 8:
+                flash(u'\u2717 Passwords must be at least 8 characters')
+            if form.password.data != form.password_confirm.data:
+                flash(u'\u2717 Passwords Must Match')
+        return redirect(url_for('personal.update', _scheme='https', _external=True))
+    form.about_me.data = current_user.about_me
+    form.limit.data= str(current_user.display)
+    return render_template('personal/update.html', form=form)

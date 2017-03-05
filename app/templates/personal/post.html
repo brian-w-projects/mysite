@@ -2,11 +2,6 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
-  {% block head %}
-    {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css' rel='stylesheet'/>
-  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -21,18 +16,22 @@
           <br/>
           {{form.text(class='textentry')}}
           <br/>
+          <br/>
           {{form.csrf_token}}
-          {{form.submit(class='rec entry', id='submit')}}
+          {{form.submit(class='rec', id='submit')}}
         </form>
       </div><!--w940-center-->
     </div><!--w940-->
+    <br/>
     <div class='listrecs'>
       {{postmacro.render_posts(display, current_user, moment)}}
     </div><!--listrecs-->
     <div class='w940-center'>
-      <a><p id='ajax' class='loadMore'>Load More</p></a>
+      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->
-    <script>var offsetVar = {{current_user.display}}; var limitVar = {{current_user.display}}</script>
+    <script>
+      var goto = "{{url_for('personal.post_ajax')}}";
+    </script>
     <script src="{{url_for('static', filename='js/personal/postjs.js')}}"></script>
   {% endblock %}
 </body>

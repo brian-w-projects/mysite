@@ -2,9 +2,9 @@
   {% if display_names.count() != 0 %}
     {% for name in display_names %}
       <div class='name'>
-        <button class='rec change to_check' id='{{name.following}}'>Following</button>
+        <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
         <a href="{{url_for('personal.profile', id=name.following, _scheme='https', _external=True)}}">
-          <p class='loadMore'>
+          <p class='loadMore special-link'>
             {{name.who.username}}
             <br/>
             {{moment(name.timestamp).fromNow()}}
@@ -24,7 +24,7 @@
     {% for name in display_names %}
       <div class='name'>
         <a href="{{url_for('personal.profile', id=name.follower, _scheme='https', _external=True)}}">
-          <p class='loadMore'>
+          <p class='loadMore special-link'>
             {{name.user.username}}
             <br/>
             {{moment(name.timestamp).fromNow()}}

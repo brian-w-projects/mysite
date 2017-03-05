@@ -4,8 +4,8 @@
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/personal/editstyle.css')}}" type='text/css' rel='stylesheet'/>
+    <link href="{{url_for('static', filename='css/personal/editstyle.css')}}" 
+      type='text/css' rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class='w940'>
       <div class='w940-center'>
         <h2 class='rec'>{{current_user.username}}</h2>
-        {{ flashmacro.render_flash(get_flashed_messages()) }}
+        {{flashmacro.render_flash(get_flashed_messages())}}
         <form method='POST'>
           {{form.title.label(class='rec')}} {{form.title(class='entry')}}
           <br/>
@@ -28,7 +28,8 @@
           </div><!--fieldset-->
           <div class='realign'></div>
           {{form.csrf_token}}
-          {{form.submit(class='rec entry', id='submit')}}
+          <br/>
+          {{form.submit(class='rec', id='submit')}}
         </form>
       </div><!--w940-center-->
     </div><!--w940-->

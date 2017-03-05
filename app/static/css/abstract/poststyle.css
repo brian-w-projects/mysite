@@ -24,12 +24,6 @@
     cursor: pointer;
 }
 
-/*OVERRIDE NAVBAR LINKS*/
-.listrecs a{
-    padding: 0;
-}
-/*OVERRIDE NAVBAR LINKS*/
-
 .postHeaderDiv{
     margin-top: 5px;
     margin-bottom: 5px;
@@ -49,6 +43,13 @@
     padding: 10px;
 }
 
+
+/*OVERRIDE NAVBAR LINKS*/
+.listrecs a{
+    padding: 0;
+}
+/*OVERRIDE NAVBAR LINKS*/
+
 /*LOAD MORE BAR */
 .loadMore, .loadMoreCom{
     margin-top: 5px;
@@ -57,22 +58,7 @@
     text-align: center;
     font-size: larger;
 }
-
-.loadMore:hover, .loadMoreCom:hover{
-    background-color: #000000;
-    color: #ffffff;
-    cursor: pointer;
-}
 /*LOAD MORE BAR */
-
-/*EDIT LINK*/
-.postEdit:hover{
-    background-color: #000000;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-/*EDIT LINK*/
 
 /*COMMENTS*/
 .listcomments{

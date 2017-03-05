@@ -5,6 +5,18 @@
 
 
 1. MAJOR REFACTORING
+    - Done:
+        - Personal
+    - ToDo:
+        - Abstract
+        - Ajax
+        - Auth
+        - Errors
+        - Macros
+        - Main
+        - Mod
+        - Non-template related code (manage, config, etc.)
+    - Remove unneeded "user_id" from models
 
 
 

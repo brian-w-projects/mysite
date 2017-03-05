@@ -10,7 +10,7 @@
 /*MAIN CONTENT TAG LINE*/
 @font-face{
     font-family: 'reckoner';
-    src: url('../fonts/reckoner.ttf');
+    src: url('../../fonts/reckoner.ttf');
 }
 
 ul {

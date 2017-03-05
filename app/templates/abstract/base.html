@@ -13,6 +13,8 @@
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
       <link href="{{url_for('static', filename='css/abstract/basestyle.css')}}" type='text/css' rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/macros/flashstyle.css')}}" type='text/css' rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css', rel='stylesheet'/>
     {% endblock %}
   </head>
   <body>
@@ -35,11 +37,11 @@
                 <li><a href="{{url_for('personal.post', _scheme='https', _external=True)}}">My Recs</a></li>
                 <li><a href="{{url_for('personal.profile', _scheme='https', _external=True)}}">My Profile</a></li>
                 <div class='submenu-container'>
-                  <li class='s'><a href="{{url_for('personal.following', _scheme='https', _external=True)}}">My Inspiration</a></li>
+                  <li class='s'><a href="{{url_for('personal.inspiration', _scheme='https', _external=True)}}">My Inspiration</a></li>
                   <div class='submenu'>
-                    <a href="{{url_for('personal.following', _scheme='https', _external=True)}}">My Inspiration</a>
-                    <a href="{{url_for('personal.relationships', _scheme='https', _external=True)}}">Following</a>
-                    <a href="{{url_for('personal.relationships2', _scheme='https', _external=True)}}">Followers</a>
+                    <a href="{{url_for('personal.inspiration', _scheme='https', _external=True)}}">My Inspiration</a>
+                    <a href="{{url_for('personal.following', _scheme='https', _external=True)}}">Following</a>
+                    <a href="{{url_for('personal.followers', _scheme='https', _external=True)}}">Followers</a>
                   </div><!--submenu-->
                 </div><!--submenu-container-->
                 <div class='submenu-container'>

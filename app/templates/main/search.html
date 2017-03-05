@@ -4,8 +4,6 @@
 <head>
   {% block head %}
     {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/poststyle.css')}}" type='text/css', rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/abstract/formstyle.css')}}" type='text/css' rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/speciality/jquery-ui.css')}}" type='text/css' rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/main/searchstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
@@ -34,7 +32,7 @@
       
     </div>
     <div class='w940-center'>
-      <a><p id='ajax' class='loadMore'>Load More</p></a>
+      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->
     <script>
       {% if current_user.is_authenticated %}
