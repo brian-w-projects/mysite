@@ -4,6 +4,7 @@
 <head>
   {% block head %}
     {{super()}}
+    <title>Recommend Me - Profile {{user.username}}</title>
     <link href="{{url_for('static', filename='css/personal/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>

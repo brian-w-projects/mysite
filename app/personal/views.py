@@ -27,10 +27,7 @@ def edit(post_id):
                 display_recs.public = form.public.data
                 display_recs.timestamp = datetime.utcnow()
                 display_recs.text = form.text.data
-                if form.public.data:
-                    display_recs.verification = 1
-                else:
-                    display_recs.verification = 0
+                display_recs.verification = form.public.data
                 db.session.add(display_recs)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')

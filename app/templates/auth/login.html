@@ -2,6 +2,10 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - Login</title>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -15,11 +19,23 @@
           {{form.password.label(class='rec')}} {{form.password(class='entry')}}
           <br/>
           {{form.csrf_token}}
-          {{form.submit(class='rec entry', id='submit')}}
+          {{form.submit(class='rec', id='submit')}}
         </form>
-        <p>Forgot your username? <a class='special-link' href="{{url_for('auth.forgot_username', _scheme='https', _external=True)}}">Recover Username</a></p>
-        <p>Forgot your password? <a class='special-link' href="{{url_for('auth.forgot', _scheme='https', _external=True)}}">Reset Password</a></p>
-        <p>Not a member? <a class='special-link' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">Register Here</a></p>
+        <p>Forgot your username? 
+          <a class='special-link' href="{{url_for('auth.forgot_username', _scheme='https', _external=True)}}">
+            Recover Username
+          </a>
+        </p>
+        <p>Forgot your password?
+          <a class='special-link' href="{{url_for('auth.forgot_password', _scheme='https', _external=True)}}">
+            Reset Password
+          </a>
+        </p>
+        <p>Not a member?
+          <a class='special-link' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
+            Register Here
+          </a>
+        </p>
       </div><!--w940-center-->
     </div><!--w940-->
   {% endblock %}

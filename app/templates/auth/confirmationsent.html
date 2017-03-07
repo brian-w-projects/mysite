@@ -2,6 +2,10 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - Confirmation Sent</title>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}

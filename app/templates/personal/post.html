@@ -2,6 +2,10 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - Post</title>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
@@ -10,10 +14,12 @@
         <h2 class='rec'>Make a Rec</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
-          {{form.title.label(class='rec')}} {{form.title(class='entry')}}
+          {{form.title.label(class='rec')}} {{form.title(class='entry titleentry')}}
+          <p class='chars-format'>Characters Left: <span class='chars-left-title'>100</span></p>
           <br/>
           {{form.public.label(class='rec')}} {{form.public(class='click', checked=True)}}
           <br/>
+          <p class='chars-format'>Characters Left: <span class='chars-left'>1000</span></p>
           {{form.text(class='textentry')}}
           <br/>
           <br/>

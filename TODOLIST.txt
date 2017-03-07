@@ -7,18 +7,12 @@
 1. MAJOR REFACTORING
     - Done:
         - Personal
-    - ToDo:
-        - Abstract
-        - Ajax
         - Auth
+    - ToDo:
         - Errors
-        - Macros
         - Main
-        - Mod
         - Non-template related code (manage, config, etc.)
     - Remove unneeded "user_id" from models
-
-
 
 1. Moderator Tools
     - Ability to Edit/Delete Posts

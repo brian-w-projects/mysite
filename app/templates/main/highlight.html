@@ -30,8 +30,7 @@
         {% if current_user.is_authenticated %}
           <h2 class='rec'>Comment</h2>
           <form method='POST'>
-            {{form.text.label(class='rec')}}
-            <br/>
+            <p class='chars-format'>Characters Left: <span class='chars-left'>250</span></p>
             {{form.text(class='textentry')}}
             <br/>
             {{form.csrf_token}}
