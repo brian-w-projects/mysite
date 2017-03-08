@@ -3,7 +3,9 @@
 {% import 'macros/commentmacro.html' as commentmacro %}
 
 {% if d_c.count() > 0 %}
-    {{commentmacro.render_posts(d_c, current_user, moment)}}
+  {% for com in d_c %}
+    {{commentmacro.render_post(com, current_user, moment)}}
+  {% endfor %}
 {% else %}
     <p class='emptyCom'>No Results</p>
 {% endif %}

@@ -2,15 +2,19 @@
 {% extends 'abstract/threecolumn.html' %}
 <html>
 <head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - About</title>
+  {% endblock %}
 </head>
 <body>
   {% block maincontent %}
-    <h2 class='rec'>Go on and have an adventure. When you are done, Rec it to everyone.</p>
+    <h2 class='rec'>Go and have an adventure. When you are done, Rec it to everyone.</p>
     <img src="{{url_for('static', filename='images/main/aboutrec.jpg')}}" class='align-center splash'/>
     <h2>
-        <a class='special-link rec' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
+      <a class='special-link rec' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
             Ready to Start? Register Here
-        </a>
+      </a>
     </h2>
   {% endblock %}
   {% block c1 %}
@@ -26,7 +30,7 @@
     <p>
       Find Recs that inspire you to have a new adventure. Find the people whose
       journeys amaze you. Connect with users around the world. Find others
-      who Rec the same things you Rec. 
+      who Rec the same things you do. 
     </p>
   {% endblock %}
   {% block c3 %}

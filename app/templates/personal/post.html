@@ -30,7 +30,9 @@
     </div><!--w940-->
     <br/>
     <div class='listrecs'>
-      {{postmacro.render_posts(display, current_user, moment)}}
+      {% for rec in display %}
+        {{postmacro.render_posts(rec, current_user, moment)}}
+      {% endfor %}
     </div><!--listrecs-->
     <div class='w940-center'>
       <a><p id='ajax' class='loadMore special-link'>Load More</p></a>

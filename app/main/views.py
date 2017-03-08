@@ -1,6 +1,6 @@
 from flask import render_template, session, redirect, url_for, request, abort, flash
 from . import main
-from .forms import SearchForm, CommentForm, DeleteForm, CommentEditForm
+from .forms import SearchForm, CommentForm, DeleteForm
 from .. import db
 from ..models import Users, Recommendation, Permission, Comments
 from flask_login import login_required, current_user
@@ -9,6 +9,15 @@ from ..email import send_email
 from random import randint, sample
 from datetime import datetime, timedelta
 from sqlalchemy.sql.expression import func, select
+
+@main.route('/about')
+def about():
+    temp = Recommendation.query\
+        .filter_by(public=True)\
+        .order_by(Recommendation.timestamp.desc())\
+        .limit(50)
+    display_recs = [possible for possible in temp if randint(1,3) == 2]
+    return render_template('main/about.html', display=display_recs[:5])
 
 @main.route('/')
 def index():
@@ -33,11 +42,6 @@ def index():
             display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('main/index.html', display = display_recs[:5])
 
-@main.route('/about')
-def about():
-    temp = Recommendation.query.filter_by(public=True).order_by(Recommendation.timestamp.desc()).limit(50)
-    display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('main/about.html', display=display_recs[:5])
 
 @main.route('/_highlight')
 def highlight_ajax():
@@ -95,33 +99,6 @@ def comment_delete(id):
             return redirect(url_for('main.comment_delete', id=id, _scheme='https', _external=True))
         return redirect(url_for('main.comment_delete', id=id, _scheme='https', _external=True))
     return render_template('main/delete.html', form=form, display=display_recs, d_c=display_comments)
-
-@main.route('/highlight/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def comment_edit(id):
-    form = CommentEditForm(request.form)
-    display_comments = [Comments.query.filter_by(id=id).first_or_404()]
-    display_recs = [Recommendation.query.filter_by(id=display_comments[0].posted_on).first_or_404()]
-    if display_comments[0].comment_by != current_user.id:
-        abort(403)
-    if request.method == 'POST':
-        if form.validate():
-            if form.delete.data:
-                db.session.delete(display_comments[0])
-                db.session.commit()
-                flash(u'\u2713 Comment deleted')
-                return redirect(url_for('main.highlight', id=display_recs[0].id, _scheme='https', _external=True))
-            else:
-                display_comments[0].comment = form.text.data
-                db.session.add(display_comments[0])
-                db.session.commit()
-                flash(u'\u2713 Comment updated')
-                return redirect(url_for('main.highlight', id=display_recs[0].id, _scheme='https', _external=True))
-        else:
-            flash(u'\u2717 Comment must contain text')
-            return redirect(url_for('main.comment_edit', id=id, _scheme='https', _external=True))
-    form.text.data = display_comments[0].comment
-    return render_template('main/commentedit.html', form=form, display=display_recs, d_c=display_comments)
 
 @main.route('/_surprise')
 def surprise_ajax():

@@ -1,18 +1,17 @@
 1. Integrate Celery to send emails
-2. FormField allows for dynamic forms. This will allow moderators to mod several recs at once
-    - Can't be used with booleanfields
-
-
 
 1. MAJOR REFACTORING
     - Done:
         - Personal
         - Auth
-    - ToDo:
         - Errors
+    - ToDo:
         - Main
+            - move highlight/delete over to personal
+            - finish cleaning up
+            - clean up naming structure?
         - Non-template related code (manage, config, etc.)
-    - Remove unneeded "user_id" from models
+    - Remove unneeded "username" from models
 
 1. Moderator Tools
     - Ability to Edit/Delete Posts

@@ -16,8 +16,3 @@ class CommentForm(FlaskForm):
 class DeleteForm(FlaskForm):
     delete = BooleanField('Delete: ', validators=[validators.DataRequired()])
     submit = SubmitField('Submit')
-
-class CommentEditForm(FlaskForm):
-    text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
-    delete = BooleanField('Delete: ')
-    submit = SubmitField('Submit')

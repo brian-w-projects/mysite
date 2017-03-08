@@ -2,7 +2,9 @@
 {{moment.include_moment()}}
 
 {% if display.count() > 0 %}
-    {{postmacro.render_posts(display, current_user, moment)}}
+  {% for rec in display %}
+    {{postmacro.render_post(rec, current_user, moment)}}
+  {% endfor %}
 {% else %}
     <p class='empty'>No Results</p>    
 {% endif %}
