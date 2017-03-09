@@ -1,6 +1,4 @@
 /* global $ */
-/* global $SCRIPT_ROOT */
-/* global limitVar */
 /* global goto */
 
 $(function(){
@@ -10,7 +8,7 @@ $(function(){
            contentType: 'application/json;charset=UTF-8',
            url: goto,
            datatype:'json',
-           data: {'limit':limitVar},
+           data: {},
            success: function(x){
                $('.listrecs').append(x);
            }

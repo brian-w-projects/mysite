@@ -12,7 +12,3 @@ class SearchForm(FlaskForm):
 class CommentForm(FlaskForm):
     text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
     submit = SubmitField('Submit')
-
-class DeleteForm(FlaskForm):
-    delete = BooleanField('Delete: ', validators=[validators.DataRequired()])
-    submit = SubmitField('Submit')

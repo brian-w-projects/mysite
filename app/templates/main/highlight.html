@@ -2,24 +2,33 @@
 {% extends 'abstract/onecolumn.html' %}
 <html>
 <head>
+ {% block head %}
+    {{super()}}
+    <title>Recommend Me - Rec {{rec.author.id}}</title>
+  {% endblock %} 
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
-      <h2><a class='rec special-link' href="{{url_for('personal.profile', id=display[0].author.id, _scheme='https', _external=True)}}">{{display[0].author.username}}</a></h2>
-      {% if current_user.is_authenticated and current_user.id != display[0].author_id %}
-        {% if current_user.following.filter_by(following=display[0].author_id).count() != 0 %}
-            <button class='rec change highlight-button' id='follow'>Following</button>
-        {% else %}
-            <button class='rec change highlight-button' id='follow'>Follow</button>
-        {% endif %}    
+      <h2>
+        <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id, _scheme='https', _external=True)}}">
+          {{rec.author.username}}
+        </a>
+      </h2>
+      {% if current_user.is_authenticated and current_user.id != rec.author_id %}
+        <button class='rec change highlight-bottom width-set' id='follow'>
+          {% if current_user.following.filter_by(following=rec.author_id).first() %}
+            Following
+          {% else %}
+            Follow
+          {% endif %}
+        </button>
+        <br/>
       {% endif %}
       {{ flashmacro.render_flash(get_flashed_messages()) }}
-    </div>
+    </div><!--w940-->
     <div class='listrecs'>
-      {% for rec in display %}
-        {{postmacro.render_post(rec, current_user, moment)}}
-      {% endfor %}
+      {{postmacro.render_post(rec, current_user, moment)}}
     </div><!--listrecs-->
     <div class='listcomments'>
       {% for com in d_c %}
@@ -38,21 +47,13 @@
             {{form.text(class='textentry')}}
             <br/>
             {{form.csrf_token}}
-            {{form.submit(class='rec entry', id='submit')}}
+            {{form.submit(class='rec', id='submit')}}
           </form>
         {% endif %}
       </div><!--w940-center-->
     </div><!--w940-->
     <script>
-      {% if current_user.is_authenticated %}
-        var offsetVar = {{current_user.display}};
-        var limitVar = {{current_user.display}};
-      {% else %}
-        var offsetVar = 10;
-        var limitVar = 10;
-      {% endif %}
-      var idVar = {{display[0].id}};
-      var id = {{display[0].author_id}};
+      var id = {{rec.author.id}};
       var goto = "{{url_for('main.highlight_ajax')}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>

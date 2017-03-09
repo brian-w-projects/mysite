@@ -1,17 +1,9 @@
 1. Integrate Celery to send emails
 
 1. MAJOR REFACTORING
-    - Done:
-        - Personal
-        - Auth
-        - Errors
-    - ToDo:
-        - Main
-            - move highlight/delete over to personal
-            - finish cleaning up
-            - clean up naming structure?
-        - Non-template related code (manage, config, etc.)
-    - Remove unneeded "username" from models
+    - Non-template related code (manage, config, etc.)
+    - Recreate all tables (add new forgery elements)
+
 
 1. Moderator Tools
     - Ability to Edit/Delete Posts

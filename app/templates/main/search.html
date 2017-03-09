@@ -4,6 +4,7 @@
 <head>
   {% block head %}
     {{super()}}
+    <title>Recommend Me - Search</title>
     <link href="{{url_for('static', filename='css/speciality/jquery-ui.css')}}" type='text/css' rel='stylesheet'/>
     <link href="{{url_for('static', filename='css/main/searchstyle.css')}}" type='text/css' rel='stylesheet'/>
   {% endblock %}
@@ -24,26 +25,18 @@
           {{form.date.label(class='rec')}} {{form.date(id='datepicker', class='entry')}}
           <br/>
           {{form.csrf_token}}
-          {{form.submit(class='rec entry', id='submit')}}
+          {{form.submit(class='rec', id='submit')}}
         </form>
       </div><!--w940-center-->
     </div><!--w940-->
-    <div class='listrecs'>
-      
-    </div>
+    <br/>
+    <div class='listrecs'></div>
     <div class='w940-center'>
       <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->
     <script>
-      {% if current_user.is_authenticated %}
-        var limitVar = {{current_user.display}};
-        var offsetVar = {{current_user.display}};
-      {% else %}
-        var limitVar = 10;
-        var offsetVar = 10;
-      {% endif %}
-      var goto = "{{url_for('main.search_ajax')}}"
-      var gotoM = "{{url_for('main.more_ajax')}}"
+      var goto = "{{url_for('main.search_ajax')}}";
+      var gotoM = "{{url_for('main.more_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/main/searchjs.js')}}"></script>
     <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>

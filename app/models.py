@@ -52,7 +52,6 @@ class Comments(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     comment_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    comment_by_user = db.Column(db.String, db.ForeignKey('users.username'))
     posted_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     comment = db.Column(db.Text)
@@ -69,11 +68,9 @@ class Comments(db.Model):
             u = Users.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             c = Comments(comment_by=u.id,
-                comment_by_user=u.username,
                 posted_on=r.id,
                 timestamp=forgery_py.date.date(True),
                 comment=forgery_py.lorem_ipsum.sentences(randint(2,8)))
-            r.likes += 1
             db.session.add(r)
             db.session.add(c)
             db.session.commit()

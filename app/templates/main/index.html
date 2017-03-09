@@ -24,10 +24,18 @@
       <div class='w700 slider'>
         <div class='slide-viewer'>
           <div class='slide-group'>
-            <div class='slide slide-1'><img src="{{url_for('static', filename='images/speciality/one.jpeg')}}"/></div>
-            <div class='slide slide-2'><img src="{{url_for('static', filename='images/speciality/two.jpeg')}}"/></div>
-            <div class='slide slide-3'><img src="{{url_for('static', filename='images/speciality/three.jpeg')}}"/></div>
-            <div class='slide slide-4'><img src="{{url_for('static', filename='images/speciality/four.jpeg')}}"/></div>
+            <div class='slide slide-1'>
+              <img src="{{url_for('static', filename='images/speciality/one.jpeg')}}"/>
+            </div><!--slide-1-->
+            <div class='slide slide-2'>
+              <img src="{{url_for('static', filename='images/speciality/two.jpeg')}}"/>
+            </div><!--slide-2-->
+            <div class='slide slide-3'>
+              <img src="{{url_for('static', filename='images/speciality/three.jpeg')}}"/>
+            </div><!--slide-3-->
+            <div class='slide slide-4'>
+              <img src="{{url_for('static', filename='images/speciality/four.jpeg')}}"/>
+            </div><!--slide-4-->
           </div><!--slide-group-->
         </div><!--slide-viewer-->
         <div class='slide-buttons'></div>
@@ -39,7 +47,7 @@
         {% for rec in display %}
           {{postmacro.render_post(rec, current_user, moment)}}
         {% endfor %}
-      </div>
+      </div><!--listrecs-->
     {% endblock %}
     {% block c1 %}
       <h3 class='rec'>Make Recs</h3>

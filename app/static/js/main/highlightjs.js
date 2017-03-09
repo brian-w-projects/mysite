@@ -1,10 +1,6 @@
 /* global $ */
-/* global $SCRIPT_ROOT */
-/* global limitVar */
-/* global offsetVar */
 /* global goto */
 /* global gotoF */
-/* global idVar */
 /* global id */
 
 $(function(){
@@ -14,18 +10,15 @@ $(function(){
             contentType: 'application/json;charset=UTF-8',
             url: gotoF,
             datatype:'json',
-            data: {'id': id, 'follow':$('#follow').text()},
+            data: {'id': id, 'follow':$('#follow').text().trim()=='Follow'},
             success: function(x){
                 var y = $.parseJSON(x);
-                if(y['added'] == true)
-                {
+                if(y['added'] == true){
                     $('#follow').text('Following');
                 }
-                else
-                {
+                else{
                     $('#follow').text('Follow');
                 }
-                
             }
         });
     });
@@ -36,10 +29,9 @@ $(function(){
             contentType: 'application/json;charset=UTF-8',
             url: goto,
             datatype:'json',
-            data: {'limit':limitVar, 'offset': offsetVar, 'id':idVar},
+            data: {},
             success: function(x){
                 $('.listcomments').append(x);
-                offsetVar += limitVar;
                if($('.emptyCom').length){
                         $('.loadMore').css('display', 'none');
                 }

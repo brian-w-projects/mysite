@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, abort, flash
 from . import personal
-from .forms import ChangeForm, PostForm, EditForm, CommentEditForm
+from .forms import ChangeForm, PostForm, EditForm, CommentEditForm, DeleteForm
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models import Users, Recommendation, Permission, Comments, Followers
 from .. import db
@@ -8,7 +8,31 @@ from ..email import send_email
 from datetime import datetime
 import json
 
-@personal.route('/highlight/edit/<int:id>', methods=['GET', 'POST'])
+@personal.route('/commentdelete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def comment_delete(id):
+    form = DeleteForm(request.form)
+    display_comments = Comments.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    display_recs = Recommendation.query\
+        .filter_by(id=display_comments.posted_on)\
+        .first_or_404()
+    if display_recs.author_id != current_user.id:
+        abort(403)
+    if request.method == 'POST':
+        if form.validate():
+            db.session.delete(display_comments)
+            db.session.commit()
+            flash(u'\u2713 Comment has been deleted')
+            return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
+        else:
+            flash(u'\u2717 You must confirm deletion')
+            return redirect(url_for('personal.comment_delete', id=id, _scheme='https', _external=True))
+        return redirect(url_for('personal.comment_delete', id=id, _scheme='https', _external=True))
+    return render_template('personal/commentdelete.html', form=form, rec=display_recs, com=display_comments)
+
+@personal.route('/commentedit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def comment_edit(id):
     form = CommentEditForm(request.form)

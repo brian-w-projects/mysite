@@ -11,7 +11,7 @@
       </p>
       {% if current_user.is_authenticated %}
         {% if current_user.posts.filter_by(id=com.posted_on).first() %}
-          <a href="{{url_for('main.comment_delete', id=com.id, _scheme='https', _external=True)}}">
+          <a href="{{url_for('personal.comment_delete', id=com.id, _scheme='https', _external=True)}}">
             <p class='postHeader special-link'>
               Delete
             </p>

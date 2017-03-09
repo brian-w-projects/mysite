@@ -1,9 +1,6 @@
 /* global $ */
-/* global $SCRIPT_ROOT */
-/* global limitVar */
 /* global goto */
 /* global gotoM */
-/* global offsetVar */
 
 $(function(){
     $('#submit').bind('click', function(event){
@@ -14,7 +11,6 @@ $(function(){
            data: $('form').serialize(),
            success: function(x){
                 $('.listrecs').html(x);
-                offsetVar = limitVar;
                if($('.empty').length){
                    $('.loadMore').css('display', 'none');
                }
@@ -32,10 +28,9 @@ $(function(){
            contentType: 'application/json;charset=UTF-8',
            url: gotoM,
            datatype:'json',
-           data: {'limit':limitVar, 'offset':offsetVar},
+           data: {},
            success: function(x){
                $('.listrecs').append(x);
-               offsetVar += limitVar;
                if($('.empty').length || $('.emptyCom').length){
                    $('.loadMore').css('display', 'none');
                }
