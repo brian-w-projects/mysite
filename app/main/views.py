@@ -39,6 +39,8 @@ def highlight(id):
     session['id']=id
     form = CommentForm(request.form)
     display_recs = Recommendation.query.filter_by(id=id).first_or_404()
+    if display_recs.public == False and display_recs.author_id != current_user.id:
+            abort(403)
     display_comments = display_recs.comments\
         .order_by(Comments.timestamp.desc())\
         .limit(session['limit'])

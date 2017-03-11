@@ -221,6 +221,7 @@ class Recommendation(db.Model):
     new_comment = db.Column(db.Boolean, default=False)
     verification = db.Column(db.Integer) 
     # verification = 0->private, 1->public and unchecked, 2->OKayed
+    made_private = db.Column(db.Boolean, default=False)
     comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',

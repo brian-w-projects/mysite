@@ -1,10 +1,12 @@
 1. Integrate Celery to send emails
 
 
+
+
 1. Moderator Tools
-    - Ability to Edit/Delete Posts
-    - Special Page with Recs to check, with checkbox to 'OK', 'Delete', or 'Privatize'
-      - Send messages to Users about Deleted or Privatized Messages
+    - Moderator Comments (add verification column to comments)
+    - Splash page for Mods with unverified counts
+    
 2. Administrator Tools
     - Special Page with stats 
     - Special page with info on Moderators

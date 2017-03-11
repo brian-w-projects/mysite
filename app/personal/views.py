@@ -283,7 +283,20 @@ def profile(id=-1):
     else:
         limit=10
     user = Users.query.filter_by(id=id).first_or_404()
-    display_recs = user.posts.order_by(Recommendation.timestamp.desc()).limit(limit)
+    display_recs = user.posts\
+        .order_by(Recommendation.timestamp.desc())\
+        .filter_by(made_private=True)
+    for rec in display_recs:
+        title = rec.title
+        if len(rec.title) > 10:
+            title = rec.title[:10]
+        flash("Rec '" + title + "...' has been made private due to it's content.")
+        rec.made_private = False
+        db.session.add(rec)
+        db.session.commit()
+    display_recs = user.posts\
+        .order_by(Recommendation.timestamp.desc())\
+        .limit(limit)
     display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
     return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
 
