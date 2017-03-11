@@ -1,45 +1,35 @@
-{% macro render_names(display_names, moment) %}
-  {% if display_names.count() != 0 %}
-    {% for name in display_names %}
-      <div class='name'>
-        <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
-        <a href="{{url_for('personal.profile', id=name.following, _scheme='https', _external=True)}}">
-          <p class='loadMore special-link'>
-            {{name.who.username}}
-            <br/>
-            {{moment(name.timestamp).fromNow()}}
-            <br/>
-          </p>
-        </a>
-      </div><!--name-->
-      <br/>
-    {% endfor %}
-  {% else %}
-    <p>You aren't following anyone! Go to a user's profile to start following them.</p>
-  {% endif %}
+{% macro render_name(name, current_user, user, moment) %}
+  <div class='name'>
+    {% if current_user.is_authenticated and current_user.id == user.id %}
+      <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
+    {% endif %}
+    <a href="{{url_for('personal.profile', id=name.following, _scheme='https', _external=True)}}">
+      <p class='followName special-link'>
+        {{name.who.username}}
+        <br/>
+        Following Since: {{moment(name.timestamp).fromNow()}}
+        <br/>
+      </p>
+    </a>
+  </div><!--name-->
 {% endmacro %}
 
-{% macro render_names2(display_names, current_user, moment) %}
-  {% if display_names.count() != 0 %}
-    {% for name in display_names %}
-      <div class='name'>
-        <a href="{{url_for('personal.profile', id=name.follower, _scheme='https', _external=True)}}">
-          <p class='loadMore special-link'>
-            {{name.user.username}}
-            <br/>
-            {{moment(name.timestamp).fromNow()}}
-            <br/>
-            {% if current_user.following.filter_by(following=name.follower).count() != 0 %}
-              You are following this user.
-            {% else %}
-              You are NOT following this user.
-            {% endif %}
-          </p>
-        </a>
-      </div><!--name-->
-      <br/>
-    {% endfor %}
-  {% else %}
-    <p>Nobody is following you! Post some Recs to get followers.</p>
-  {% endif %}
+{% macro render_name2(name, current_user, moment) %}
+  <div class='name'>
+    <a href="{{url_for('personal.profile', id=name.follower, _scheme='https', _external=True)}}">
+      <p class='followName special-link'>
+        {{name.user.username}}
+        <br/>
+        Follower Since: {{moment(name.timestamp).fromNow()}}
+        <br/>
+        {% if current_user.is_authenticated %}
+          {% if current_user.following.filter_by(following=name.follower).count() != 0 %}
+            You are following this user.
+          {% else %}
+            You are NOT following this user.
+          {% endif %}
+        {% endif %}
+      </p>
+    </a>
+  </div><!--name-->
 {% endmacro %}

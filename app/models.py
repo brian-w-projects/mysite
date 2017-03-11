@@ -47,6 +47,28 @@ class Followers(db.Model):
     follower = db.Column(db.Integer, db.ForeignKey('users.id'))
     following = db.Column(db.Integer, db.ForeignKey('users.id'))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    
+    @staticmethod
+    def generate_followers(count):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count=Users.query.count()
+        for i in range(count):
+            u = Users.query.offset(randint(0, user_count-1)).first()
+            v = Users.query.offset(randint(0, user_count-1)).first()
+            if datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d') < datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d'):
+                days_since = (datetime.utcnow() - datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d')).days
+            else:
+                days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
+            if days_since == 0:
+                continue
+            if u.id != v.id and not u.following.filter_by(following=v.id).first():
+                f = Followers(follower=u.id, following=v.id,
+                    timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since))
+                db.session.add(f)
+                db.session.commit()
 
 class Comments(db.Model):
     __tablename__ = 'comments'
@@ -57,7 +79,7 @@ class Comments(db.Model):
     comment = db.Column(db.Text)
     
     @staticmethod
-    def generate_comments(count=1000):
+    def generate_comments(count):
         from random import seed, randint
         import forgery_py
         
@@ -67,11 +89,11 @@ class Comments(db.Model):
         for i in range(count):
             u = Users.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
+            days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
             c = Comments(comment_by=u.id,
                 posted_on=r.id,
-                timestamp=forgery_py.date.date(True),
-                comment=forgery_py.lorem_ipsum.sentences(randint(2,8)))
-            db.session.add(r)
+                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
 
@@ -154,7 +176,7 @@ class Users(UserMixin, db.Model):
         return Users.get_random_string(10, chars)
 
     @staticmethod
-    def generate_users(count=100):
+    def generate_users(count):
         from sqlalchemy.exc import IntegrityError
         from random import seed, randint
         import forgery_py
@@ -166,8 +188,8 @@ class Users(UserMixin, db.Model):
                 password=forgery_py.lorem_ipsum.word(),
                 confirmed=True,
                 about_me=forgery_py.lorem_ipsum.sentences(randint(3,5)),
-                member_since=forgery_py.date.date(True),
-                last_login=forgery_py.date.date(True))
+                member_since=forgery_py.date.date(True, min_delta=0, max_delta=365),
+                last_login=forgery_py.date.date(True, min_delta=0, max_delta=100))
             db.session.add(u)
             try:
                 db.session.commit()
@@ -205,7 +227,7 @@ class Recommendation(db.Model):
         cascade='all, delete-orphan')
     
     @staticmethod
-    def generate_recs(count=1000):
+    def generate_recs(count):
         from random import seed, randint
         import forgery_py
         
@@ -213,17 +235,23 @@ class Recommendation(db.Model):
         user_count=Users.query.count()
         for i in range(count):
             u = Users.query.offset(randint(0, user_count - 1)).first()
-            pub = randint(0,10)<8
-            if pub:
-                ver = 1
+            days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
+            if days_since == 0:
+                continue
+            ver = randint(0,10)<8
+            if randint(0,10)<8 and ver:
+                verified = 2
+            elif not ver:
+                verified = 0
             else:
-                ver = 0
+                verified = 1
+            
             r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
-                public=pub,
-                timestamp=forgery_py.date.date(True),
+                public=ver,
+                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
                 author=u,
                 text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
-                verification=ver)
+                verification=verified)
             
             db.session.add(r)
             db.session.commit()

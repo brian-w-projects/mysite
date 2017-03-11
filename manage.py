@@ -39,21 +39,21 @@ def hashed_static_file(endpoint, values):
 
 if __name__ == '__main__':
     # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    #     Role.insert_roles()
-    #     user = Users(username='a', email='njpsfgsdychopath@gmail.com', password='123456789', confirmed=True)
+        # db.drop_all()
+        # db.create_all()
+        # Role.insert_roles()
+        # user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id=2)
         # db.session.add(user)
-        # upgrade = Users.query.filter_by(username='njpsychopath').first()
-        # upgrade.password = '123456789'
-    #     upgrade.role_id=2
-    #     db.session.add(upgrade)
-    #     user2 = Users(username='b', email='exdsfample@example.com', password='123456789', confirmed=True)
-    #     db.session.add(user2)
-    #     Users.generate_users()
-    #     Recommendation.generate_recs(250)
-    #     Comments.generate_comments(3000)
+        # user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
+        # db.session.add(user2)
+        # Users.generate_users(1000)
+        # print('Finished users')
+        # Recommendation.generate_recs(5000)
+        # print('Finished recs')
+        # Comments.generate_comments(10000)
+        # print('Finished comments')
+        # Followers.generate_followers(10000)
+        # print('Finished followers')
         # db.session.commit()
-
 
     manager.run()

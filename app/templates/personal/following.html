@@ -4,22 +4,35 @@
 <head>
   {% block head %}
     {{super()}}
-    <title>Recommend Me - Following</title>
+    <title>Recommend Me - Following {{user.username}}</title>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
       <div class='w940-center'>
-        <h2 class='rec'>Following</h2>
+        <h2 class='rec'>{{user.username}} Following</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {{namemacro.render_names(display_names, moment)}}
+      {% if display_names.count() != 0 %}
+        {% for name in display_names %}
+          {{namemacro.render_name(name, current_user, user, moment)}}
+          {{postmacro.render_post(name.who.posts.filter_by(public=True)
+            .order_by(Recommendation.timestamp.desc()).first(), current_user, moment)}}
+        {% endfor %}
+      {% else %}
+        <p>You aren't following anyone! Go to a user's profile to start following them.</p>
+      {% endif %}
     </div><!--listrecs-->
+    <div class='w940-center'>
+      <a><p class='ajax loadMore special-link'>Load More</p></a>
+    </div><!--w940-center-->
     <script>
       var goto = "{{url_for('personal.follow_ajax')}}";
+      var gotoM = "{{url_for('personal.following_ajax')}}";
+      var id = "{{user.id}}"
     </script>
     <script src="{{url_for('static', filename='js/personal/followingjs.js')}}"></script>
   {% endblock %}

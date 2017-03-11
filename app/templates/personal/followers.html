@@ -4,20 +4,36 @@
 <head>
   {% block head %}
     {{super()}}
-    <title>Recommend Me - Followers</title>
+    <title>Recommend Me - Followers {{user.username}}</title>
   {% endblock %}
 </head>
 <body>
   {% block maincontent %}
     <div class='w940'>
       <div class='w940-center'>
-          <h2 class='rec'>Followers</h2>
+          <h2 class='rec'>{{user.username}} Followers</h2>
           {{ flashmacro.render_flash(get_flashed_messages()) }}
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {{namemacro.render_names2(display_names, current_user, moment)}}
+      {% if display_names.count() != 0 %}
+        {% for name in display_names %}
+          {{namemacro.render_name2(name, current_user, moment)}}
+          {{postmacro.render_post(name.user.posts.filter_by(public=True)
+            .order_by(Recommendation.timestamp.desc()).first(), current_user, moment)}}
+        {% endfor %}
+      {% else %}
+        <p>Nobody is following you! Post some Recs to get followers.</p>
+      {% endif %}
     </div><!--listrecs-->
+    <div class='w940-center'>
+      <a><p class='ajax loadMore special-link'>Load More</p></a>
+    </div><!--w940-center-->
+    <script>
+      var id = {{user.id}};
+      var goto = "{{url_for('personal.followers_ajax')}}";
+    </script>
+    <script src="{{url_for('static', filename='js/personal/followersjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

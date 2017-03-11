@@ -99,11 +99,38 @@ def edit(post_id):
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
-@personal.route('/followers')
+@personal.route('/_followers')
 @login_required
-def followers():
-    to_return = current_user.followed_by.order_by(Followers.timestamp.desc())
-    return render_template('personal/followers.html', display_names=to_return)
+def followers_ajax():
+    id = request.args.get('id')
+    session['offset'] += session['limit']
+    user = Users.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    to_return = user\
+        .followed_by\
+        .order_by(Followers.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(session['limit'])
+    return render_template('ajax/followerajax.html', display = to_return, Recommendation=Recommendation)
+
+@personal.route('/followers/<int:id>')
+@personal.route('/followers')
+def followers(id):
+    if current_user.is_authenticated:
+        session['limit'] = current_user.display
+    else:
+        session['limit'] = 10
+    session['offset'] = 0
+    user = Users.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    to_return = user\
+        .followed_by\
+        .order_by(Followers.timestamp.desc())\
+        .limit(session['limit'])
+    return render_template('personal/followers.html', display_names=to_return, 
+        user=user, Recommendation=Recommendation)
 
 @personal.route('/_follow')
 @login_required
@@ -120,11 +147,38 @@ def follow_ajax():
         db.session.commit()
         return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
 
+@personal.route('/_following')
+def following_ajax():
+    id = request.args.get('id')
+    session['offset'] += session['limit']
+    user = Users.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    to_return = user\
+        .following\
+        .order_by(Followers.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(session['limit'])
+    return render_template('ajax/followingajax.html', display_names = to_return, 
+        Recommendation=Recommendation, user=user)
+
+
+@personal.route('/following/<int:id>')
 @personal.route('/following')
-@login_required
-def following():
-    to_return = current_user.following.order_by(Followers.timestamp.desc())
-    return render_template('personal/following.html', display_names=to_return)
+def following(id):
+    if current_user.is_authenticated:
+        session['limit'] = current_user.display
+    else:
+        session['limit'] = 10
+    session['offset'] = 0
+    user = Users.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    to_return = user\
+        .following\
+        .order_by(Followers.timestamp.desc())\
+        .limit(session['limit'])
+    return render_template('personal/following.html', display_names=to_return, user = user, Recommendation=Recommendation)
 
 @personal.route('/_inspiration')
 @login_required
