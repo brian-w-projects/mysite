@@ -69,6 +69,8 @@ def highlight(id):
 def index():
     display_recs = []
     if current_user.is_authenticated:
+        if current_user.role_id == 2:
+            return redirect(url_for('admin.admin_splash', _scheme='https', _external=True))
         initial_grab = Recommendation.query\
             .filter_by(public=True)\
             .filter(Recommendation.author_id != current_user.id)\

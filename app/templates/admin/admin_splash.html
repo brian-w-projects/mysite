@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends 'abstract/onecolumn.html' %}
+<html>
+<head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - Admin</title>
+  {% endblock %}
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <div class='w940-center'>
+         <h2 class='rec'>Admin</h2>
+         <p>Total users: {{data['count']}}</p>
+         <p>Recent accounts: {{data['recent_account']}}</p>
+         <p>Recent logins: {{data['recent_logins']}}</p>
+         <p>Total recs: {{data['total_recs']}}</p>
+         <p>Recent recs: {{data['recent_recs']}}</p>
+         <p>Total comments: {{data['total_comments']}}</p>
+         <p>Recent comments: {{data['recent_comments']}}</p>
+         <p>Recs to Verify: {{data['recs_to_mod']}}</p>
+         <p>Comments to Verify: {{data['comments_to_mod']}}</p>
+         <p>Total mods: {{data['mods_count']}}</p>
+         {% for mod in data['mods'] %}
+           <p>
+             <a class='special-link'
+                href="{{url_for('personal.profile', id=mod.id, _scheme='https', _external=True)}}">
+               {{mod.username}}
+             </a>
+           </p>
+           <p>Last Login: {{moment(mod.last_login).fromNow()}}</p>
+           <p>Total Rec Mods: {{mod.rec_mods.count()}}</p>
+           <p>Last Week Rec Mods: {{mod.rec_mods.filter(RecModerations.timestamp > week_ago).count()}}</p>
+           <p>Total Com Mods: {{mod.com_mods.count()}}</p>
+           <p>Last Week Com Mods: {{mod.com_mods.filter(ComModerations.timestamp > week_ago).count()}}</p>
+           
+         {% endfor %}
+      </div><!--w940-center-->
+    </div><!--w940-->
+  {% endblock %}
+</body>
+</html>

@@ -100,6 +100,22 @@ class Comments(db.Model):
             db.session.add(c)
             db.session.commit()
 
+class RecModerations(db.Model):
+    __tablename__ = 'recmoderations'
+    id = db.Column(db.Integer, primary_key=True)
+    mod_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    mod_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    action = db.Column(db.Boolean)
+
+class ComModerations(db.Model):
+    __tablename__ = 'commoderations'
+    id = db.Column(db.Integer, primary_key=True)
+    mod_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    mod_on = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    action = db.Column(db.Boolean)
+
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
@@ -114,6 +130,8 @@ class Users(UserMixin, db.Model):
     member_since = db.Column(db.DATETIME(), default=datetime.utcnow)
     last_login = db.Column(db.DATETIME(), default=datetime.utcnow)
     invalid_logins = db.Column(db.Integer, default=0)
+    rec_mods = db.relationship('RecModerations', backref='user', lazy='dynamic')
+    com_mods = db.relationship('ComModerations', backref='user', lazy='dynamic')
     posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
     following = db.relationship('Followers', backref='user', 
         foreign_keys=[Followers.follower], lazy='dynamic')

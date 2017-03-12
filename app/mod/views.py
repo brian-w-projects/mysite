@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 from . import mod
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission, Comments
+from ..models import Users, Recommendation, Permission, Comments, RecModerations, ComModerations
 from .. import db
 from ..email import send_email
 from ..decorators import permission_required
@@ -14,6 +14,8 @@ import json
 def moderate_ajax():
     id = request.args.get('id')
     verify = request.args.get('verify')
+    new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=verify)
+    db.session.add(new_mod)
     if verify is True:
         rec = Recommendation.query.filter_by(id=id).first_or_404()
         rec.verification = 2
@@ -58,6 +60,8 @@ def verify():
 def moderate_com_ajax():
     id = request.args.get('id')
     verify = request.args.get('verify')
+    new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action=verify)
+    db.session.add(new_mod)
     if verify is True:
         com = Comments.query.filter_by(id=id).first_or_404()
         com.verified = True
