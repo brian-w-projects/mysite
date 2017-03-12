@@ -2,12 +2,7 @@
 
 
 
-
-1. Moderator Tools
-    - Moderator Comments (add verification column to comments)
-    - Splash page for Mods with unverified counts
-    
-2. Administrator Tools
+1. Administrator Tools
     - Special Page with stats 
     - Special page with info on Moderators
 

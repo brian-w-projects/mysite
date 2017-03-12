@@ -1,0 +1,16 @@
+{{moment.include_jquery()}}
+{{moment.include_moment()}}
+{% import 'macros/commentmacro.html' as commentmacro %}
+
+{% if d_c.count() > 0 %}
+  {% for com in d_c %}
+   <div class='button'>
+      <button class='rec to_check verify' id='{{com.id}}'>Verify</button>
+      <button class='rec to_check private' id='{{com.id}}'>Delete</button>
+      <br/>
+    </div><!--button-->
+    {{commentmacro.render_post(com, current_user, moment)}}
+  {% endfor %}
+{% else %}
+    <p class='emptyCom'>No Results</p>
+{% endif %}

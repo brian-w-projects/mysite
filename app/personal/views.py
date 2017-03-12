@@ -280,6 +280,13 @@ def profile(id=-1):
         return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
     if current_user.is_authenticated:
         limit=current_user.display
+        if current_user.can(Permission.MODERATE_COMMENTS):
+            com_count = Comments.query\
+                .filter_by(verified=0)\
+                .count()
+            rec_count = Recommendation.query\
+                .filter_by(verification=1)\
+                .count()
     else:
         limit=10
     user = Users.query.filter_by(id=id).first_or_404()
@@ -298,7 +305,8 @@ def profile(id=-1):
         .order_by(Recommendation.timestamp.desc())\
         .limit(limit)
     display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
-    return render_template('personal/profile.html', user=user, display=display_recs, d_c=display_comments, id=id)
+    return render_template('personal/profile.html', user=user, display=display_recs, 
+        d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
 
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required

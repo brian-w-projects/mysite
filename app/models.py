@@ -76,6 +76,7 @@ class Comments(db.Model):
     comment_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     posted_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    verified = db.Column(db.Boolean, default=False)
     comment = db.Column(db.Text)
     
     @staticmethod
@@ -90,9 +91,11 @@ class Comments(db.Model):
             u = Users.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
+            v = randint(1,10) < 8
             c = Comments(comment_by=u.id,
                 posted_on=r.id,
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                verified=v,
                 comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()

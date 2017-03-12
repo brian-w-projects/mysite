@@ -3,7 +3,7 @@
 /* global gotoM */
 
 $(function(){
-    $('.to_check').bind('click', function(){
+    $('.listrecs').on('click', '.to_check', function(){
         var $to_mod = $(this);
         var $id = $(this).attr('id');
         var $action = $(this).hasClass('verify');

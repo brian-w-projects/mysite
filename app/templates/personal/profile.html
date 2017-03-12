@@ -12,6 +12,25 @@
   {% block maincontent %}
     <div class='w940'>
       <div class='w940-center'>
+        {% if current_user.is_authenticated and current_user.role_id == 1 %}
+          <h2 class='rec'>Welcome, Moderator</h2>
+          <div class='profile-box'>
+            <div class='profile-left'>
+              <p>
+                <a class='profile-link special-link' 
+                  href="{{url_for('mod.verify', _scheme='https', _external=True)}}">
+                  Unverified Recs: {{rec_count}}
+                </a>
+              </p>
+              <p>
+                <a class='profile-link special-link' 
+                  href="{{url_for('mod.verify_comments', _scheme='https', _external=True)}}">
+                  Unverified Comments: {{com_count}}
+                </a>
+              </p>
+            </div><!--profile-left-->
+          </div><!-profile-box-->
+        {% endif %}
         <h2 class='rec'>Profile</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
       </div><!--w940-center-->
