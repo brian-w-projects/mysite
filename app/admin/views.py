@@ -2,8 +2,8 @@ from flask import render_template, request, redirect, url_for, session, abort, f
 from . import admin
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission, Comments, Followers, RecModerations, ComModerations
-from ..decorators import permission_required
+from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations
+from ..decorators import is_administrator
 from .. import db
 from ..email import send_email
 from datetime import datetime, timedelta
@@ -11,7 +11,7 @@ import json
 
 @admin.route('/admin')
 @login_required
-@permission_required(Permission.ADMINISTER)
+@is_administrator
 def admin_splash():
     week_ago = datetime.today() - timedelta(days=7)
     data = {}
@@ -31,13 +31,13 @@ def admin_splash():
         .filter(Comments.timestamp > week_ago)\
         .count()
     data['recs_to_mod'] = Recommendation.query\
-        .filter(Comments.verification != 0)\
+        .filter(Recommendation.verification == 1)\
         .count()
     data['comments_to_mod'] = Comments.query\
         .filter_by(verification=1)\
         .count()
     data['mods'] = Users.query\
-        .filter_by(role_id = 1)
+        .filter_by(role_id = 2)
     data['mods_count'] = data['mods'].from_self()\
         .count()
     return render_template('admin/admin_splash.html', data=data, RecModerations=RecModerations,

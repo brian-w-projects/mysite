@@ -2,9 +2,9 @@ from flask import render_template, session, redirect, url_for, request, abort, f
 from . import main
 from .forms import SearchForm, CommentForm
 from .. import db
-from ..models import Users, Recommendation, Permission, Comments
+from ..models import Users, Recommendation, Comments
 from flask_login import login_required, current_user
-from ..decorators import admin_required, permission_required
+from ..decorators import is_administrator
 from ..email import send_email
 from random import randint, sample
 from datetime import datetime, timedelta
@@ -71,7 +71,7 @@ def highlight(id):
 def index():
     display_recs = []
     if current_user.is_authenticated:
-        if current_user.role_id == 2:
+        if current_user.is_administrator():
             return redirect(url_for('admin.admin_splash', _scheme='https', _external=True))
         initial_grab = Recommendation.query\
             .filter(Recommendation.verification > 0)\

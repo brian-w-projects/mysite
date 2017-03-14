@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, session, abort, f
 from . import personal
 from .forms import ChangeForm, PostForm, EditForm, CommentEditForm, DeleteForm
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission, Comments, Followers
+from ..models import Users, Recommendation, Comments, Followers
 from .. import db
 from ..email import send_email
 from datetime import datetime
@@ -284,9 +284,9 @@ def profile(id=-1):
         return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
     if current_user.is_authenticated:
         limit=current_user.display
-        if current_user.can(Permission.MODERATE_COMMENTS):
+        if current_user.is_moderator():
             com_count = Comments.query\
-                .filter_by(verified=0)\
+                .filter_by(verification=1)\
                 .count()
             rec_count = Recommendation.query\
                 .filter_by(verification=1)\

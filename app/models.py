@@ -6,47 +6,32 @@ from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
 import random
+
 random = random.SystemRandom()
-
-class Permission:
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
-
 
 class Role(db.Model):
     __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True)
     name = db.Column(db.String(64), unique=True)
-    default = db.Column(db.Boolean, default=False, index=True)
-    permissions = db.Column(db.Integer)
+    default = db.Column(db.BOOLEAN, default=False, index=True)
     users = db.relationship('Users', backref='role', lazy='dynamic')
 
     @staticmethod
-    def insert_roles():
-        roles = {
-            'User': (Permission.FOLLOW | Permission.COMMENT | Permission.WRITE_ARTICLES, True),
-            'Moderator': (Permission.FOLLOW | Permission.COMMENT | Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
-            'Administrator': (0xff, False)
-        }
-        for r in roles:
-            role = Role.query.filter_by(name=r).first()
-            if role is None:
-                role = Role(name=r)
-            role.permissions = roles[r][0]
-            role.default = roles[r][1]
-            db.session.add(role)
+    def generate_roles():
+        role = Role(name='Administrator')
+        db.session.add(role)
+        role = Role(name='Moderator')
+        db.session.add(role)
+        role = Role(name='User', default=True)
+        db.session.add(role)
         db.session.commit()
 
 class Followers(db.Model):
     __tablename__ = 'followers'
-    id = db.Column(db.Integer, primary_key=True)
-    follower = db.Column(db.Integer, db.ForeignKey('users.id'))
-    following = db.Column(db.Integer, db.ForeignKey('users.id'))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    id = db.Column(db.INTEGER, primary_key=True)
+    follower = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    following = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
     
     @staticmethod
     def generate_followers(count):
@@ -58,10 +43,12 @@ class Followers(db.Model):
         for i in range(count):
             u = Users.query.offset(randint(0, user_count-1)).first()
             v = Users.query.offset(randint(0, user_count-1)).first()
-            if datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d') < datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d'):
-                days_since = (datetime.utcnow() - datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d')).days
+            u_time = datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')
+            v_time = datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d')
+            if u_time < v_time:
+                days_since = (datetime.utcnow() - v_time).days
             else:
-                days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
+                days_since = (datetime.utcnow() - u_time).days
             if days_since == 0:
                 continue
             if u.id != v.id and not u.following.filter_by(following=v.id).first():
@@ -72,13 +59,13 @@ class Followers(db.Model):
 
 class Comments(db.Model):
     __tablename__ = 'comments'
-    id = db.Column(db.Integer, primary_key=True)
-    comment_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    posted_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    verification = db.Column(db.Integer, default=1) 
+    id = db.Column(db.INTEGER, primary_key=True)
+    comment_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    posted_on = db.Column(db.INTEGER, db.ForeignKey('recs.id'))
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    verification = db.Column(db.INTEGER, default=1) 
     # verification = 0->private, 1->public and unchecked, 2->OKayed
-    comment = db.Column(db.Text)
+    comment = db.Column(db.TEXT)
     
     @staticmethod
     def generate_comments(count):
@@ -92,30 +79,99 @@ class Comments(db.Model):
             u = Users.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
-            v = randint(1,2)
             c = Comments(comment_by=u.id,
                 posted_on=r.id,
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                verification=v,
+                verification=1,
                 comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
 
 class RecModerations(db.Model):
     __tablename__ = 'recmoderations'
-    id = db.Column(db.Integer, primary_key=True)
-    mod_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    mod_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    action = db.Column(db.Boolean)
+    id = db.Column(db.INTEGER, primary_key=True)
+    mod_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    mod_on = db.Column(db.INTEGER, db.ForeignKey('recs.id'))
+    timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
+    action = db.Column(db.BOOLEAN)
+
+    @staticmethod
+    def generate_recmods():
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        mods = Users.query.filter_by(role_id = 2)
+        rec_count = Recommendation.query.filter_by(verification=1).count()
+        for mod in mods:
+            for i in range(int(rec_count / mods.count() * 0.9)):
+                rec_mod = Recommendation.query\
+                    .filter_by(verification=1)\
+                    .offset(randint(0, rec_count-1))\
+                    .first()
+                if rec_mod:
+                    days_since = (datetime.utcnow() - datetime.strptime(str(rec_mod.timestamp)[:10], '%Y-%m-%d')).days
+                    if randint(0,1) == 0:
+                        to_add = RecModerations(mod_by=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            mod_on=rec_mod.id, action = True)
+                        rec_mod.verification = 2
+                        db.session.add(to_add)
+                        db.session.add(rec_mod)
+                        db.session.commit()
+                    else:
+                        to_add = RecModerations(mod_by=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            mod_on=rec_mod.id, action = False)
+                        rec_mod.verification = 0
+                        rec_mod.made_private = 1
+                        db.session.add(to_add)
+                        db.session.add(rec_mod)
+                        db.session.commit()
+
 
 class ComModerations(db.Model):
     __tablename__ = 'commoderations'
-    id = db.Column(db.Integer, primary_key=True)
-    mod_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    mod_on = db.Column(db.Integer, db.ForeignKey('comments.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    action = db.Column(db.Boolean)
+    id = db.Column(db.INTEGER, primary_key=True)
+    mod_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    mod_on = db.Column(db.INTEGER, db.ForeignKey('comments.id'))
+    timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
+    action = db.Column(db.BOOLEAN)
+    
+    @staticmethod
+    def generate_commods():
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        mods = Users.query.filter_by(role_id = 2)
+        com_count = Comments.query\
+            .filter_by(verification=1)\
+            .count()
+        for mod in mods:
+            for i in range(int(com_count / mods.count() * 0.9)):
+                com_mod = Comments.query\
+                    .filter_by(verification=1)\
+                    .offset(randint(0, com_count-1))\
+                    .first()
+                if com_mod:
+                    days_since = (datetime.utcnow() - datetime.strptime(str(com_mod.timestamp)[:10], '%Y-%m-%d')).days
+                    if randint(0,1) == 0:
+                        to_add = ComModerations(mod_by=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            mod_on=com_mod.id, action = True)
+                        com_mod.verification = 2
+                        db.session.add(to_add)
+                        db.session.add(com_mod)
+                        db.session.commit()
+                    else:
+                        to_add = ComModerations(mod_by=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            mod_on=com_mod.id, action = False)
+                        com_mod.verification = 0
+                        db.session.add(to_add)
+                        db.session.add(com_mod)
+                        db.session.commit()
 
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -123,14 +179,14 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
     password_hash = db.Column(db.String(128))
-    updates = db.Column(db.Boolean, default=True)
-    confirmed = db.Column(db.Boolean, default=False)
+    updates = db.Column(db.BOOLEAN, default=True)
+    confirmed = db.Column(db.BOOLEAN, default=False)
     role_id = db.Column(db.INTEGER, db.ForeignKey('roles.id'))
-    display = db.Column(db.Integer, default=10)
-    about_me = db.Column(db.Text())
-    member_since = db.Column(db.DATETIME(), default=datetime.utcnow)
-    last_login = db.Column(db.DATETIME(), default=datetime.utcnow)
-    invalid_logins = db.Column(db.Integer, default=0)
+    display = db.Column(db.INTEGER, default=10)
+    about_me = db.Column(db.TEXT)
+    member_since = db.Column(db.DATETIME, default=datetime.utcnow)
+    last_login = db.Column(db.DATETIME, default=datetime.utcnow)
+    invalid_logins = db.Column(db.INTEGER, default=0)
     rec_mods = db.relationship('RecModerations', backref='user', lazy='dynamic')
     com_mods = db.relationship('ComModerations', backref='user', lazy='dynamic')
     posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
@@ -142,15 +198,6 @@ class Users(UserMixin, db.Model):
         backref=db.backref('comm', lazy='joined'),
         lazy='dynamic',
         cascade='all, delete-orphan')
-
-
-    def __init__(self, **kwargs):
-        super(Users, self).__init__(**kwargs)
-        if self.role is None:
-            if self.email == current_app.config['ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
 
     @property
     def password(self):
@@ -180,11 +227,11 @@ class Users(UserMixin, db.Model):
         db.session.commit()
         return True
 
-    def can(self, permissions):
-        return self.role is not None and (self.role.permissions & permissions) == permissions
+    def is_moderator(self):
+        return self.role_id == 2 or self.role_id == 1
 
     def is_administrator(self):
-        return self.can(Permission.ADMINISTER)
+        return self.role_id == 1
         
     @staticmethod
     def get_random_string(length=12,
@@ -210,10 +257,16 @@ class Users(UserMixin, db.Model):
             db.session.commit()
         
         for i in range(count):
+            if randint(0,100) == 10:
+                role = 2
+            else:
+                role = 3
+            
             u = Users(username=forgery_py.internet.user_name(True),
                 email=forgery_py.internet.email_address(),
                 password=forgery_py.lorem_ipsum.word(),
                 confirmed=True,
+                role_id = role,
                 about_me=forgery_py.lorem_ipsum.sentences(randint(3,5)),
                 member_since=forgery_py.date.date(True, min_delta=0, max_delta=365),
                 last_login=forgery_py.date.date(True, min_delta=0, max_delta=100))
@@ -225,7 +278,7 @@ class Users(UserMixin, db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
-    def can(self, permissions):
+    def is_moderator(self):
         return False
 
     def is_administrator(self):
@@ -237,17 +290,18 @@ login_manager.anonymous_user = AnonymousUser
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
+
 class Recommendation(db.Model):
     __tablename__ = 'recs'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True)
     title = db.Column(db.String(64))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    text = db.Column(db.Text)
-    new_comment = db.Column(db.Boolean, default=False)
-    verification = db.Column(db.Integer) 
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    text = db.Column(db.TEXT)
+    new_comment = db.Column(db.BOOLEAN, default=False)
+    verification = db.Column(db.INTEGER) 
     # verification = 0->private, 1->public and unchecked, 2->OKayed
-    made_private = db.Column(db.Boolean, default=False)
+    made_private = db.Column(db.BOOLEAN, default=False)
     comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',
@@ -266,8 +320,6 @@ class Recommendation(db.Model):
             if days_since == 0:
                 continue
             if randint(0,10)<8:
-                verified = 2
-            elif randint(0,10)<8:
                 verified = 1
             else:
                 verified = 0

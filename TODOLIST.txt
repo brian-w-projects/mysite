@@ -4,11 +4,9 @@
 
 1. Administrator Tools
     - CSS Admin Splash Page
-    - Update Comments to have private coms. Nothing is permentantly deleted
     - Click on Moderator to see recent mod history
     - Update forgery to create moderators/admins and mod history
 
-Clean up Models, eliminate permissions, add moderator/admin decorators and methods
 
 Problems:
 - Goes from Secure to non-secure when using @login_required

@@ -1,7 +1,7 @@
 #!usr/bin/env python
 import os
 from app import create_app, db
-from app.models import Users, Role, Recommendation, Comments, Followers
+from app.models import Users, Role, Recommendation, Comments, Followers, RecModerations, ComModerations
 from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 from flask import request, redirect, url_for
@@ -38,22 +38,27 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    #     Role.insert_roles()
-    #     user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id=2)
-    #     db.session.add(user)
-    #     user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True)
-    #     db.session.add(user2)
-    #     Users.generate_users(100, [user, user2])
-    #     print('Finished users')
-    #     Recommendation.generate_recs(50)
-    #     print('Finished recs')
-    #     Comments.generate_comments(1000)
-    #     print('Finished comments')
-    #     Followers.generate_followers(1000)
-    #     print('Finished followers')
-    #     db.session.commit()
+    with app.app_context():
+        # db.drop_all()
+        # db.create_all()
+        # Role.generate_roles()
+        # user = Users(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
+        # db.session.add(user)
+        # user2 = Users(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
+        # db.session.add(user2)
+        # Users.generate_users(100, [user, user2])
+        # print('Finished users')
+        # Recommendation.generate_recs(500)
+        # print('Finished recs')
+        # Comments.generate_comments(1000)
+        # print('Finished comments')
+        # Followers.generate_followers(500)
+        # print('Finished followers')
+        # RecModerations.generate_recmods()
+        # print('Finished recmods')
+        # ComModerations.generate_commods()
+        # print('Finished commods')
+        db.session.commit()
+        
 
     manager.run()

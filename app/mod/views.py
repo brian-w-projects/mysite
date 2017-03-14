@@ -2,15 +2,15 @@ from flask import render_template, request, redirect, url_for, session, flash
 from . import mod
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Permission, Comments, RecModerations, ComModerations
+from ..models import Users, Recommendation, Comments, RecModerations, ComModerations
 from .. import db
 from ..email import send_email
-from ..decorators import permission_required
+from ..decorators import is_moderator
 import json
 
 @mod.route('/_moderate')
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def moderate_ajax():
     id = request.args.get('id')
     verify = request.args.get('verify')
@@ -33,7 +33,7 @@ def moderate_ajax():
 
 @mod.route('/_verify')
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def verify_ajax():
     session['offset'] += current_user.display
     display_recs = Recommendation.query\
@@ -45,7 +45,7 @@ def verify_ajax():
 
 @mod.route('/verify')
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def verify():
     session['offset'] = 0
     display_recs = Recommendation.query\
@@ -56,7 +56,7 @@ def verify():
 
 @mod.route('/_moderate_com')
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def moderate_com_ajax():
     id = request.args.get('id')
     verify = request.args.get('verify')
@@ -77,7 +77,7 @@ def moderate_com_ajax():
 
 @mod.route('/_verify_comments')    
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def verify_com_ajax():
     session['offset'] += current_user.display
     display_comments = Comments.query\
@@ -89,7 +89,7 @@ def verify_com_ajax():
 
 @mod.route('/verify_comments')
 @login_required
-@permission_required(Permission.MODERATE_COMMENTS)
+@is_moderator
 def verify_comments():
     session['offest'] = 0
     display_comments = Comments.query\

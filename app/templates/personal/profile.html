@@ -12,7 +12,7 @@
   {% block maincontent %}
     <div class='w940'>
       <div class='w940-center'>
-        {% if current_user.is_authenticated and current_user.role_id == 1 %}
+        {% if current_user.is_authenticated and current_user.is_moderator() %}
           <h2 class='rec'>Welcome, Moderator</h2>
           <div class='profile-box'>
             <div class='profile-left'>
