@@ -22,7 +22,8 @@ def comment_delete(id):
         abort(403)
     if request.method == 'POST':
         if form.validate():
-            db.session.delete(display_comments)
+            display_comments.verification = 0
+            db.session.add(display_comments)
             db.session.commit()
             flash(u'\u2713 Comment has been deleted')
             return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
@@ -47,7 +48,8 @@ def comment_edit(id):
     if request.method == 'POST':
         if form.validate():
             if form.delete.data:
-                db.session.delete(display_comments)
+                display_comments.verification = 0
+                db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment deleted')
                 return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
@@ -79,7 +81,7 @@ def edit(post_id):
                 return redirect(url_for('personal.profile', _scheme='https', _external=True))
             else:
                 display_recs.title = form.title.data
-                display_recs.public = form.public.data
+                display_recs.verification = form.public.data
                 display_recs.timestamp = datetime.utcnow()
                 display_recs.text = form.text.data
                 display_recs.verification = form.public.data
@@ -95,7 +97,7 @@ def edit(post_id):
                 flash(u'\u2717 Check both boxes to delete this rec')
         return redirect(url_for('personal.edit', post_id=post_id, _scheme='https', _external=True))
     form.title.data = display_recs.title
-    form.public.data = display_recs.public
+    form.public.data = display_recs.verification > 0
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
@@ -222,7 +224,7 @@ def post():
     if request.method == 'POST':
         if form.validate():
             ver = form.public.data
-            post = Recommendation(title = form.title.data, public = form.public.data, 
+            post = Recommendation(title = form.title.data,
                 text = form.text.data, author_id=current_user.id, verification=ver)
             db.session.add(post)
             db.session.commit()
@@ -274,6 +276,8 @@ def profile_ajax():
 def profile(id=-1):
     session['offset'] = 0
     session['offsetCom'] = 0
+    com_count = 0
+    rec_count = 0
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
@@ -304,7 +308,10 @@ def profile(id=-1):
     display_recs = user.posts\
         .order_by(Recommendation.timestamp.desc())\
         .limit(limit)
-    display_comments = user.commented_on.order_by(Comments.timestamp.desc()).limit(limit)
+    display_comments = user.commented_on\
+        .filter(Comments.verification != 0)\
+        .order_by(Comments.timestamp.desc())\
+        .limit(limit)
     return render_template('personal/profile.html', user=user, display=display_recs, 
         d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
 

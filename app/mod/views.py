@@ -64,13 +64,14 @@ def moderate_com_ajax():
     db.session.add(new_mod)
     if verify is True:
         com = Comments.query.filter_by(id=id).first_or_404()
-        com.verified = True
+        com.verification = 2
         db.session.add(com)
         db.session.commit()
         return json.dumps({'verified':True}), 200, {'ContentType':'application/json'} 
     else:
         com = Comments.query.filter_by(id=id).first_or_404()
-        db.session.delete(com)
+        com.verificition = 0
+        db.session.add(com)
         db.session.commit()
         return json.dumps({'verified':False}), 200, {'ContentType':'application/json'} 
 
@@ -80,7 +81,7 @@ def moderate_com_ajax():
 def verify_com_ajax():
     session['offset'] += current_user.display
     display_comments = Comments.query\
-        .filter_by(verified=False)\
+        .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
         .offset(session['offset'])\
         .limit(current_user.display)
@@ -92,7 +93,7 @@ def verify_com_ajax():
 def verify_comments():
     session['offest'] = 0
     display_comments = Comments.query\
-        .filter_by(verified=False)\
+        .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
         .limit(current_user.display)
     return render_template('mod/verify_comments.html', d_c=display_comments)

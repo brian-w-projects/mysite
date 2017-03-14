@@ -31,10 +31,10 @@ def admin_splash():
         .filter(Comments.timestamp > week_ago)\
         .count()
     data['recs_to_mod'] = Recommendation.query\
-        .filter_by(verification=1)\
+        .filter(Comments.verification != 0)\
         .count()
     data['comments_to_mod'] = Comments.query\
-        .filter_by(verified=False)\
+        .filter_by(verification=1)\
         .count()
     data['mods'] = Users.query\
         .filter_by(role_id = 1)

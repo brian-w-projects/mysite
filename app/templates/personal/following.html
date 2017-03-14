@@ -19,8 +19,13 @@
       {% if display_names.count() != 0 %}
         {% for name in display_names %}
           {{namemacro.render_name(name, current_user, user, moment)}}
-          {{postmacro.render_post(name.who.posts.filter_by(public=True)
-            .order_by(Recommendation.timestamp.desc()).first(), current_user, moment)}}
+          {% set highlight = name.who.posts.filter(Recommendation.verification > 0)
+            .order_by(Recommendation.timestamp.desc()).first() %}
+          {% if highlight != None %}
+            {{postmacro.render_post(highlight, current_user, moment)}}
+          {% else %}
+            <br/>
+          {% endif %}
         {% endfor %}
       {% else %}
         <p>You aren't following anyone! Go to a user's profile to start following them.</p>

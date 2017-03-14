@@ -76,7 +76,8 @@ class Comments(db.Model):
     comment_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     posted_on = db.Column(db.Integer, db.ForeignKey('recs.id'))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    verified = db.Column(db.Boolean, default=False)
+    verification = db.Column(db.Integer, default=1) 
+    # verification = 0->private, 1->public and unchecked, 2->OKayed
     comment = db.Column(db.Text)
     
     @staticmethod
@@ -91,11 +92,11 @@ class Comments(db.Model):
             u = Users.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
-            v = randint(1,10) < 8
+            v = randint(1,2)
             c = Comments(comment_by=u.id,
                 posted_on=r.id,
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                verified=v,
+                verification=v,
                 comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
@@ -197,12 +198,17 @@ class Users(UserMixin, db.Model):
         return Users.get_random_string(10, chars)
 
     @staticmethod
-    def generate_users(count):
+    def generate_users(count, preload = None):
         from sqlalchemy.exc import IntegrityError
         from random import seed, randint
         import forgery_py
         
         seed()
+        for custom in preload:
+            custom.member_since=forgery_py.date.date(True, min_delta=0, max_delta=365)
+            db.session.add(custom)
+            db.session.commit()
+        
         for i in range(count):
             u = Users(username=forgery_py.internet.user_name(True),
                 email=forgery_py.internet.email_address(),
@@ -235,7 +241,6 @@ class Recommendation(db.Model):
     __tablename__ = 'recs'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
-    public = db.Column(db.Boolean, default=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     text = db.Column(db.Text)
@@ -260,20 +265,16 @@ class Recommendation(db.Model):
             days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
             if days_since == 0:
                 continue
-            ver = randint(0,10)<8
-            if randint(0,10)<8 and ver:
+            if randint(0,10)<8:
                 verified = 2
-            elif not ver:
-                verified = 0
-            else:
+            elif randint(0,10)<8:
                 verified = 1
-            
+            else:
+                verified = 0
             r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
-                public=ver,
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
                 author=u,
                 text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
                 verification=verified)
-            
             db.session.add(r)
             db.session.commit()

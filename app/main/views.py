@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import func, select
 @main.route('/about')
 def about():
     temp = Recommendation.query\
-        .filter_by(public=True)\
+        .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .limit(50)
     display_recs = [possible for possible in temp if randint(1,3) == 2]
@@ -23,6 +23,7 @@ def about():
 def highlight_ajax():
     session['offset'] += session['limit']
     display_comments = Comments.query\
+        .filter(Comments.verification != 0)\
         .filter_by(posted_on=session['id'])\
         .order_by(Comments.timestamp.desc())\
         .offset(session['offset'])\
@@ -39,9 +40,10 @@ def highlight(id):
     session['id']=id
     form = CommentForm(request.form)
     display_recs = Recommendation.query.filter_by(id=id).first_or_404()
-    if display_recs.public == False and display_recs.author_id != current_user.id:
+    if display_recs.verification == 0 and display_recs.author_id != current_user.id:
             abort(403)
     display_comments = display_recs.comments\
+        .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
         .limit(session['limit'])
     if current_user.is_authenticated and display_recs.author_id == current_user.id:
@@ -72,7 +74,7 @@ def index():
         if current_user.role_id == 2:
             return redirect(url_for('admin.admin_splash', _scheme='https', _external=True))
         initial_grab = Recommendation.query\
-            .filter_by(public=True)\
+            .filter(Recommendation.verification > 0)\
             .filter(Recommendation.author_id != current_user.id)\
             .order_by(Recommendation.timestamp.desc())\
             .limit(100)
@@ -88,7 +90,7 @@ def index():
             display_recs = sample(display_recs, 5)
         elif len(display_recs) == 0:
             temp = Recommendation.query\
-                .filter_by(public=True)\
+                .filter(Recommendation.verification > 0)\
                 .filter(Recommendation.author_id != current_user.id)\
                 .order_by(Recommendation.timestamp.desc())\
                 .limit(50)
@@ -119,7 +121,7 @@ def more_ajax():
 def search_query():
     if session['type'] == 'Recs':
         display_recs = Recommendation.query\
-            .filter_by(public=True)
+            .filter(Recommendation.verification > 0)
         if session['search'] != '':
             display_recs = display_recs.filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
@@ -135,7 +137,7 @@ def search_query():
             .limit(session['limit'])
         return render_template('ajax/postajax.html', display = display_recs)
     else:
-        display_comments = Comments.query
+        display_comments = Comments.query.filter_by(verification=1)
         if session['search'] != '':
             display_comments = display_comments\
                 .filter(Comments.comment.contains(session['search']))
@@ -159,7 +161,7 @@ def search():
 @main.route('/_surprise')
 def surprise_ajax():
     temp = Recommendation.query\
-        .filter_by(public=True)\
+        .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .limit(5*session['limit'])\
         .from_self().order_by(func.random())\
@@ -173,7 +175,7 @@ def surprise():
     else:
         session['limit']=10
     display_recs = Recommendation.query\
-        .filter_by(public=True)\
+        .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .limit(5*session['limit'])\
         .from_self()\

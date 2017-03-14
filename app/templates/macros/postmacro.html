@@ -1,5 +1,5 @@
 {% macro render_post(rec, current_user, moment) %}
-  {% if rec.public or (current_user.is_authenticated and current_user.id == rec.author_id) %}
+  {% if rec.verificaton != 0 or (current_user.is_authenticated and current_user.id == rec.author_id) %}
     <div class='rec1'>
       <a href="{{url_for('main.highlight', id=rec.id, _scheme='https', _external=True)}}">
         <h3 class='postTitle'>
@@ -13,7 +13,7 @@
           </p>
         </a>
         <p class='postHeader'>
-          {% if rec.public %}
+          {% if rec.verification != 0 %}
             Public
           {% else %}
             Private
