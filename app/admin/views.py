@@ -9,7 +9,7 @@ from ..email import send_email
 from datetime import datetime, timedelta
 import json
 
-@admin.route('/admin')
+@admin.route('/splash')
 @login_required
 @is_administrator
 def admin_splash():
@@ -42,3 +42,12 @@ def admin_splash():
         .count()
     return render_template('admin/admin_splash.html', data=data, RecModerations=RecModerations,
         ComModerations=ComModerations, week_ago=week_ago)
+
+@admin.route('/mod_history/<int:id>')
+@login_required
+@is_administrator
+def mod_history(id):
+    mod = Users.query\
+        .filter(Users.role_id != 3)\
+        .filter_by(id=id).first_or_404()
+    return render_template('admin/mod_history.html', mod=mod)

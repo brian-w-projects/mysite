@@ -38,7 +38,7 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    with app.app_context():
+    # with app.app_context():
         # db.drop_all()
         # db.create_all()
         # Role.generate_roles()
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         # print('Finished recmods')
         # ComModerations.generate_commods()
         # print('Finished commods')
-        db.session.commit()
+        # db.session.commit()
         
 
     manager.run()

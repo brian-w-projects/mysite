@@ -3,9 +3,11 @@
 
 
 1. Administrator Tools
-    - CSS Admin Splash Page
     - Click on Moderator to see recent mod history
-    - Update forgery to create moderators/admins and mod history
+        - add ajax functionality (see profile js) for loading more comments/recs
+        - add banner indicating action taken
+
+admin url_prefix not showing
 
 
 Problems:

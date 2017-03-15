@@ -66,6 +66,7 @@ class Comments(db.Model):
     verification = db.Column(db.INTEGER, default=1) 
     # verification = 0->private, 1->public and unchecked, 2->OKayed
     comment = db.Column(db.TEXT)
+    moderation = db.relationship('ComModerations', backref='com', lazy='dynamic')
     
     @staticmethod
     def generate_comments(count):
@@ -300,8 +301,9 @@ class Recommendation(db.Model):
     text = db.Column(db.TEXT)
     new_comment = db.Column(db.BOOLEAN, default=False)
     verification = db.Column(db.INTEGER) 
-    # verification = 0->private, 1->public and unchecked, 2->OKayed
+    # verification = -1-> deleted, 0->private, 1->public and unchecked, 2->OKayed
     made_private = db.Column(db.BOOLEAN, default=False)
+    moderation = db.relationship('RecModerations', backref='rec', lazy='dynamic')
     comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',
@@ -321,8 +323,10 @@ class Recommendation(db.Model):
                 continue
             if randint(0,10)<8:
                 verified = 1
-            else:
+            elif randint(0,1) == 0:
                 verified = 0
+            else:
+                verified = -1
             r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
                 author=u,

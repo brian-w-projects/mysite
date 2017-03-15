@@ -16,7 +16,7 @@ def moderate_ajax():
     verify = request.args.get('verify')
     new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=verify)
     db.session.add(new_mod)
-    if verify is True:
+    if verify == 'true':
         rec = Recommendation.query.filter_by(id=id).first_or_404()
         rec.verification = 2
         db.session.add(rec)
@@ -25,7 +25,6 @@ def moderate_ajax():
     else:
         rec = Recommendation.query.filter_by(id=id).first_or_404()
         rec.verification = 0
-        rec.public = False
         rec.made_private = True
         db.session.add(rec)
         db.session.commit()
@@ -62,7 +61,7 @@ def moderate_com_ajax():
     verify = request.args.get('verify')
     new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action=verify)
     db.session.add(new_mod)
-    if verify is True:
+    if verify == 'true':
         com = Comments.query.filter_by(id=id).first_or_404()
         com.verification = 2
         db.session.add(com)

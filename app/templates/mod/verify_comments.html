@@ -15,7 +15,7 @@
          <h2 class='rec'>Verify Comments</h2>
       </div><!--w940-center-->
     </div><!--w940-->
-    <div class='listrecs'>
+    <div class='listcomments'>
       {% for com in d_c %}
         <div class='button'>
           <button class='rec to_check verify' id='{{com.id}}'>Verify</button>
@@ -24,7 +24,7 @@
         </div><!--button-->
         {{commentmacro.render_post(com, current_user, moment)}}
       {% endfor %}
-    </div><!--listrecs-->
+    </div><!--listcomments-->
     <div class='w940-center'>
       <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->

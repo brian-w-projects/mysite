@@ -1,26 +1,30 @@
-{% macro render_posts(display, current_user, moment, form) %}
-  {% for rec in display %}
-    {% if rec.public or (current_user.is_authenticated and current_user.id == rec.author_id) %}
-      {{form.privatize.label(class='rec')}} {{form.privatize(class='entry')}}
-      <div class='rec1'>
-        <a href="{{url_for('main.highlight', id=rec.id, _scheme='https', _external=True)}}"><h3 class='postTitle'>{{rec.title}}</h3></a>
-        <div class='postHeaderDiv'>
-          <a href="{{url_for('personal.profile', id=rec.author_id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>{{rec.author.username}}</p></a>
-          {% if rec.public %}
-            <p class='postHeader'>Public</p>
-          {% else %}
-            <p class='postHeader'>Private</p>
-          {% endif %}
-        <p class='postHeader'>{{moment(rec.timestamp).format('MMMM Do YYYY')}}</p>
-          {% if current_user.is_authenticated and rec.author_id==current_user.id %}
-            <a href="{{url_for('personal.edit', post_id=rec.id, _scheme='https', _external=True)}}"><p class='postHeader postEdit'>Edit</p></a>
-          {% endif %}
-        </div><!--postheaderdiv-->
-        <p class='postText'>{{rec.text}}</p>
-      </div><!--rec1-->
-      <br/>
-    {% endif %}
-  {% endfor %}
-  {{form.csrf_token}}
-  {{form.submit(class='entry', id='submit')}}
+{% macro mod_display(mod, moment, RecModerations, ComModerations, week_ago) %}
+  <div class='onemod'>
+    <div class='headline'>
+      <p>
+        <a class='special-link' href="{{url_for('personal.profile', id=mod.id, _scheme='https', _external=True)}}">
+          {{mod.username}}
+       </a>
+      </p>
+      <p>
+        <a class='special-link' href="{{url_for('admin.mod_history', id=mod.id, _scheme='https', _external=True)}}">
+          Mod History
+        </a>
+      </p>
+      <p>Last Login: {{moment(mod.last_login).fromNow()}}</p>
+    </div><!--headline-->
+    <div class='w225'>
+      <p>Total Rec Mods: {{mod.rec_mods.count()}}</p>
+      <p>
+        Last Week Rec Mods: {{mod.rec_mods.filter(RecModerations.timestamp > week_ago).count()}}
+      </p>
+    </div><!--w225-->
+    <div class='w225'>
+      <p>Total Com Mods: {{mod.com_mods.count()}}</p>
+      <p>
+        Last Week Com Mods: {{mod.com_mods.filter(ComModerations.timestamp > week_ago).count()}}
+      </p>
+    </div><!--w225-->
+  </div><!--onemod-->
+  <br/>
 {% endmacro %}

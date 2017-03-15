@@ -75,7 +75,11 @@ def edit(post_id):
     if request.method == 'POST':
         if form.validate():
             if form.delete.data == True and form.delete_confirm.data == True:
-                db.session.delete(display_recs)
+                display_recs.verification = -1
+                db.session.add(display_recs)
+                for com in display_recs.comments:
+                    com.verification = 0
+                    db.session.add(com)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been deleted')
                 return redirect(url_for('personal.profile', _scheme='https', _external=True))
@@ -284,7 +288,7 @@ def profile(id=-1):
         return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
     if current_user.is_authenticated:
         limit=current_user.display
-        if current_user.is_moderator():
+        if current_user.is_moderator() and current_user.id == id:
             com_count = Comments.query\
                 .filter_by(verification=1)\
                 .count()
@@ -294,22 +298,24 @@ def profile(id=-1):
     else:
         limit=10
     user = Users.query.filter_by(id=id).first_or_404()
+    if current_user.is_authenticated and current_user.id == id:
+        display_recs = user.posts\
+            .order_by(Recommendation.timestamp.desc())\
+            .filter_by(made_private=True)
+        for rec in display_recs:
+            title = rec.title
+            if len(rec.title) > 10:
+                title = rec.title[:10]
+            flash("Rec '" + title + "...' has been made private due to it's content.")
+            rec.made_private = False
+            db.session.add(rec)
+            db.session.commit()
     display_recs = user.posts\
-        .order_by(Recommendation.timestamp.desc())\
-        .filter_by(made_private=True)
-    for rec in display_recs:
-        title = rec.title
-        if len(rec.title) > 10:
-            title = rec.title[:10]
-        flash("Rec '" + title + "...' has been made private due to it's content.")
-        rec.made_private = False
-        db.session.add(rec)
-        db.session.commit()
-    display_recs = user.posts\
+        .filter(Recommendation.verification >= 0)\
         .order_by(Recommendation.timestamp.desc())\
         .limit(limit)
     display_comments = user.commented_on\
-        .filter(Comments.verification != 0)\
+        .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .limit(limit)
     return render_template('personal/profile.html', user=user, display=display_recs, 
