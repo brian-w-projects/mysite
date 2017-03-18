@@ -25,7 +25,7 @@
             <p>Recent recs: {{data['recent_recs']}}</p>
             <p>
               <a class='mod-link special-link' 
-                href="{{url_for('mod.verify', _scheme='https', _external=True)}}">
+                href="{{url_for('mod.verify')}}">
                 Recs to Verify: {{data['recs_to_mod']}}
               </a>
             </p>
@@ -35,7 +35,7 @@
             <p>Recent comments: {{data['recent_comments']}}</p>
             <p>
               <a class='mod-link special-link' 
-                href="{{url_for('mod.verify_comments', _scheme='https', _external=True)}}">
+                href="{{url_for('mod.verify_comments')}}">
                 Comments to Verify: {{data['comments_to_mod']}}
               </a>
             </p>

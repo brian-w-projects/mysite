@@ -64,7 +64,7 @@ def highlight(id):
             flash(u'\u2713 Your comment has been successfully posted')
         else:
             flash(u'\u2717 Comment cannot be empty')
-        return redirect(url_for('main.highlight', id=id, _scheme='https', _external=True))
+        return redirect(url_for('main.highlight', id=id))
     return render_template('main/highlight.html', rec=display_recs, d_c=display_comments, form=form)
 
 @main.route('/')
@@ -72,7 +72,7 @@ def index():
     display_recs = []
     if current_user.is_authenticated:
         if current_user.is_administrator():
-            return redirect(url_for('admin.admin_splash', _scheme='https', _external=True))
+            return redirect(url_for('admin.admin_splash'))
         initial_grab = Recommendation.query\
             .filter(Recommendation.verification > 0)\
             .filter(Recommendation.author_id != current_user.id)\

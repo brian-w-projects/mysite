@@ -22,17 +22,17 @@
           {{form.submit(class='rec', id='submit')}}
         </form>
         <p>Forgot your username? 
-          <a class='special-link' href="{{url_for('auth.forgot_username', _scheme='https', _external=True)}}">
+          <a class='special-link' href="{{url_for('auth.forgot_username')}}">
             Recover Username
           </a>
         </p>
         <p>Forgot your password?
-          <a class='special-link' href="{{url_for('auth.forgot_password', _scheme='https', _external=True)}}">
+          <a class='special-link' href="{{url_for('auth.forgot_password')}}">
             Reset Password
           </a>
         </p>
         <p>Not a member?
-          <a class='special-link' href="{{url_for('auth.subscribe', _scheme='https', _external=True)}}">
+          <a class='special-link' href="{{url_for('auth.subscribe')}}">
             Register Here
           </a>
         </p>

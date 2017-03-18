@@ -11,7 +11,7 @@
   {% block maincontent %}
     <div class='w940'>
       <h2>
-        <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id, _scheme='https', _external=True)}}">
+        <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id)}}">
           {{rec.author.username}}
         </a>
       </h2>

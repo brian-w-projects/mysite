@@ -2,13 +2,12 @@
 
 
 
-1. Administrator Tools
-    - Click on Moderator to see recent mod history
-        - add ajax functionality (see profile js) for loading more comments/recs
-        - add banner indicating action taken
+1. Add api posting/deleting/editing
+2. remove api from users models
+3. monitor and track all api requests
+4. cap api requests from users
+5. fix url formatting
 
-admin url_prefix not showing
 
+1. incorporate sslify to keep links secure and remove external from url_for
 
-Problems:
-- Goes from Secure to non-secure when using @login_required

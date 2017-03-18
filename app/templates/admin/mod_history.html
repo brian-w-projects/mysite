@@ -5,6 +5,7 @@
   {% block head %}
     {{super()}}
     <title>Recommend Me - Mod History {{mod.username}}</title>
+    <link href="{{url_for('static', filename='css/admin/modhistorystyle.css')}}" type='text/css', rel='stylesheet'/>
   {% endblock %}
 </head>
 <body>
@@ -17,12 +18,36 @@
     <br/>
     <br/>
     <div class='listrecs'>
-      {% for rec_mod in mod.rec_mods %}
+      {% for rec_mod in mod_recs %}
+        <div class='action-header'>
+          <p class='rec'>
+            {% if rec_mod.action %}
+              Accepted
+            {% else %}
+              Made Private
+            {% endif %}
+          </p>
+          <p>
+            {{moment(rec_mod.timestamp).fromNow()}}
+          </p>
+        </div><!--action-header-->
         {{postmacro.render_post(rec_mod.rec, current_user, moment)}}
       {% endfor %}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {% for rec_com in mod.com_mods %}
+      {% for rec_com in mod_coms %}
+        <div class='action-header'>
+          <p class='rec'>
+            {% if rec_com.action %}
+              Accepted
+            {% else %}
+              Deleted
+            {% endif %}
+          </p>
+          <p>
+            {{moment(rec_com.timestamp).fromNow()}}
+          </p>
+        </div><!--action-header-->
         {{commentmacro.render_post(rec_com.com, current_user, moment)}}
       {% endfor %}
     </div><!--listcomments-->
@@ -33,8 +58,11 @@
       <a><p class='ajax loadMoreCom special-link'>Load More</p></a>
     </div><!--w940-center-->
     <script>
+      var id = {{mod.id}};
+      var gotoP = "{{url_for('admin.mod_rec_ajax')}}";
+      var gotoC = "{{url_for('admin.mod_com_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/personal/')}}"></script>
+    <script src="{{url_for('static', filename='js/admin/modhistoryjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

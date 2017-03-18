@@ -2,12 +2,12 @@
   <div class='onemod'>
     <div class='headline'>
       <p>
-        <a class='special-link' href="{{url_for('personal.profile', id=mod.id, _scheme='https', _external=True)}}">
+        <a class='special-link' href="{{url_for('personal.profile', id=mod.id)}}">
           {{mod.username}}
        </a>
       </p>
       <p>
-        <a class='special-link' href="{{url_for('admin.mod_history', id=mod.id, _scheme='https', _external=True)}}">
+        <a class='special-link' href="{{url_for('admin.mod_history', id=mod.id)}}">
           Mod History
         </a>
       </p>

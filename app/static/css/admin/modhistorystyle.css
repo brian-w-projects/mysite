@@ -1,0 +1,11 @@
+.action-header{
+    border: 1px black solid;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.action-header>p{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}

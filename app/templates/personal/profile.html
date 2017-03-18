@@ -18,13 +18,13 @@
             <div class='profile-left'>
               <p>
                 <a class='profile-link special-link' 
-                  href="{{url_for('mod.verify', _scheme='https', _external=True)}}">
+                  href="{{url_for('mod.verify')}}">
                   Unverified Recs: {{rec_count}}
                 </a>
               </p>
               <p>
                 <a class='profile-link special-link' 
-                  href="{{url_for('mod.verify_comments', _scheme='https', _external=True)}}">
+                  href="{{url_for('mod.verify_comments')}}">
                   Unverified Comments: {{com_count}}
                 </a>
               </p>
@@ -57,13 +57,13 @@
           <p>Comments: {{user.commented_on.count()}}</p>
           <p>
             <a class='profile-link special-link' 
-              href="{{url_for('personal.followers', id=id, _scheme='https', _external=True)}}">
+              href="{{url_for('personal.followers', id=id)}}">
               Followers: <span class='f_count'>{{user.followed_by.count()}}</span>
             </a>
           </p>
           <p>
             <a class='profile-link special-link' 
-              href="{{url_for('personal.following', id=user.id, _scheme='https', _external=True)}}">
+              href="{{url_for('personal.following', id=user.id)}}">
               Following: {{user.following.count()}}
             </a>
           </p>

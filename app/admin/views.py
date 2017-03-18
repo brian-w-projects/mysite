@@ -43,11 +43,48 @@ def admin_splash():
     return render_template('admin/admin_splash.html', data=data, RecModerations=RecModerations,
         ComModerations=ComModerations, week_ago=week_ago)
 
+@admin.route('/_mod_history_com_ajax')
+@login_required
+@is_administrator
+def mod_com_ajax():
+    id = request.args.get('id')
+    session['offset'] += current_user.display
+    mod = Users.query\
+        .filter(Users.role_id != 3)\
+        .filter_by(id=id).first_or_404()
+    mod_coms = mod.com_mods\
+        .order_by(ComModerations.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(current_user.display)
+    return render_template('ajax/modhistorycomajax.html', d_c = mod_coms)
+
+@admin.route('/_mod_history_rec_ajax')
+@login_required
+@is_administrator
+def mod_rec_ajax():
+    id = request.args.get('id')
+    session['offset'] += current_user.display
+    mod = Users.query\
+        .filter(Users.role_id != 3)\
+        .filter_by(id=id).first_or_404()
+    mod_recs = mod.rec_mods\
+        .order_by(RecModerations.timestamp.desc())\
+        .offset(session['offset'])\
+        .limit(current_user.display)
+    return render_template('ajax/modhistoryrecajax.html', display=mod_recs)
+
 @admin.route('/mod_history/<int:id>')
 @login_required
 @is_administrator
 def mod_history(id):
+    session['offset'] = 0
     mod = Users.query\
         .filter(Users.role_id != 3)\
         .filter_by(id=id).first_or_404()
-    return render_template('admin/mod_history.html', mod=mod)
+    mod_recs = mod.rec_mods\
+        .order_by(RecModerations.timestamp.desc())\
+        .limit(current_user.display)
+    mod_coms = mod.com_mods\
+        .order_by(ComModerations.timestamp.desc())\
+        .limit(current_user.display)
+    return render_template('admin/mod_history.html', mod=mod, mod_recs=mod_recs, mod_coms=mod_coms)

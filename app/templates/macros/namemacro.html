@@ -3,7 +3,7 @@
     {% if current_user.is_authenticated and current_user.id == user.id %}
       <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
     {% endif %}
-    <a href="{{url_for('personal.profile', id=name.following, _scheme='https', _external=True)}}">
+    <a href="{{url_for('personal.profile', id=name.following)}}">
       <p class='followName special-link'>
         {{name.who.username}}
         <br/>
@@ -16,7 +16,7 @@
 
 {% macro render_name2(name, current_user, moment) %}
   <div class='name'>
-    <a href="{{url_for('personal.profile', id=name.follower, _scheme='https', _external=True)}}">
+    <a href="{{url_for('personal.profile', id=name.follower)}}">
       <p class='followName special-link'>
         {{name.user.username}}
         <br/>

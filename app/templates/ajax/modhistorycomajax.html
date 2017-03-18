@@ -1,0 +1,22 @@
+{{moment.include_moment()}}
+{% import 'macros/commentmacro.html' as commentmacro %}
+
+{% if d_c.count() > 0 %}
+  {% for com in d_c %}
+    <div class='action-header'>
+      <p class='rec'>
+        {% if com.action %}
+          Accepted
+        {% else %}
+          Deleted
+        {% endif %}
+      </p>
+      <p>
+        {{moment(com.timestamp).fromNow()}}
+      </p>
+    </div><!--action-header-->
+    {{commentmacro.render_post(com.com, current_user, moment)}}
+  {% endfor %}
+{% else %}
+    <p class='emptyCom'>No Results</p>
+{% endif %}

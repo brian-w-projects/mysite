@@ -1,7 +1,7 @@
 {% macro render_post(com, current_user, moment) %}
   <div class='rec1'>
     <div class='postHeaderDiv'>
-      <a href="{{url_for('personal.profile', id=com.comment_by, _scheme='https', _external=True)}}">
+      <a href="{{url_for('personal.profile', id=com.comment_by)}}">
         <p class='postHeader special-link'>
           {{com.comm.username}}
         </p>
@@ -11,21 +11,21 @@
       </p>
       {% if current_user.is_authenticated %}
         {% if current_user.posts.filter_by(id=com.posted_on).first() %}
-          <a href="{{url_for('personal.comment_delete', id=com.id, _scheme='https', _external=True)}}">
+          <a href="{{url_for('personal.comment_delete', id=com.id)}}">
             <p class='postHeader special-link'>
               Delete
             </p>
           </a>
         {% endif %}
         {% if current_user.id == com.comment_by %}
-          <a href="{{url_for('personal.comment_edit', id=com.id, _scheme='https', _external=True)}}">
+          <a href="{{url_for('personal.comment_edit', id=com.id)}}">
             <p class='postHeader special-link'>
               Edit
             </p>
           </a>
         {% endif %}
       {% endif %}
-      <a href="{{url_for('main.highlight', id=com.posted_on, _scheme='https', _external=True)}}">
+      <a href="{{url_for('main.highlight', id=com.posted_on)}}">
         <p class=' rec postHeader special-link'>
           Rec
         </p>

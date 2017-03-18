@@ -2,7 +2,7 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
 import random
@@ -87,6 +87,17 @@ class Comments(db.Model):
                 comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
+            
+    def to_json(self):
+        json_rec = {
+            'url': url_for('api1.get_comments', token='token', id=self.id, _scheme='https', _external=True),
+            'id': self.id,
+            'comment_by': self.comment_by,
+            'posted_on': self.posted_on,
+            'timestamp': self.timestamp,
+            'comment': self.comment
+        }
+        return json_rec
 
 class RecModerations(db.Model):
     __tablename__ = 'recmoderations'
@@ -95,6 +106,20 @@ class RecModerations(db.Model):
     mod_on = db.Column(db.INTEGER, db.ForeignKey('recs.id'))
     timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
     action = db.Column(db.BOOLEAN)
+
+    def to_json(self):
+        json_rec = {
+            'url': url_for('api1.get_rec_mods', token='token', id=self.id, _scheme='https', _external=True),
+            'id': self.id,
+            'timestamp': self.timestamp,
+            'mod_by': self.mod_by,
+            'mod_on': self.mod_on,
+            'action': self.action,
+            'text': self.rec.text,
+            'title': self.rec.title,
+            'author': self.rec.author_id
+        }
+        return json_rec
 
     @staticmethod
     def generate_recmods():
@@ -139,6 +164,20 @@ class ComModerations(db.Model):
     timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
     action = db.Column(db.BOOLEAN)
     
+    def to_json(self):
+        json_rec = {
+            'url': url_for('api1.get_com_mods', token='token', id=self.id, _scheme='https', _external=True),
+            'id': self.id,
+            'timestamp': self.timestamp,
+            'mod_by': self.mod_by,
+            'mod_on': self.mod_on,
+            'action': self.action,
+            'text': self.com.comment,
+            'author': self.com.comment_by,
+            'posted_on': self.com.posted_on
+        }
+        return json_rec
+    
     @staticmethod
     def generate_commods():
         from random import seed, randint
@@ -180,6 +219,7 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
     password_hash = db.Column(db.String(128))
+    api = db.Column(db.String())
     updates = db.Column(db.BOOLEAN, default=True)
     confirmed = db.Column(db.BOOLEAN, default=False)
     role_id = db.Column(db.INTEGER, db.ForeignKey('roles.id'))
@@ -245,6 +285,49 @@ class Users(UserMixin, db.Model):
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
         return Users.get_random_string(10, chars)
 
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'],
+            expires_in=expiration)
+        self.api = s.dumps({'id': self.id})
+        db.session.add(self)
+        db.session.commit()
+        return s.dumps({'id': self.id})
+    
+    def verify_auth_token(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return Users.query.get(data['id'])
+
+    def to_json(self, requester, follow):
+        json_rec = {
+            'url': url_for('api1.get_rec', token='token', id=self.id, _scheme='https', _external=True),
+            'username': self.username,
+            'confirmed': self.confirmed,
+            'display': self.display,
+            'about_me': self.about_me,
+            'member_since': self.member_since,
+            'recs': self.posts.filter_by(verification=2).count(),
+            'following_count' : self.following.count(),
+            'followed_by_count': self.followed_by.count(),
+            'comments': self.commented_on.filter_by(verification=2).count(),
+            'id': self.id
+        }
+        if requester.is_administrator():
+            json_rec['email'] = self.email
+            json_rec['role_id'] = self.role_id
+            json_rec['last_login'] = self.last_login
+            if self.is_moderator():
+                json_rec['rec_mods'] = self.rec_mods.count()
+                json_rec['com_mods'] = self.com_mods.count()
+        if follow:
+            json_rec['following'] = {following.id : following.timestamp for following in self.following}
+            json_rec['followed_by'] = {followed_by.id : followed_by.timestamp for followed_by in self.followed_by}
+        
+        return json_rec
+
     @staticmethod
     def generate_users(count, preload = None):
         from sqlalchemy.exc import IntegrityError
@@ -308,6 +391,19 @@ class Recommendation(db.Model):
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',
         cascade='all, delete-orphan')
+    
+    def to_json(self, comments):
+        json_rec = {
+            'url': url_for('api1.get_rec', token='token', id=self.id, _scheme='https', _external=True),
+            'text': self.text,
+            'title': self.title,
+            'author': self.author.username,
+            'comment_count': self.comments.filter_by(verification=2).count(),
+            'id': self.id
+        }
+        if comments:
+            json_rec['comments'] = {com.id : com.comment for com in self.comments if com.verification == 2 }
+        return json_rec
     
     @staticmethod
     def generate_recs(count):

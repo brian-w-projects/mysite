@@ -12,7 +12,7 @@ import json
 @login_required
 def confirmationsent(username):
     if current_user.confirmed:
-        return redirect(url_for('main.index', _scheme='https', _external=True))
+        return redirect(url_for('main.index'))
     token=current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
         user=username, token=token)
@@ -32,7 +32,7 @@ def forgot_password():
                 db.session.commit()
                 send_email(check_user.email, 'Reset Your Password', 'auth/email/reset', user=check_user.username, password=reset_password)
                 flash(u'\u2713 Your password has been e-mailed to you')
-                return redirect(url_for('auth.login', _scheme='https', _external=True))
+                return redirect(url_for('auth.login'))
             else:
                 flash(u'\u2717 Invalid username')  
         else:
@@ -42,7 +42,7 @@ def forgot_password():
                 flash(u'\u2717 Please enter email')
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
-        return redirect(url_for('auth.forgot', _scheme='https', _external=True))
+        return redirect(url_for('auth.forgot'))
     return render_template('auth/forgot_password.html', form=form)
 
 @auth.route('/forgot_username', methods=['GET', 'POST'])
@@ -54,7 +54,7 @@ def forgot_username():
             if check_user is not None:
                 send_email(check_user.email, 'Your Username', 'auth/email/username', user=check_user.username)
                 flash(u'\u2713 Your username has been e-mailed to you')
-                return redirect(url_for('auth.login', _scheme='https', _external=True))
+                return redirect(url_for('auth.login'))
             else:
                 flash(u'\u2717 Invalid email')
         else:
@@ -62,7 +62,7 @@ def forgot_username():
                 flash(u'\u2717 Please enter email')
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
-        return redirect(url_for('auth.forgot_username', _scheme='https', _external=True))
+        return redirect(url_for('auth.forgot_username'))
     return render_template('auth/forgot_username.html', form=form)
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -80,23 +80,23 @@ def login():
                 check_user.last_login = datetime.utcnow()
                 db.session.add(check_user)
                 db.session.commit()
-                return redirect(request.args.get('next') or url_for('main.index', _scheme='https', _external=True))
+                return redirect(request.args.get('next') or url_for('main.index'))
             elif check_user is not None:
                 check_user.invalid_logins += 1
                 db.session.add(check_user)
                 db.session.commit()
                 if check_user.invalid_logins >= 5:
                     flash(u'\u2717 Account has been locked. Please reset password')
-                    return redirect(url_for('auth.forgot', _scheme='https', _external=True))
+                    return redirect(url_for('auth.forgot'))
         flash(u'\u2717 Invalid Login')
-        return redirect(url_for('auth.login', _scheme='https', _external=True))
+        return redirect(url_for('auth.login'))
     return render_template('auth/login.html', form=form)
 
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index', _scheme='https', _external=True))
+    return redirect(url_for('main.index'))
 
 @auth.route('/_subscribe')
 def subscribe_ajax():
@@ -128,7 +128,7 @@ def subscribe():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user)
-                return redirect(url_for('auth.confirmationsent', username=username_verify, _scheme='https', _external=True))
+                return redirect(url_for('auth.confirmationsent', username=username_verify))
             else:
                 if check_user is not None:
                     flash(u'\u2717 Username already in use')
@@ -148,7 +148,7 @@ def subscribe():
                 flash(u'\u2717 Registration is currently restricted to those with valid tokens')
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
-        return redirect(url_for('auth.subscribe', _scheme='https', _external=True))
+        return redirect(url_for('auth.subscribe'))
     return render_template('auth/subscribe.html', form=form)
     
 @auth.route('/confirm/<token>')
@@ -159,19 +159,19 @@ def confirm(token):
     elif current_user.confirm(token):
         pass
     else:
-        return redirect(url_for('auth.confirmationsent', _scheme='https', _external=True))
+        return redirect(url_for('auth.confirmationsent'))
     flash(u'\u2713 Your account has been confirmed!')
-    return(redirect(url_for('personal.profile', _scheme='https', _external=True)))
+    return(redirect(url_for('personal.profile')))
 
 @auth.route('/unconfirmed')
 @login_required
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index', _scheme='https', _external=True))
+        return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
     
 @auth.before_app_request
 def before_request():
     if current_user.is_authenticated and not current_user.confirmed \
         and request.endpoint[:5] != 'auth.' and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed', _scheme='https', _external=True))
+        return redirect(url_for('auth.unconfirmed'))

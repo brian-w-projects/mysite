@@ -26,11 +26,11 @@ def comment_delete(id):
             db.session.add(display_comments)
             db.session.commit()
             flash(u'\u2713 Comment has been deleted')
-            return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
+            return redirect(url_for('main.highlight', id=display_recs.id))
         else:
             flash(u'\u2717 You must confirm deletion')
-            return redirect(url_for('personal.comment_delete', id=id, _scheme='https', _external=True))
-        return redirect(url_for('personal.comment_delete', id=id, _scheme='https', _external=True))
+            return redirect(url_for('personal.comment_delete', id=id))
+        return redirect(url_for('personal.comment_delete', id=id))
     return render_template('personal/commentdelete.html', form=form, rec=display_recs, com=display_comments)
 
 @personal.route('/commentedit/<int:id>', methods=['GET', 'POST'])
@@ -52,16 +52,16 @@ def comment_edit(id):
                 db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment deleted')
-                return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
+                return redirect(url_for('main.highlight', id=display_recs.id))
             else:
                 display_comments.comment = form.text.data
                 db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment updated')
-                return redirect(url_for('main.highlight', id=display_recs.id, _scheme='https', _external=True))
+                return redirect(url_for('main.highlight', id=display_recs.id))
         else:
             flash(u'\u2717 Comment must contain text')
-            return redirect(url_for('personal.comment_edit', id=id, _scheme='https', _external=True))
+            return redirect(url_for('personal.comment_edit', id=id))
     form.text.data = display_comments.comment
     return render_template('personal/commentedit.html', form=form, rec=display_recs, com=display_comments)
 
@@ -82,7 +82,7 @@ def edit(post_id):
                     db.session.add(com)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been deleted')
-                return redirect(url_for('personal.profile', _scheme='https', _external=True))
+                return redirect(url_for('personal.profile'))
             else:
                 display_recs.title = form.title.data
                 display_recs.verification = form.public.data
@@ -99,7 +99,7 @@ def edit(post_id):
                 flash(u'\u2717 Recs must contain text')
             if 'delete' in form.errors:
                 flash(u'\u2717 Check both boxes to delete this rec')
-        return redirect(url_for('personal.edit', post_id=post_id, _scheme='https', _external=True))
+        return redirect(url_for('personal.edit', post_id=post_id))
     form.title.data = display_recs.title
     form.public.data = display_recs.verification > 0
     form.text.data = display_recs.text
@@ -238,7 +238,7 @@ def post():
                 flash(u'\u2717 Recs must contain a title')
             if 'text' in form.errors:
                 flash(u'\u2717 Recs must contain text')
-        return redirect(url_for('personal.post', _scheme='https', _external=True))
+        return redirect(url_for('personal.post'))
     display_recs = Recommendation.query\
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
@@ -285,7 +285,7 @@ def profile(id=-1):
     if id == -1 and current_user.is_authenticated:
         id = current_user.id
     elif id == -1 and not current_user.is_authenticated:
-        return redirect(url_for('auth.login', _scheme='https', _external=True, next='personal/profile'))
+        return redirect(url_for('auth.login', next='personal/profile'))
     if current_user.is_authenticated:
         limit=current_user.display
         if current_user.is_moderator() and current_user.id == id:
@@ -342,7 +342,7 @@ def update():
                 flash(u'\u2717 Passwords must be at least 8 characters')
             if form.password.data != form.password_confirm.data:
                 flash(u'\u2717 Passwords Must Match')
-        return redirect(url_for('personal.update', _scheme='https', _external=True))
+        return redirect(url_for('personal.update'))
     form.about_me.data = current_user.about_me
     form.limit.data= str(current_user.display)
     return render_template('personal/update.html', form=form)
