@@ -90,7 +90,7 @@ class Comments(db.Model):
             
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_comments', token='token', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_comments', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'comment_by': self.comment_by,
             'posted_on': self.posted_on,
@@ -109,7 +109,7 @@ class RecModerations(db.Model):
 
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_rec_mods', token='token', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_rec_mods', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'timestamp': self.timestamp,
             'mod_by': self.mod_by,
@@ -166,7 +166,7 @@ class ComModerations(db.Model):
     
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_com_mods', token='token', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_com_mods', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'timestamp': self.timestamp,
             'mod_by': self.mod_by,
@@ -293,7 +293,8 @@ class Users(UserMixin, db.Model):
         db.session.commit()
         return s.dumps({'id': self.id})
     
-    def verify_auth_token(self, token):
+    @staticmethod
+    def verify_auth_token(token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
@@ -303,7 +304,7 @@ class Users(UserMixin, db.Model):
 
     def to_json(self, requester, follow):
         json_rec = {
-            'url': url_for('api1.get_rec', token='token', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_rec', id=self.id, _scheme='https', _external=True),
             'username': self.username,
             'confirmed': self.confirmed,
             'display': self.display,
@@ -394,7 +395,7 @@ class Recommendation(db.Model):
     
     def to_json(self, comments):
         json_rec = {
-            'url': url_for('api1.get_rec', token='token', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_rec', id=self.id, _scheme='https', _external=True),
             'text': self.text,
             'title': self.title,
             'author': self.author.username,
