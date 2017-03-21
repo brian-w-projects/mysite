@@ -29,7 +29,7 @@
             </p>
           </a>
         {% endif %}
-        <p class='postHeader rec'>Comments: {{rec.comments.count()}}</p>
+        <p class='postHeader rec'>Comments: {{rec.comments.filter(rec.verification != 0).count()}}</p>
         {% if current_user.id == rec.author_id and rec.new_comment == True %}
           <p class='postHeader rec'>New Comment!</p>
         {% endif %}

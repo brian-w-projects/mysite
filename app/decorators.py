@@ -46,6 +46,21 @@ def auth_token_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def moderator_token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not request.authorization:
+            return message(401, 'Must send token for authentication')
+        token = request.authorization['username']
+        check = Users.verify_auth_token(token)
+        if check is None:
+            return message(401, 'Invalid token')
+        if not check.is_moderator():
+            return message(403, 'You do not have permission to view this page')
+        g.current_user = check
+        return f(*args, **kwargs)
+    return decorated_function
+
 def admin_token_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

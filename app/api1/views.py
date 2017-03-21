@@ -3,7 +3,7 @@ from . import api1
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
 from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations
-from ..decorators import auth_token_required, is_administrator, admin_token_required, auth_login_required
+from ..decorators import auth_token_required, is_administrator, admin_token_required, auth_login_required, moderator_token_required
 from .. import db
 from ..email import send_email
 from datetime import datetime, timedelta
@@ -248,7 +248,7 @@ def get_user_followed_by(id):
         return message(404, 'This user does not exist')
     return jsonify(to_ret.to_json_followed())
 
-@api1.route('/follow/<int:id>', methods=['PUT'])
+@api1.route('/follow/<int:id>', methods=['POST'])
 @auth_token_required
 def put_follower(id):
     user = Users.query\
@@ -266,7 +266,7 @@ def put_follower(id):
         db.session.commit()
         return message(201, 'Succesfully following user')
 
-@api1.route('/unfollow/<int:id>', methods=['DELETE'])
+@api1.route('/follow/<int:id>', methods=['DELETE'])
 @auth_token_required
 def delete_follow(id):
     user = Users.query\
@@ -284,53 +284,35 @@ def delete_follow(id):
         db.session.commit()
         return message(201, 'Successfully unfollowed user')
 
-# Stopped Here on Monday
-
-@api1.route('/mod_rec_history/<int:id>/<int:moderated>')
-@api1.route('/mod_rec_history/<int:id>')
+@api1.route('/mods/<int:id>/recs', methods=['GET'])
 @admin_token_required
-def get_mod_rec_history(id, moderated = -1):
-    data = {}
-    if moderated != 0:
-        data['recs_private'] = {}
-    if moderated != 1:
-        data['recs_approved'] = {}
+def get_mod_rec_history(id):
     mod = Users.query\
         .filter(Users.role_id != 3)\
         .filter_by(id=id)\
         .first()
     if not mod:
-        return message(404, 'This moderator does not exist')
-    for x in mod.rec_mods:
-        if x.action is True and moderated != 0:
-            data['recs_private'][x.mod_on] =  x.rec.text
-        elif x.action is False and moderated != 1:
-            data['recs_approved'][x.mod_on] = x.rec.text
+        return message(404, 'This user is not a moderator')
+    data = {}
+    data['recs_private'] = {x.id : x.to_json() for x in mod.rec_mods if x.action is True}
+    data['recs_approved'] = {x.id: x.to_json() for x in mod.rec_mods if x.action is False}
     return jsonify(data)
 
-@api1.route('/mod_com_history/<int:id>/<int:moderated>')
-@api1.route('/mod_com_history/<int:id>')
+@api1.route('/mods/<int:id>/comments', methods=['GET'])
 @admin_token_required
-def get_mod_com_history(id, moderated = -1):
-    data = {}
-    if moderated != 0:
-        data['coms_private'] = {}
-    if moderated != 1:
-        data['coms_approved'] = {}
+def get_mod_com_history(id):
     mod = Users.query\
         .filter(Users.role_id != 3)\
         .filter_by(id=id)\
         .first()
     if not mod:
-        return message(404, 'This moderator does not exist')
-    for x in mod.com_mods:
-        if x.action is True and moderated != 0:
-            data['coms_private'][x.mod_on] =  x.com.comment
-        elif x.action is False and moderated != 1:
-            data['coms_approved'][x.mod_on] = x.com.comment
+        return message(404, 'This user is not a moderator')
+    data = {}
+    data['comments_private'] = {x.id : x.to_json() for x in mod.com_mods if x.action is True}
+    data['comments_approved'] = {x.id : x.to_json() for x in mod.com_mods if x.action is False}
     return jsonify(data)
 
-@api1.route('/rec_mods/<int:id>')
+@api1.route('/moderations/recs/<int:id>', methods=['GET'])
 @admin_token_required
 def get_rec_mods(id):
     to_ret = RecModerations.query\
@@ -339,8 +321,32 @@ def get_rec_mods(id):
     if not to_ret:
         return message(404, 'This Rec Moderation does not exist')
     return jsonify(to_ret.to_json())
+
+@api1.route('/moderations/recs/<int:id>', methods=['PUT'])
+@admin_token_required
+def put_rec_mods(id):
+    to_ret = RecModerations.query\
+        .filter_by(id=id)\
+        .first()
+    if not to_ret:
+        return message(404, 'This Rec Moderation does not exist')
+    to_ret.action = not to_ret.action
+    rec = to_ret.rec
+    if to_ret.action is False:
+        rec.verification = 0
+        rec.made_private = True
+        db.session.add(to_ret)
+        db.session.add(rec)
+        db.session.commit()
+        return message(201, 'This rec has been made private')
+    else:
+        rec.verification = 2
+        db.session.add(to_ret)
+        db.session.add(rec)
+        db.session.commit()
+        return message(201, 'This rec has been verified')
     
-@api1.route('/com_mods/<int:id>')
+@api1.route('/moderations/comments/<int:id>', methods=['GET'])
 @admin_token_required
 def get_com_mods(id):
     to_ret = ComModerations.query\
@@ -349,6 +355,109 @@ def get_com_mods(id):
     if not to_ret:
         return message(404, 'This Comment Moderation does not exist')
     return jsonify(to_ret.to_json())
+
+@api1.route('/moderations/comments/<int:id>', methods=['PUT'])
+@admin_token_required
+def put_com_mods(id):
+    to_ret = ComModerations.query\
+        .filter_by(id=id)\
+        .first()
+    if not to_ret:
+        return message(404, 'This Comment Moderation does not exist')
+    to_ret.action = not to_ret.action
+    com = to_ret.com
+    if to_ret.action is False:
+        com.verification = 0
+        db.session.add(to_ret)
+        db.session.add(com)
+        db.session.commit()
+        return message(201, 'This comment has been made private')
+    else:
+        com.verification = 2
+        db.session.add(to_ret)
+        db.session.add(com)
+        db.session.commit()
+        return message(201, 'This comment has been verified')
+
+@api1.route('/moderate/recs', methods=['GET'])
+@moderator_token_required
+def get_moderate_recs():
+    recs = Recommendation.query\
+        .filter_by(verification = 1)\
+        .order_by(Recommendation.timestamp.asc())\
+        .limit(10)
+    if not recs:
+        return message(200, 'There are no recs in need of moderation at this time')
+    to_ret = {x.id : x.to_json() for x in recs}
+    return jsonify(to_ret)
+
+@api1.route('/moderate/recs/<int:id>', methods=['POST'])
+@moderator_token_required
+def moderate_recs(id):
+    if not request.get_json(silent=True):
+        return message(400, 'Must provide value for action')
+    action = request.json.get('action')
+    if action not in ['True', 'False']:
+        return message(400, 'action must be true or false')
+    rec = Recommendation.query\
+        .filter_by(verification = 1)\
+        .filter_by(id=id)\
+        .first()
+    if not rec:
+        return message(404, 'This rec cannot be modded. It is private or has been verified')
+    if action == 'True':
+        rec.verification = 2
+    else:
+        rec.verification = 0
+        rec.made_private = True
+    to_add = RecModerations(mod_by=g.current_user.id, mod_on=id, action=(rec.verification == 2))
+    db.session.add(rec)
+    db.session.add(to_add)
+    db.session.commit()
+    return message(201, 'Rec successfully moderated')
+
+@api1.route('/moderate/comments', methods=['GET'])
+@moderator_token_required
+def get_moderate_comments():
+    com = Comments.query\
+        .filter_by(verification = 1)\
+        .limit(10)
+    if not com:
+        return message(200, 'There are not comments to moderate at this time')
+    to_ret = {x.id : x.to_json() for x in com}
+    return jsonify(to_ret)
+
+@api1.route('/moderate/comments/<int:id>', methods=['POST'])
+@moderator_token_required
+def moderate_comments(id):
+    if not request.get_json(silent=True):
+        return message(400, 'Must provide value for action')
+    action = request.json.get('action')
+    if action not in ['True', 'False']:
+        return message(400, 'action must be true or false')
+    comment = Comments.query\
+        .filter_by(verification = 1)\
+        .filter_by(id=id)\
+        .first()
+    if not comment:
+        return message(404, 'This comment cannot be modded. It has been deleted or has been verified')
+    if action == 'True':
+        comment.verification = 2
+    else:
+        comment.verification = 0
+    to_add = ComModerations(mod_by=g.current_user.id, mod_on=id, action=(comment.verification == 2))
+    db.session.add(comment)
+    db.session.add(to_add)
+    db.session.commit()
+    return message(201, 'Comment successfully moderated')
+
+# Finished here Tuesday
+
+@api1.route('/search', methods=['GET'])
+@auth_token_required
+def get_search():
+    pass
+    
 
 @api1.route('/admin')
 @admin_token_required
