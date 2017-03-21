@@ -2,11 +2,16 @@
 
 
 
-1. Add api posting/deleting/editing
-2. remove api from users models
-3. monitor and track all api requests
+
+1. Check moderator API code (as marked in code comment)
+2. Add Error handling in main (400, 404, 500, 405)
+
+1. Make API key permenant, unless user wants to change it
+2. Make page that shows api key/change api key
+3. monitor and track all api requests (api request table)
 4. cap api requests from users
-5. fix url formatting
+
+
 
 
 1. incorporate sslify to keep links secure and remove external from url_for

@@ -2,7 +2,7 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app, url_for
+from flask import current_app, url_for, g
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
 import random
@@ -92,7 +92,8 @@ class Comments(db.Model):
         json_rec = {
             'url': url_for('api1.get_comments', id=self.id, _scheme='https', _external=True),
             'id': self.id,
-            'comment_by': self.comment_by,
+            'author_id': self.comment_by,
+            'author_username': self.comm.username,
             'posted_on': self.posted_on,
             'timestamp': self.timestamp,
             'comment': self.comment
@@ -302,9 +303,9 @@ class Users(UserMixin, db.Model):
             return None
         return Users.query.get(data['id'])
 
-    def to_json(self, requester, follow):
+    def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_rec', id=self.id, _scheme='https', _external=True),
+            'url': url_for('api1.get_user', id=self.id, _scheme='https', _external=True),
             'username': self.username,
             'confirmed': self.confirmed,
             'display': self.display,
@@ -316,17 +317,27 @@ class Users(UserMixin, db.Model):
             'comments': self.commented_on.filter_by(verification=2).count(),
             'id': self.id
         }
-        if requester.is_administrator():
+        if g.current_user.is_administrator():
             json_rec['email'] = self.email
             json_rec['role_id'] = self.role_id
             json_rec['last_login'] = self.last_login
             if self.is_moderator():
                 json_rec['rec_mods'] = self.rec_mods.count()
                 json_rec['com_mods'] = self.com_mods.count()
-        if follow:
-            json_rec['following'] = {following.id : following.timestamp for following in self.following}
-            json_rec['followed_by'] = {followed_by.id : followed_by.timestamp for followed_by in self.followed_by}
-        
+        return json_rec
+
+    def to_json_following(self):
+        json_rec = {}
+        json_rec['count'] = self.following.count()
+        json_rec['url'] = url_for('api1.get_user_following', id=self.id, _scheme='https', _external=True)
+        json_rec['following'] = {following.id : following.timestamp for following in self.following}
+        return json_rec
+    
+    def to_json_followed(self):
+        json_rec = {}
+        json_rec['count'] = self.followed_by.count()
+        json_rec['url'] = url_for('api1.get_user_followed_by', id=self.id, _scheme='https', _external=True)
+        json_rec['followed_by'] = {followed_by.id : followed_by.timestamp for followed_by in self.followed_by}
         return json_rec
 
     @staticmethod
@@ -393,17 +404,22 @@ class Recommendation(db.Model):
         lazy='dynamic',
         cascade='all, delete-orphan')
     
-    def to_json(self, comments):
+    def to_json(self):
         json_rec = {
             'url': url_for('api1.get_rec', id=self.id, _scheme='https', _external=True),
+            'url_comments': url_for('api1.get_rec_comments', id=self.id, _scheme='https', _external=True),
             'text': self.text,
             'title': self.title,
             'author': self.author.username,
-            'comment_count': self.comments.filter_by(verification=2).count(),
+            'author_id': self.author_id,
+            'timestamp': self.timestamp,
+            'comment_count': self.comments.filter(Comments.verification != 0).count(),
             'id': self.id
         }
-        if comments:
-            json_rec['comments'] = {com.id : com.comment for com in self.comments if com.verification == 2 }
+        return json_rec
+    
+    def to_json_comments(self):
+        json_rec = {com.id : com.to_json() for com in self.comments if com.verification != 0}
         return json_rec
     
     @staticmethod

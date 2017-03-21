@@ -40,8 +40,10 @@ def highlight(id):
     session['id']=id
     form = CommentForm(request.form)
     display_recs = Recommendation.query.filter_by(id=id).first_or_404()
-    if display_recs.verification <= 0 and display_recs.author_id != current_user.id:
-            abort(403)
+    if display_recs.verification == -1:
+        abort(404)
+    if display_recs.verification == 0 and (not current_user.is_authenticated or display_recs.author_id != current_user.id):
+        abort(403)
     display_comments = display_recs.comments\
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
