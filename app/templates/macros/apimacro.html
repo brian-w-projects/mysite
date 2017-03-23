@@ -1,0 +1,22 @@
+{% macro render_api(header, methods, authorization, description, example) %}
+<div class='api_element_container'>
+  <div class='api_element_header'>
+    {{header}}
+  </div><!--api_element_header-->
+  <div class='api_element_text'>
+    <p>
+      Authorization: {{authorization}}
+    </p>
+    <p>
+      Methods: {{methods}}
+    </p>
+    <p>
+      {{description}}
+    </p>
+    <p class='example'>
+      {{example}}
+    </p>
+  </div><!--api_element_text-->
+</div><!--api_element_container-->
+<br/>
+{% endmacro %}

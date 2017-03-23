@@ -286,9 +286,8 @@ class Users(UserMixin, db.Model):
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
         return Users.get_random_string(10, chars)
 
-    def generate_auth_token(self, expiration):
-        s = Serializer(current_app.config['SECRET_KEY'],
-            expires_in=expiration)
+    def generate_auth_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
         self.api = s.dumps({'id': self.id})
         db.session.add(self)
         db.session.commit()
@@ -406,8 +405,6 @@ class Recommendation(db.Model):
     
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_rec', id=self.id, _scheme='https', _external=True),
-            'url_comments': url_for('api1.get_rec_comments', id=self.id, _scheme='https', _external=True),
             'text': self.text,
             'title': self.title,
             'author': self.author.username,

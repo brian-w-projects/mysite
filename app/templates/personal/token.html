@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% extends 'abstract/onecolumn.html' %}
+{% import 'macros/apimacro.html' as apimacro %}
+<html>
+<head>
+  {% block head %}
+    {{super()}}
+    <title>Recommend Me - API Token</title>
+    <link href="{{url_for('static', filename='css/personal/tokenstyle.css')}}" type='text/css' rel='stylesheet'/>
+  {% endblock %}
+</head>
+<body>
+  {% block maincontent %}
+    <div class='w940'>
+      <div class='w940-center'>
+        <h2 class='rec'>API Token</h2>
+        {{ flashmacro.render_flash(get_flashed_messages()) }}
+        <input class='entry api_entry'/>
+        <button class='rec copy to_check'>Copy</button>
+        <button class='rec reload to_check'>&#8635;</button>
+        <br/>
+        <div class='api_welcome'>
+          <h2 class='rec'>Welcome!</h2>
+          <p>
+            This site has a comprehensive api available for use with the above token.
+            This token will provide full access to the site and has no expiration date.
+            As such, it should remain private. You are encouraged to change your token if
+            it should ever become compromised.
+          </p>
+          <p>
+            Below you will find documentation for all the features available in this api.
+          </p>
+        </div><!--api_welcome-->
+          {{apimacro.render_api(
+              url_for('api1.get_token', _scheme='https', _external='True'),
+              'GET',
+              'username/password',
+              'Retreives token associated with this account.',
+              '{ "token": "eyJhbGci..." }'
+              )
+          }}
+          {{apimacro.render_api(
+              url_for('api1.get_new_token', _scheme='https', _external='True'),
+              'GET',
+              'username/password',
+              'Provides a new token associated with this account.',
+              '{ "token": "eyJhbGci..." }'
+              )
+          }}
+          <h2 class='rec'>/recs</h2>
+          <p>These requests interact with the site's recommendations.</p>
+          {{apimacro.render_api(
+              url_for('api1.get_rec', id=1, _scheme='https', _external='True'),
+              'GET',
+              'token',
+              'Retreives relevent information about the rec identified by id number.',
+              '{"author": "cheryl92", "author_id": 64, "comment_count": 2, "id": 2, "text": "Nunc nisl...",
+                "timestamp": "Sat, 14 Jan 2017 00:00:00 GMT", "title": "Donec...",}'
+              )
+          }}
+      </div><!--w940-center-->
+    </div><!--w940-->
+    <script>
+      var api = "{{current_user.api}}";
+      var goto = "{{url_for('personal.token_ajax')}}"
+    </script>
+    <script src="{{url_for('static', filename='js/personal/tokenjs.js')}}"></script>
+  {% endblock %}
+</body>
+</html>

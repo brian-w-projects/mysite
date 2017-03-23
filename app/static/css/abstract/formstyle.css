@@ -13,6 +13,12 @@
     margin-bottom: 19px;
     border-bottom: 2px solid black;
 }
+
+.api_entry{
+    width: 550px;
+    font-size: smaller;
+}
+
 /*TEXT ENTRY FORM ELEMENTS*/
 
 /*CLICK ENTRY FORM ELEMENTS */

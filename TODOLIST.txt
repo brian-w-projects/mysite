@@ -7,8 +7,10 @@
 2. Add Error handling in main (400, 404, 500, 405)
     -mime_type json and html always returning true
 
-1. Make API key permenant, unless user wants to change it
-2. Make page that shows api key/change api key
+1. Make page that shows api key/change api key
+    - finish api page with descriptions
+
+
 3. monitor and track all api requests (api request table)
 4. cap api requests from users
 

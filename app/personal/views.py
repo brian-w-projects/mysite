@@ -321,6 +321,19 @@ def profile(id=-1):
     return render_template('personal/profile.html', user=user, display=display_recs, 
         d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
 
+@personal.route('/_token')
+@login_required
+def token_ajax():
+    current_user.generate_auth_token()
+    return current_user.api
+
+@personal.route('/token')
+@login_required
+def token():
+    if not current_user.api:
+        current_user.generate_auth_token()
+    return render_template('personal/token.html')
+
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required
 def update():

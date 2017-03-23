@@ -18,7 +18,14 @@ def message(code, message):
 @api1.route('/token')
 @auth_login_required
 def get_token():
-    return jsonify({'token': g.current_user.generate_auth_token(expiration=3600), 'expiration': 3600})
+    if not g.current_user.api:
+        g.current_user.generate_auth_token()
+    return jsonify({'token': g.current_user.api})
+
+@api1.route('/token/new')
+@auth_login_required
+def get_new_token():
+    return jsonify({'token': g.current_user.generate_auth_token()})
 
 @api1.route('/recs/<int:id>', methods=['GET'])
 @auth_token_required

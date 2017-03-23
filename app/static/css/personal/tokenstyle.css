@@ -1,0 +1,19 @@
+.api_element_container{
+    border: 1px black solid;
+    background-color: white;
+}
+
+.api_element_header{
+    border-bottom: 1px black solid;
+    text-align: center;
+    font-size: large;
+    padding: 5px;
+}
+
+.api_element_text{
+    padding: 5px;
+}
+
+.example{
+    font-family: Courier;
+}
