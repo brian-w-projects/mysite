@@ -17,7 +17,14 @@
 .api_entry{
     width: 550px;
     font-size: smaller;
+    border-radius: 10px;
+    border: 1px solid black;
+    padding: 5px;
+    background-color: #f9f09a;
+    margin: 20px;
 }
+
+
 
 /*TEXT ENTRY FORM ELEMENTS*/
 

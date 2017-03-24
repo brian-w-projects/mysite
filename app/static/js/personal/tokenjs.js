@@ -4,15 +4,21 @@
 
 $(function(){
     
-    $('.entry').val(api);
+    $('.api_entry').val(api);
     
-    $('.entry').on('input', function(){
-        $(this).val(api);
+    // $('.api_entry').on('input', function(){
+    //     $(this).val(api);
+    // });
+    
+    $('.api_entry').on('click', function(event){
+        event.preventDefault();
+        $(this).blur();
     });
     
     $('.copy').on('click', function(){
-        $('.entry').select();
+        $('.api_entry').select();
         document.execCommand('copy');
+        $('.api_entry').blur();
     });
     
     $('.reload').on('click', function(){
@@ -21,7 +27,7 @@ $(function(){
            contentType: 'application/json;charset=UTF-8',
            url: goto,
            success: function(x){
-                $('.entry').val(x);   
+                $('.api_entry').val(x);   
            }
         });
     });

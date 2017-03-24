@@ -90,7 +90,6 @@ class Comments(db.Model):
             
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_comments', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'author_id': self.comment_by,
             'author_username': self.comm.username,
@@ -110,7 +109,6 @@ class RecModerations(db.Model):
 
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_rec_mods', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'timestamp': self.timestamp,
             'mod_by': self.mod_by,
@@ -167,7 +165,6 @@ class ComModerations(db.Model):
     
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_com_mods', id=self.id, _scheme='https', _external=True),
             'id': self.id,
             'timestamp': self.timestamp,
             'mod_by': self.mod_by,
@@ -304,7 +301,6 @@ class Users(UserMixin, db.Model):
 
     def to_json(self):
         json_rec = {
-            'url': url_for('api1.get_user', id=self.id, _scheme='https', _external=True),
             'username': self.username,
             'confirmed': self.confirmed,
             'display': self.display,
@@ -328,14 +324,12 @@ class Users(UserMixin, db.Model):
     def to_json_following(self):
         json_rec = {}
         json_rec['count'] = self.following.count()
-        json_rec['url'] = url_for('api1.get_user_following', id=self.id, _scheme='https', _external=True)
         json_rec['following'] = {following.id : following.timestamp for following in self.following}
         return json_rec
     
     def to_json_followed(self):
         json_rec = {}
         json_rec['count'] = self.followed_by.count()
-        json_rec['url'] = url_for('api1.get_user_followed_by', id=self.id, _scheme='https', _external=True)
         json_rec['followed_by'] = {followed_by.id : followed_by.timestamp for followed_by in self.followed_by}
         return json_rec
 
