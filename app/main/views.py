@@ -10,7 +10,16 @@ from random import randint, sample
 from datetime import datetime, timedelta
 from sqlalchemy.sql.expression import func, select
 
-@main.route('/load_comments')
+@main.route('/about')
+def about():
+    temp = Recommendation.query\
+        .filter(Recommendation.verification > 0)\
+        .order_by(Recommendation.timestamp.desc())\
+        .limit(50)
+    display_recs = [possible for possible in temp if randint(1,3) == 2]
+    return render_template('main/about.html', display=display_recs[:5])
+
+@main.route('/highlight_ajax')
 def load_comments():
     id = int(request.args.get('id'))
     page = int(request.args.get('page'))
@@ -21,14 +30,6 @@ def load_comments():
         .paginate(page, per_page=current_user.display, error_out=False)
     return render_template('ajax/commentajax.html', d_c = display_comments.items)
 
-@main.route('/about')
-def about():
-    temp = Recommendation.query\
-        .filter(Recommendation.verification > 0)\
-        .order_by(Recommendation.timestamp.desc())\
-        .limit(50)
-    display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('main/about.html', display=display_recs[:5])
 
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
 def highlight(id):

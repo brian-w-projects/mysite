@@ -1,13 +1,24 @@
 from functools import wraps
 from flask import abort, g, request, jsonify
 from flask_login import current_user
-from .models import Users
+from .models import Users, API
 from .import db
 
 def message(code, message):
     response = jsonify({'Code': code, 'message': message})
     response.status_code = code
     return response
+
+
+def auth_request(role):
+    def auth_request_inner(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not API.access_request(g.current_user, request.path, role):
+                return message(429, 'Too many requests. You may only make 15 requests every 15 minutes')
+            return f(*args, **kwargs)
+        return decorated_function
+    return auth_request_inner
 
 def auth_login_required(f):
     @wraps(f)

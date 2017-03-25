@@ -3,14 +3,14 @@
 
 
 
-1. Finish API
-    - get recs/comments by user_id
-2. Add Error handling in main (400, 404, 500, 405)
+1. Add Error handling in main (400, 404, 500, 405)
     -mime_type json and html always returning true
 
 1. Finish api page with descriptions
 2. monitor and track all api requests (api request table)
 3. cap api requests from users
+    - ensure moderators can access mod api requests, still log
+    - ensure administrators can access everything, no limits
 
 
 1. Refractoring:

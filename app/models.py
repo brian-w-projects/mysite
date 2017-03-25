@@ -4,7 +4,7 @@ from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
 from flask import current_app, url_for, g
 from flask_login import UserMixin, AnonymousUserMixin
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 random = random.SystemRandom()
@@ -25,6 +25,34 @@ class Role(db.Model):
         role = Role(name='User', default=True)
         db.session.add(role)
         db.session.commit()
+
+class API(db.Model):
+    __tablename__ = 'apirequests'
+    id = db.Column(db.INTEGER, primary_key=True)
+    requester = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    endpoint = db.Column(db.String)
+    role = db.Column(db.INTEGER, default=3)
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    
+    @staticmethod
+    def access_request(requester, endpoint, role=3):
+        access = 0
+        if role == 3:
+            fifteen_mins_ago = datetime.utcnow() - timedelta(minutes=15)
+            access = API.query\
+                .filter_by(requester = requester.id)\
+                .filter_by(role = 3)\
+                .filter(API.timestamp > fifteen_mins_ago)\
+                .count()
+        if access < 15:
+            to_add = API(requester=requester.id, endpoint=endpoint, role=role)
+            db.session.add(to_add)
+            db.session.commit()
+            return True
+        else:
+            return False
+        
+        
 
 class Followers(db.Model):
     __tablename__ = 'followers'

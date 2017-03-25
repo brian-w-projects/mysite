@@ -2,8 +2,8 @@ from flask import render_template, request, redirect, url_for, session, abort, f
 from . import api1
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations
-from ..decorators import auth_token_required, is_administrator, admin_token_required, auth_login_required, moderator_token_required
+from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations, API
+from ..decorators import auth_token_required, is_administrator, admin_token_required, auth_login_required, moderator_token_required, auth_request
 from .. import db
 from ..email import send_email
 from datetime import datetime, timedelta
@@ -29,6 +29,7 @@ def get_new_token():
 
 @api1.route('/recs/<int:id>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_rec(id):
     to_ret = Recommendation.query\
         .filter_by(id=id)\
@@ -203,6 +204,44 @@ def get_user(id):
     if not to_ret:
         return message(404, 'This user does not exist')
     return jsonify(to_ret.to_json())
+
+@api1.route('/users/<int:id>/recs', methods=['GET'])
+@api1.route('/users/<int:id>/recs/page/<int:page>', methods=['GET'])
+@auth_token_required
+def get_user_recs(id, page=1):
+    user = Users.query\
+        .filter_by(id=id)\
+        .first()
+    if not user:
+        return message(404, 'This user does not exist')
+    if g.current_user.id == id:
+        private = 0
+    else:
+        private = 1
+    recs = Recommendation.query\
+        .filter_by(author_id = id)\
+        .filter(Recommendation.verification >= private)\
+        .order_by(Recommendation.timestamp.desc())\
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    to_rec = {x.id: x.to_json() for x in recs.items}
+    return jsonify(to_rec)
+
+@api1.route('/users/<int:id>/comments', methods=['GET'])
+@api1.route('/users/<int:id>/comments/page/<int:page>', methods=['GET'])
+@auth_token_required
+def get_user_comments(id, page=1):
+    user = Users.query\
+        .filter_by(id=id)\
+        .first()
+    if not user:
+        return message(404, 'This user does not exist')
+    comments = Comments.query\
+        .filter_by(comment_by = id)\
+        .filter(Comments.verification > 0)\
+        .order_by(Comments.timestamp.desc())\
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    to_ret = {x.id : x.to_json() for x in comments.items}
+    return jsonify(to_ret)
 
 @api1.route('/users', methods=['PUT'])
 @auth_token_required
