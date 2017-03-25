@@ -1,7 +1,7 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
 from flask import current_app, url_for, g
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
@@ -250,11 +250,11 @@ class Users(UserMixin, db.Model):
         return check_password_hash(self.password_hash, p)
 
     def generate_confirmation_token(self, expiration=3600):
-        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        s = TimedSerializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id})
 
     def confirm(self, token):
-        s = Serializer(current_app.config['SECRET_KEY'])
+        s = TimedSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         except:
@@ -297,7 +297,11 @@ class Users(UserMixin, db.Model):
             data = s.loads(token)
         except:
             return None
-        return Users.query.get(data['id'])
+        user = Users.query.get(data['id'])
+        if user.api == token:
+            return user
+        else:
+            return None
 
     def to_json(self):
         json_rec = {
@@ -367,6 +371,9 @@ class Users(UserMixin, db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
+    id = -1
+    display = 10
+    
     def is_moderator(self):
         return False
 
@@ -405,7 +412,8 @@ class Recommendation(db.Model):
             'author_id': self.author_id,
             'timestamp': self.timestamp,
             'comment_count': self.comments.filter(Comments.verification != 0).count(),
-            'id': self.id
+            'id': self.id,
+            'private': self.verification == 0
         }
         return json_rec
     

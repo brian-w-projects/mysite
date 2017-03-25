@@ -2,6 +2,7 @@
 /* global goto */
 /* global gotoM */
 /* global id */
+/* global page */
 
 $(function(){
     $('.to_check').each(function(){
@@ -23,12 +24,13 @@ $(function(){
     });
     
     $('.ajax').bind('click', function(){
+        page += 1;
         $.ajax({
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             url: gotoM,
             datatype:'json',
-            data: {'id': id},
+            data: {'id': id, 'page':page},
             success: function(x){
                 $('.listrecs').append(x);
                if($('.empty').length){

@@ -1,10 +1,11 @@
 {% import 'macros/postmacro.html' as postmacro %}
 {{moment.include_moment()}}
 
-{% if display.count() > 0 %}
+{% if display|length > 0 %}
   {% for rec in display %}
     {{postmacro.render_post(rec, current_user, moment)}}
   {% endfor %}
-{% else %}
-    <p class='empty'>No Results</p>    
+{% endif %}
+{% if display|length < current_user.display %}
+  <p class='empty'>No More Results</p>    
 {% endif %}

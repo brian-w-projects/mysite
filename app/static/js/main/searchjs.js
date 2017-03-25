@@ -1,6 +1,7 @@
 /* global $ */
 /* global goto */
 /* global gotoM */
+/* global page */
 
 $(function(){
     $('#submit').bind('click', function(event){
@@ -23,12 +24,13 @@ $(function(){
     });
     
     $('#ajax').bind('click', function(){
+        page += 1;
         $.ajax({
            type: 'GET',
            contentType: 'application/json;charset=UTF-8',
            url: gotoM,
            datatype:'json',
-           data: {},
+           data: {'page': page},
            success: function(x){
                $('.listrecs').append(x);
                if($('.empty').length || $('.emptyCom').length){

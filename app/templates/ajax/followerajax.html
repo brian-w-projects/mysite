@@ -2,12 +2,13 @@
 {% import 'macros/namemacro.html' as namemacro %}
 {{moment.include_moment()}}
 
-{% if display.count() > 0 %}
+{% if display|length > 0 %}
   {% for name in display %}
     {{namemacro.render_name2(name, current_user, moment)}}
     {{postmacro.render_post(name.user.posts.filter_by(public=True)
       .order_by(Recommendation.timestamp.desc()).first(), current_user, moment)}}
   {% endfor %}
-{% else %}
-    <p class='empty'>No Results</p>    
+{% endif %}
+{% if display|length < current_user.display %}
+  <p class='empty'>No Results</p>    
 {% endif %}

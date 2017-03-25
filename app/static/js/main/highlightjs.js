@@ -2,6 +2,8 @@
 /* global goto */
 /* global gotoF */
 /* global id */
+/* global page */
+/* global rec_id */
 
 $(function(){
     $('#follow').on('click', function(){
@@ -24,12 +26,13 @@ $(function(){
     });
     
     $('#ajax').bind('click', function(){
+        page += 1;
         $.ajax({
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             url: goto,
             datatype:'json',
-            data: {},
+            data: {'id': rec_id, 'page': page},
             success: function(x){
                 $('.listcomments').append(x);
                if($('.emptyCom').length){

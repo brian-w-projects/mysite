@@ -16,7 +16,7 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {% if display_names.count() != 0 %}
+      {% if display_names|length != 0 %}
         {% for name in display_names %}
           {{namemacro.render_name2(name, current_user, moment)}}
           {% set highlight = name.user.posts.filter(Recommendation.verification > 0)
@@ -37,6 +37,7 @@
     <script>
       var id = {{user.id}};
       var goto = "{{url_for('personal.followers_ajax')}}";
+      var page = 1;
     </script>
     <script src="{{url_for('static', filename='js/personal/followersjs.js')}}"></script>
   {% endblock %}

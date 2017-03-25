@@ -387,15 +387,14 @@ def put_com_mods(id):
         return message(201, 'This comment has been verified')
 
 @api1.route('/moderate/recs', methods=['GET'])
+@api1.route('/moderate/recs/page/<int:page>', methods=['GET'])
 @moderator_token_required
-def get_moderate_recs():
+def get_moderate_recs(page=1):
     recs = Recommendation.query\
         .filter_by(verification = 1)\
         .order_by(Recommendation.timestamp.asc())\
-        .limit(10)
-    if not recs:
-        return message(200, 'There are no recs in need of moderation at this time')
-    to_ret = {x.id : x.to_json() for x in recs}
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    to_ret = {x.id : x.to_json() for x in recs.items}
     return jsonify(to_ret)
 
 @api1.route('/moderate/recs/<int:id>', methods=['POST'])
@@ -424,14 +423,13 @@ def moderate_recs(id):
     return message(201, 'Rec successfully moderated')
 
 @api1.route('/moderate/comments', methods=['GET'])
+@api1.route('/moderate/comments/page/<int:page>', methods=['GET'])
 @moderator_token_required
-def get_moderate_comments():
+def get_moderate_comments(page=1):
     com = Comments.query\
         .filter_by(verification = 1)\
-        .limit(10)
-    if not com:
-        return message(200, 'There are not comments to moderate at this time')
-    to_ret = {x.id : x.to_json() for x in com}
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    to_ret = {x.id : x.to_json() for x in com.items}
     return jsonify(to_ret)
 
 @api1.route('/moderate/comments/<int:id>', methods=['POST'])
@@ -458,13 +456,56 @@ def moderate_comments(id):
     db.session.commit()
     return message(201, 'Comment successfully moderated')
 
-# Finished here Tuesday
-
-@api1.route('/search', methods=['GET'])
+@api1.route('/search/recs', methods=['GET'])
+@api1.route('/search/recs/page/<int:page>', methods=['GET'])
 @auth_token_required
-def get_search():
-    pass
-    
+def get_search_recs(page = 1):
+    display_recs = Recommendation.query\
+        .filter(Recommendation.verification > 0)
+    if request.get_json(silent=True):
+        if request.json.get('term') is not None:
+            display_recs = display_recs\
+                .filter(Recommendation.title.contains(request.json.get('term')))
+        if request.json.get('user') is not None:
+            me = Users.query\
+                .filter_by(username=request.json.get('user'))\
+                .first()
+            display_recs = display_recs\
+                .filter_by(author_id = me.id)
+        if request.json.get('date') is not None:
+            date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
+            display_recs = display_recs.filter(Recommendation.timestamp <= date)
+    display_recs = display_recs\
+        .order_by(Recommendation.timestamp.desc())\
+        .paginate(page, per_page=current_user.display, error_out=False)
+    to_ret = {x.id : x.to_json() for x in display_recs.items}
+    return jsonify(to_ret)
+
+@api1.route('/search/comments', methods=['GET'])
+@api1.route('/search/comments/page/<int:page>', methods=['GET'])
+@auth_token_required
+def get_search_comments(page = 1):
+    display_comments = Comments.query\
+        .filter(Comments.verification > 0)
+    if request.get_json(silent=True):
+        if request.json.get('term') is not None:
+            display_comments = display_comments\
+                .filter(Comments.comment.contains(request.json.get('term')))
+        if request.json.get('user') is not None:
+            me = Users.query\
+                .filter_by(username=request.json.get('user'))\
+                .first()
+            display_comments = display_comments\
+                .filter_by(comment_by=me.id)
+        if request.json.get('date') is not None:
+            date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
+            display_comments = display_comments\
+                .filter(Comments.timestamp <= date)
+    display_comments = display_comments\
+        .order_by(Comments.timestamp.desc())\
+        .paginate(page, per_page=current_user.display, error_out=False)
+    to_ret = {x.id: x.to_json() for x in display_comments.items}
+    return jsonify(to_ret)
 
 @api1.route('/admin')
 @admin_token_required

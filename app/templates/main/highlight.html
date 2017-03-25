@@ -54,7 +54,9 @@
     </div><!--w940-->
     <script>
       var id = {{rec.author.id}};
-      var goto = "{{url_for('main.highlight_ajax')}}";
+      var rec_id = {{rec.id}};
+      var page = 1;
+      var goto = "{{url_for('main.load_comments')}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/main/highlightjs.js')}}"></script>

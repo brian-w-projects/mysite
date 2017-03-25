@@ -108,34 +108,31 @@ def edit(post_id):
 @personal.route('/_followers')
 @login_required
 def followers_ajax():
-    id = request.args.get('id')
-    session['offset'] += session['limit']
+    id = int(request.args.get('id'))
+    page = int(request.args.get('page'))
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
     to_return = user\
         .followed_by\
         .order_by(Followers.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(session['limit'])
-    return render_template('ajax/followerajax.html', display = to_return, Recommendation=Recommendation)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/followerajax.html', display = to_return.items, 
+        Recommendation=Recommendation)
 
 @personal.route('/followers/<int:id>')
 @personal.route('/followers')
-def followers(id):
-    if current_user.is_authenticated:
-        session['limit'] = current_user.display
-    else:
-        session['limit'] = 10
-    session['offset'] = 0
+def followers(id=-1):
+    if current_user.is_authenticated and id == -1:
+        id = current_user.id
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
     to_return = user\
         .followed_by\
         .order_by(Followers.timestamp.desc())\
-        .limit(session['limit'])
-    return render_template('personal/followers.html', display_names=to_return, 
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('personal/followers.html', display_names=to_return.items, 
         user=user, Recommendation=Recommendation)
 
 @personal.route('/_follow')
@@ -155,75 +152,69 @@ def follow_ajax():
 
 @personal.route('/_following')
 def following_ajax():
-    id = request.args.get('id')
-    session['offset'] += session['limit']
+    id = int(request.args.get('id'))
+    page = int(request.args.get('page'))
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
-    to_return = user\
-        .following\
+    to_return = user.following\
         .order_by(Followers.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(session['limit'])
-    return render_template('ajax/followingajax.html', display_names = to_return, 
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/followingajax.html', display_names = to_return.items, 
         Recommendation=Recommendation, user=user)
 
 
 @personal.route('/following/<int:id>')
 @personal.route('/following')
-def following(id):
-    if current_user.is_authenticated:
-        session['limit'] = current_user.display
-    else:
-        session['limit'] = 10
-    session['offset'] = 0
+def following(id=-1):
+    if current_user.is_authenticated and id == -1:
+        id = current_user.id
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
     to_return = user\
         .following\
         .order_by(Followers.timestamp.desc())\
-        .limit(session['limit'])
-    return render_template('personal/following.html', display_names=to_return, user = user, Recommendation=Recommendation)
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('personal/following.html', display_names=to_return.items, 
+        user = user, Recommendation=Recommendation)
 
 @personal.route('/_inspiration')
 @login_required
 def inspiration_ajax():
-    session['offset'] += current_user.display
+    page = int(request.args.get('page'))
     following = [x.who.id for x in current_user.following]
     display_recs = Recommendation.query\
         .filter(Recommendation.author_id.in_(following))\
+        .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/postajax.html', display = display_recs)   
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/postajax.html', display = display_recs.items)   
 
 @personal.route('/inspiration')
 @login_required
 def inspiration():
-    session['offset'] = 0
     following = [x.who.id for x in current_user.following]
     display_recs = Recommendation.query\
         .filter(Recommendation.author_id.in_(following))\
+        .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(current_user.display)
-    return render_template('personal/inspiration.html', display=display_recs)
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('personal/inspiration.html', display=display_recs.items)
 
 @personal.route('/_post')
 @login_required
 def post_ajax():
-    session['offset'] += current_user.display
+    page = int(request.args.get('page'))
     display_recs = Recommendation.query\
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/postajax.html', display = display_recs)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/postajax.html', display = display_recs.items)
 
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
 def post():
-    session['offset'] = 0
     form = PostForm(request.form)
     if request.method == 'POST':
         if form.validate():
@@ -242,44 +233,38 @@ def post():
     display_recs = Recommendation.query\
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(current_user.display)
-    return render_template('personal/post.html', form=form, display=display_recs)
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('personal/post.html', form=form, display=display_recs.items)
 
 @personal.route('/_profileCom')
 def profileCom_ajax():
-    id = request.args.get('id')
-    if current_user.is_authenticated:
-        limit = current_user.display
-    else:
-        limit = 10
-    session['offsetCom'] += limit
+    id = int(request.args.get('id'))
+    page = int(request.args.get('page'))
     display_comments = Comments.query\
         .filter_by(comment_by=id)\
+        .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
-        .offset(session['offsetCom'])\
-        .limit(limit)
-    return render_template('ajax/commentajax.html', d_c = display_comments)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/commentajax.html', d_c = display_comments.items)
 
 @personal.route('/_profile')
 def profile_ajax():
-    id = request.args.get('id')
-    if current_user.is_authenticated:
-        limit = current_user.display
+    id = int(request.args.get('id'))
+    page = int(request.args.get('page'))
+    if(current_user.id == id):
+        private = 0
     else:
-        limit = 10
-    session['offset'] += limit
+        private = 1
     display_recs = Recommendation.query\
         .filter_by(author_id=id)\
+        .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(limit)
-    return render_template('ajax/postajax.html', display = display_recs)
+        .paginate(page, per_page=current_user.display, error_out = False)
+    return render_template('ajax/postajax.html', display = display_recs.items)
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')
 def profile(id=-1):
-    session['offset'] = 0
-    session['offsetCom'] = 0
     com_count = 0
     rec_count = 0
     if id == -1 and current_user.is_authenticated:
@@ -287,7 +272,6 @@ def profile(id=-1):
     elif id == -1 and not current_user.is_authenticated:
         return redirect(url_for('auth.login', next='personal/profile'))
     if current_user.is_authenticated:
-        limit=current_user.display
         if current_user.is_moderator() and current_user.id == id:
             com_count = Comments.query\
                 .filter_by(verification=1)\
@@ -295,10 +279,11 @@ def profile(id=-1):
             rec_count = Recommendation.query\
                 .filter_by(verification=1)\
                 .count()
-    else:
-        limit=10
-    user = Users.query.filter_by(id=id).first_or_404()
+    user = Users.query.\
+        filter_by(id=id)\
+        .first_or_404()
     if current_user.is_authenticated and current_user.id == id:
+        private = 0
         display_recs = user.posts\
             .order_by(Recommendation.timestamp.desc())\
             .filter_by(made_private=True)
@@ -310,16 +295,18 @@ def profile(id=-1):
             rec.made_private = False
             db.session.add(rec)
             db.session.commit()
+    else: 
+        private = 1
     display_recs = user.posts\
-        .filter(Recommendation.verification >= 0)\
+        .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(limit)
+        .paginate(1, per_page=current_user.display, error_out=False)
     display_comments = user.commented_on\
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
-        .limit(limit)
-    return render_template('personal/profile.html', user=user, display=display_recs, 
-        d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('personal/profile.html', user=user, display=display_recs.items, 
+        d_c=display_comments.items, id=id, com_count = com_count, rec_count=rec_count)
 
 @personal.route('/_token')
 @login_required

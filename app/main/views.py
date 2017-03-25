@@ -10,6 +10,17 @@ from random import randint, sample
 from datetime import datetime, timedelta
 from sqlalchemy.sql.expression import func, select
 
+@main.route('/load_comments')
+def load_comments():
+    id = int(request.args.get('id'))
+    page = int(request.args.get('page'))
+    display_comments = Comments.query\
+        .filter_by(posted_on = id)\
+        .filter(Comments.verification != 0)\
+        .order_by(Comments.timestamp.desc())\
+        .paginate(page, per_page=current_user.display, error_out=False)
+    return render_template('ajax/commentajax.html', d_c = display_comments.items)
+
 @main.route('/about')
 def about():
     temp = Recommendation.query\
@@ -19,35 +30,19 @@ def about():
     display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('main/about.html', display=display_recs[:5])
 
-@main.route('/_highlight')
-def highlight_ajax():
-    session['offset'] += session['limit']
-    display_comments = Comments.query\
-        .filter(Comments.verification != 0)\
-        .filter_by(posted_on=session['id'])\
-        .order_by(Comments.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(session['limit'])
-    return render_template('ajax/commentajax.html', d_c = display_comments)
-
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
 def highlight(id):
-    if current_user.is_authenticated:
-        session['limit']=current_user.display
-    else:
-        session['limit']=10
-    session['offset']=0
-    session['id']=id
     form = CommentForm(request.form)
-    display_recs = Recommendation.query.filter_by(id=id).first_or_404()
-    if display_recs.verification == -1:
-        abort(404)
+    display_recs = Recommendation.query\
+        .filter(Recommendation.verification != -1)\
+        .filter_by(id=id)\
+        .first_or_404()
     if display_recs.verification == 0 and (not current_user.is_authenticated or display_recs.author_id != current_user.id):
         abort(403)
     display_comments = display_recs.comments\
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
-        .limit(session['limit'])
+        .paginate(1, per_page=session['limit'], error_out=False)
     if current_user.is_authenticated and display_recs.author_id == current_user.id:
         display_recs.new_comment = False
         db.session.add(display_recs)
@@ -67,7 +62,8 @@ def highlight(id):
         else:
             flash(u'\u2717 Comment cannot be empty')
         return redirect(url_for('main.highlight', id=id))
-    return render_template('main/highlight.html', rec=display_recs, d_c=display_comments, form=form)
+    return render_template('main/highlight.html', rec=display_recs, d_c=display_comments.items, 
+        form=form)
 
 @main.route('/')
 def index():
@@ -108,52 +104,50 @@ def search_ajax():
         session['date'] = datetime.strptime(request.form['date'], '%m/%d/%Y') + timedelta(days=1)
     else:
         session['date'] = ''
-    if current_user.is_authenticated:
-        session['limit'] = current_user.display
-    else:
-        session['limit'] = 10
-    session['offset'] = 0
     return search_query()
     
 @main.route('/_additional_results')
 def more_ajax():
-    session['offset'] += session['limit']
-    return search_query()
+    return search_query(page = int(request.args.get('page')))
 
-def search_query():
+def search_query(page = 1):
     if session['type'] == 'Recs':
         display_recs = Recommendation.query\
             .filter(Recommendation.verification > 0)
         if session['search'] != '':
-            display_recs = display_recs.filter(Recommendation.title.contains(session['search']))
+            display_recs = display_recs\
+                .filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
             me = Users.query\
                 .filter_by(username=session['user'])\
                 .first()
-            display_recs = display_recs.filter_by(author_id=me.id)
+            display_recs = display_recs\
+                .filter_by(author_id = me.id)
         if session['date'] != '':
             display_recs = display_recs.filter(Recommendation.timestamp <= session['date'])
         display_recs = display_recs\
             .order_by(Recommendation.timestamp.desc())\
-            .offset(session['offset'])\
-            .limit(session['limit'])
-        return render_template('ajax/postajax.html', display = display_recs)
+            .paginate(page, per_page=current_user.display, error_out=False)
+        return render_template('ajax/postajax.html', display = display_recs.items)
     else:
-        display_comments = Comments.query.filter_by(verification=1)
+        display_comments = Comments.query\
+            .filter(Comments.verification > 0)
         if session['search'] != '':
             display_comments = display_comments\
                 .filter(Comments.comment.contains(session['search']))
         if session['user'] != '':
+            me = Users.query\
+                .filter_by(username=session['user'])\
+                .first()
             display_comments = display_comments\
-                .filter_by(comment_by_user=session['user'])
+                .filter_by(comment_by=me.id)
         if session['date'] != '':
             display_comments = display_comments\
                 .filter(Comments.timestamp <= session['date'])
         display_comments = display_comments\
             .order_by(Comments.timestamp.desc())\
-            .offset(session['offset'])\
-            .limit(session['limit'])
-        return render_template('ajax/commentajax.html', d_c = display_comments)
+            .paginate(page, per_page=current_user.display, error_out=False)
+        return render_template('ajax/commentajax.html', d_c = display_comments.items)
     
 @main.route('/search')
 def search():
@@ -165,22 +159,18 @@ def surprise_ajax():
     temp = Recommendation.query\
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(5*session['limit'])\
+        .limit(5*current_user.display)\
         .from_self().order_by(func.random())\
-        .limit(session['limit'])
+        .limit(current_user.display)
     return render_template('ajax/postajax.html', display = temp)
 
 @main.route('/surprise')
 def surprise():
-    if current_user.is_authenticated:
-        session['limit'] = current_user.display
-    else:
-        session['limit']=10
     display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(5*session['limit'])\
+        .limit(current_user.display)\
         .from_self()\
         .order_by(func.random())\
-        .limit(session['limit'])
+        .limit(current_user.display)
     return render_template('main/surprise.html', display=display_recs)

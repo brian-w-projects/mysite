@@ -24,7 +24,8 @@
       <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
     </div><!--w940-center-->
     <script>
-        var goto = "{{url_for('personal.inspiration_ajax')}}";
+      var page = 1;
+      var goto = "{{url_for('personal.inspiration_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/personal/inspirationjs.js')}}"></script>
   {% endblock %}

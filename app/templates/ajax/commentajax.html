@@ -1,10 +1,11 @@
 {{moment.include_moment()}}
 {% import 'macros/commentmacro.html' as commentmacro %}
 
-{% if d_c.count() > 0 %}
+{% if d_c|length > 0 %}
   {% for com in d_c %}
     {{commentmacro.render_post(com, current_user, moment)}}
   {% endfor %}
-{% else %}
-    <p class='emptyCom'>No Results</p>
+{% endif %}
+{% if d_c|length < current_user.display %}
+  <p class='emptyCom'>No More Results</p>
 {% endif %}
