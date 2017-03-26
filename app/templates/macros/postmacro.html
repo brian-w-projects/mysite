@@ -1,43 +1,60 @@
-{% macro render_post(rec, current_user, moment) %}
-  {% if rec.verificaton != 0 or (current_user.is_authenticated and current_user.id == rec.author_id) %}
-    <div class='rec1'>
-      <a href="{{url_for('main.highlight', id=rec.id)}}">
-        <h3 class='postTitle'>
-          {{rec.title}}
-        </h3>
+{{moment.include_moment()}}
+
+{% macro render_post(rec) %}
+  <div class='rec1'>
+    <a href="{{url_for('main.highlight', id=rec.id)}}">
+      <h3 class='postTitle'>
+        {{rec.title}}
+      </h3>
+    </a>
+    <div class='postHeaderDiv'>
+      <a href="{{url_for('personal.profile', id=rec.author_id)}}">
+        <p class='postHeader special-link'>
+          {{rec.author.username}}
+        </p>
       </a>
-      <div class='postHeaderDiv'>
-        <a href="{{url_for('personal.profile', id=rec.author_id)}}">
+      <p class='postHeader'>
+        {% if rec.verification != 0 %}
+          Public
+        {% else %}
+          Private
+        {% endif %}
+      </p>
+      <p class='postHeader'>
+        {{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
+      </p>
+      {% if current_user.is_authenticated and rec.author_id==current_user.id %}
+        <a href="{{url_for('personal.edit', post_id=rec.id)}}">
           <p class='postHeader special-link'>
-            {{rec.author.username}}
+            Edit
           </p>
         </a>
-        <p class='postHeader'>
-          {% if rec.verification != 0 %}
-            Public
-          {% else %}
-            Private
-          {% endif %}
-        </p>
-        <p class='postHeader'>
-          {{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
-        </p>
-        {% if current_user.is_authenticated and rec.author_id==current_user.id %}
-          <a href="{{url_for('personal.edit', post_id=rec.id)}}">
-            <p class='postHeader special-link'>
-              Edit
-            </p>
-          </a>
-        {% endif %}
-        <p class='postHeader rec'>Comments: {{rec.comments.filter(rec.verification != 0).count()}}</p>
-        {% if current_user.id == rec.author_id and rec.new_comment == True %}
-          <p class='postHeader rec'>New Comment!</p>
-        {% endif %}
-      </div><!--postheaderdiv-->
-      <p class='postText'>
-        {{rec.text}}
-        </p>
-    </div><!--rec1-->
-    <br/>
-  {% endif %}
+      {% endif %}
+      <p class='postHeader rec'>Comments: {{rec.comments.filter(rec.verification != 0).count()}}</p>
+      {% if current_user.id == rec.author_id and rec.new_comment == True %}
+        <p class='postHeader rec'>New Comment!</p>
+      {% endif %}
+    </div><!--postheaderdiv-->
+    <p class='postText'>
+      {{rec.text}}
+    </p>
+  </div><!--rec1-->
+  <br/>
 {% endmacro %}
+
+{% macro initialize_recs(display) %}
+  {% for rec in display %}
+    {{render_post(rec)}}
+  {% endfor %}
+  {% if display|length == current_user.display %}
+    <p id='ajax_recs' class='loadMore special-link'>Load More</p>
+  {% endif %}
+  <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
+{% endmacro %}
+
+{% for rec in display %}
+  {{render_post(rec)}}
+{% endfor %}
+{% if display|length != current_user.display %}
+  <em class='empty'></em>
+{% endif %}

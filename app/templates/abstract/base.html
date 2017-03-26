@@ -2,9 +2,9 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/postmacro.html' as postmacro %}
+  {% import 'macros/postmacro.html' as postmacro with context %}
+  {% import 'macros/commentmacro.html' as commentmacro with context %}
   {% import 'macros/flashmacro.html' as flashmacro %}
-  {% import 'macros/commentmacro.html' as commentmacro %}
   {% import 'macros/namemacro.html' as namemacro %}
   <head>
     {% block head %}

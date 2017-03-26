@@ -25,23 +25,6 @@ $(function(){
         });
     });
     
-    $('#ajax').bind('click', function(){
-        page += 1;
-        $.ajax({
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-            url: goto,
-            datatype:'json',
-            data: {'id': rec_id, 'page': page},
-            success: function(x){
-                $('.listcomments').append(x);
-               if($('.emptyCom').length){
-                        $('.loadMore').css('display', 'none');
-                }
-            }
-        });
-    });
-    
     var $count = 250 - $('.textentry').val().length;
     $('.chars-left').text($count);
     

@@ -30,10 +30,10 @@
       {% else %}
         <p>Nobody is following you! Post some Recs to get followers.</p>
       {% endif %}
+      {% if display_names|length == current_user.display %}
+        <a><p class='ajax loadMore special-link'>Load More</p></a>
+      {% endif %}
     </div><!--listrecs-->
-    <div class='w940-center'>
-      <a><p class='ajax loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <script>
       var id = {{user.id}};
       var goto = "{{url_for('personal.followers_ajax')}}";

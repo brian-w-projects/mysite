@@ -60,40 +60,4 @@ $(function(){
             }
         }
     });
-    
-    $('.ajax').bind('click', function(){
-        if($('#submit').text() == 'Comments'){
-            page += 1;
-            $.ajax({
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                url: gotoP,
-                datatype:'json',
-                data: {'id': id, 'page':page},
-                success: function(x){
-                    $('.listrecs').append(x);
-                   if($('.empty').length){
-                        $('.loadMore').hide();
-                    }
-                }
-            });
-        }
-        else
-        {
-            pageCom += 1;
-            $.ajax({
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                url: gotoC,
-                datatype:'json',
-                data: {'id': id, 'page': pageCom},
-                success: function(x){
-                    $('.listcomments').append(x);
-                   if($('.emptyCom').length){
-                        $('.loadMoreCom').hide();
-                    }
-                }
-            });
-        }
-    });
 });

@@ -1,22 +1,17 @@
 1. Integrate Celery to send emails
-
+2. incorporate sslify to keep links secure and remove external from url_for
 
 
 
 1. Add Error handling in main (400, 404, 500, 405)
     -mime_type json and html always returning true
-
-1. Finish api page with descriptions
-2. monitor and track all api requests (api request table)
-3. cap api requests from users
-    - ensure moderators can access mod api requests, still log
-    - ensure administrators can access everything, no limits
+2. Finish api page with descriptions
 
 
-1. Refractoring:
-    - load More loads from macros. Prevent load more from showing if no more to load
+Refactoring:
+    - remove ajax.html folder, incorporate into macros similar to recs and comments
+    - combine javascript for following/unfollowing, displaying characters remaining
+    
+    - rename variables for consistant snake_naming
 
-
-
-1. incorporate sslify to keep links secure and remove external from url_for
 

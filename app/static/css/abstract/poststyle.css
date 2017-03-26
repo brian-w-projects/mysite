@@ -45,7 +45,7 @@
 
 
 /*OVERRIDE NAVBAR LINKS*/
-.listrecs a{
+.listrecs a, .listcomments a{
     padding: 0;
 }
 /*OVERRIDE NAVBAR LINKS*/
@@ -66,16 +66,6 @@
     margin: 0 auto;
 }
 /*COMMENTS*/
-
-/*EMPTY BAR STYLING*/
-.empty, .emptyCom{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border: 2px solid black;
-    text-align: center;
-    font-size: larger;
-}
-/*EMPTY BAR STYLING*/
 
 /*FOLLOWING/FOLLOWER STYLE */
 .followName{

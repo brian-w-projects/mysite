@@ -1,4 +1,6 @@
-{% macro render_post(com, current_user, moment) %}
+{{moment.include_moment()}}
+
+{% macro render_post(com) %}
   {% if com.verification != 0 %}
     <div class='rec1'>
       <div class='postHeaderDiv'>
@@ -39,3 +41,20 @@
     <br/>
   {% endif %}
 {% endmacro %}
+
+{% macro initialize_comments(d_c) %}
+  {% for com in d_c %}
+    {{render_post(com)}}
+  {% endfor %}
+  {% if d_c|length == current_user.display %}
+    <a><p id='ajax_comments' class='loadMoreCom special-link'>Load More</p></a>
+  {% endif %}
+  <script src="{{url_for('static', filename='js/speciality/ajax_comment_js.js')}}"></script>
+{% endmacro %}
+
+{% for com in d_c %}
+  {{render_post(com)}}
+{% endfor %}
+{% if d_c|length != current_user.display %}
+  <em class='emptyCom'></em>
+{% endif %}

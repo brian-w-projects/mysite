@@ -1,41 +1,38 @@
 /* global $ */
-/* global goto */
-/* global gotoM */
+/* global goto_initial */
 /* global page */
+/* global pageCom */
 
 $(function(){
-    $('#submit').bind('click', function(event){
+    $('.loadMore').hide();
+    $('.loadMoreCom').hide();
+    
+    $('#submit').on('click', function(event){
+        page = 1;
+        pageCom = 1;
         event.preventDefault();
         $.ajax({
            type: 'POST',
-           url: goto,
+           url: goto_initial,
            data: $('form').serialize(),
            success: function(x){
-                $('.listrecs').html(x);
-               if($('.empty').length){
-                   $('.loadMore').css('display', 'none');
-               }
-               else{
-                    $('.loadMore').css('display', 'block');
-               }
-               
-           }
-        });
-    });
-    
-    $('#ajax').bind('click', function(){
-        page += 1;
-        $.ajax({
-           type: 'GET',
-           contentType: 'application/json;charset=UTF-8',
-           url: gotoM,
-           datatype:'json',
-           data: {'page': page},
-           success: function(x){
-               $('.listrecs').append(x);
-               if($('.empty').length || $('.emptyCom').length){
-                   $('.loadMore').css('display', 'none');
-               }
+                $('.loadMore').prevAll().remove();
+                $('.loadMoreCom').prevAll().remove();
+                $('.loadMore').hide();
+                $('.loadMoreCom').hide();
+                if($('.type').val() == 'Recs'){
+                    $('.loadMore').before(x);
+                    if(!$('.empty').length){
+                        $('.loadMore').show();
+                    }
+                }else{
+                    $('.loadMoreCom').before(x);
+                    if(!$('.emptyCom').length){
+                        $('.loadMoreCom').show();
+                    }
+                }
+                
+             
            }
         });
     });

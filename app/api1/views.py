@@ -43,6 +43,7 @@ def get_rec(id):
 
 @api1.route('/recs/<int:id>', methods=['PUT'])
 @auth_token_required
+@auth_request(role=3)
 def put_rec(id):
     if not request.get_json(silent=True):
         return message(400, 'text, title or public must be present')
@@ -81,6 +82,7 @@ def put_rec(id):
 
 @api1.route('/recs/<int:id>', methods=['DELETE'])
 @auth_token_required
+@auth_request(role=3)
 def delete_rec(id):
     rec = Recommendation.query\
         .filter_by(id=id)\
@@ -96,6 +98,7 @@ def delete_rec(id):
 
 @api1.route('/recs', methods=['POST'])
 @auth_token_required
+@auth_request(role=3)
 def post_rec():
     if not request.get_json(silent=True):
         return message(400, 'text, title and public must be present')
@@ -116,6 +119,7 @@ def post_rec():
 
 @api1.route('/recs/<int:id>/comments', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_rec_comments(id):
     to_ret = Recommendation.query\
         .filter_by(id=id)\
@@ -129,6 +133,7 @@ def get_rec_comments(id):
 
 @api1.route('/recs/<int:id>/comments', methods=['POST'])
 @auth_token_required
+@auth_request(role=3)
 def post_rec_comments(id):
     if not request.get_json(silent=True):
         return message(400, 'text must be present')
@@ -149,6 +154,7 @@ def post_rec_comments(id):
 
 @api1.route('/comments/<int:id>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_comments(id):
     to_ret = Comments.query\
         .filter(Comments.verification > 0)\
@@ -160,6 +166,7 @@ def get_comments(id):
 
 @api1.route('/comments/<int:id>', methods=['PUT'])
 @auth_token_required
+@auth_request(role=3)
 def edit_comments(id):
     com = Comments.query\
         .filter(Comments.verification > 0)\
@@ -181,6 +188,7 @@ def edit_comments(id):
 
 @api1.route('/comments/<int:id>', methods=['DELETE'])
 @auth_token_required
+@auth_request(role=3)
 def delete_comments(id):
     com = Comments.query\
         .filter(Comments.verification > 0)\
@@ -197,6 +205,7 @@ def delete_comments(id):
 
 @api1.route('/users/<int:id>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_user(id):
     to_ret = Users.query\
         .filter_by(id=id)\
@@ -229,6 +238,7 @@ def get_user_recs(id, page=1):
 @api1.route('/users/<int:id>/comments', methods=['GET'])
 @api1.route('/users/<int:id>/comments/page/<int:page>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_user_comments(id, page=1):
     user = Users.query\
         .filter_by(id=id)\
@@ -245,6 +255,7 @@ def get_user_comments(id, page=1):
 
 @api1.route('/users', methods=['PUT'])
 @auth_token_required
+@auth_request(role=3)
 def put_user():
     if not request.get_json(silent=True):
         return message(400, 'Must provide value for display, about_me or updates')
@@ -276,6 +287,7 @@ def put_user():
 
 @api1.route('/users/<int:id>/following', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_user_following(id):
     to_ret = Users.query\
         .filter_by(id=id)\
@@ -286,6 +298,7 @@ def get_user_following(id):
 
 @api1.route('/users/<int:id>/followed_by', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_user_followed_by(id):
     to_ret = Users.query\
         .filter_by(id=id)\
@@ -296,6 +309,7 @@ def get_user_followed_by(id):
 
 @api1.route('/follow/<int:id>', methods=['POST'])
 @auth_token_required
+@auth_request(role=3)
 def put_follower(id):
     user = Users.query\
         .filter_by(id=id)\
@@ -314,6 +328,7 @@ def put_follower(id):
 
 @api1.route('/follow/<int:id>', methods=['DELETE'])
 @auth_token_required
+@auth_request(role=3)
 def delete_follow(id):
     user = Users.query\
         .filter_by(id=id)\
@@ -332,6 +347,7 @@ def delete_follow(id):
 
 @api1.route('/mods/<int:id>/recs', methods=['GET'])
 @admin_token_required
+@auth_request(role=1)
 def get_mod_rec_history(id):
     mod = Users.query\
         .filter(Users.role_id != 3)\
@@ -346,6 +362,7 @@ def get_mod_rec_history(id):
 
 @api1.route('/mods/<int:id>/comments', methods=['GET'])
 @admin_token_required
+@auth_request(role=1)
 def get_mod_com_history(id):
     mod = Users.query\
         .filter(Users.role_id != 3)\
@@ -360,6 +377,7 @@ def get_mod_com_history(id):
 
 @api1.route('/moderations/recs/<int:id>', methods=['GET'])
 @admin_token_required
+@auth_request(role=1)
 def get_rec_mods(id):
     to_ret = RecModerations.query\
         .filter_by(id=id)\
@@ -370,6 +388,7 @@ def get_rec_mods(id):
 
 @api1.route('/moderations/recs/<int:id>', methods=['PUT'])
 @admin_token_required
+@auth_request(role=1)
 def put_rec_mods(id):
     to_ret = RecModerations.query\
         .filter_by(id=id)\
@@ -394,6 +413,7 @@ def put_rec_mods(id):
     
 @api1.route('/moderations/comments/<int:id>', methods=['GET'])
 @admin_token_required
+@auth_request(role=1)
 def get_com_mods(id):
     to_ret = ComModerations.query\
         .filter_by(id=id)\
@@ -404,6 +424,7 @@ def get_com_mods(id):
 
 @api1.route('/moderations/comments/<int:id>', methods=['PUT'])
 @admin_token_required
+@auth_request(role=1)
 def put_com_mods(id):
     to_ret = ComModerations.query\
         .filter_by(id=id)\
@@ -428,6 +449,7 @@ def put_com_mods(id):
 @api1.route('/moderate/recs', methods=['GET'])
 @api1.route('/moderate/recs/page/<int:page>', methods=['GET'])
 @moderator_token_required
+@auth_request(role=2)
 def get_moderate_recs(page=1):
     recs = Recommendation.query\
         .filter_by(verification = 1)\
@@ -438,6 +460,7 @@ def get_moderate_recs(page=1):
 
 @api1.route('/moderate/recs/<int:id>', methods=['POST'])
 @moderator_token_required
+@auth_request(role=2)
 def moderate_recs(id):
     if not request.get_json(silent=True):
         return message(400, 'Must provide value for action')
@@ -464,6 +487,7 @@ def moderate_recs(id):
 @api1.route('/moderate/comments', methods=['GET'])
 @api1.route('/moderate/comments/page/<int:page>', methods=['GET'])
 @moderator_token_required
+@auth_request(role=2)
 def get_moderate_comments(page=1):
     com = Comments.query\
         .filter_by(verification = 1)\
@@ -473,6 +497,7 @@ def get_moderate_comments(page=1):
 
 @api1.route('/moderate/comments/<int:id>', methods=['POST'])
 @moderator_token_required
+@auth_request(role=2)
 def moderate_comments(id):
     if not request.get_json(silent=True):
         return message(400, 'Must provide value for action')
@@ -498,6 +523,7 @@ def moderate_comments(id):
 @api1.route('/search/recs', methods=['GET'])
 @api1.route('/search/recs/page/<int:page>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_search_recs(page = 1):
     display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)
@@ -523,6 +549,7 @@ def get_search_recs(page = 1):
 @api1.route('/search/comments', methods=['GET'])
 @api1.route('/search/comments/page/<int:page>', methods=['GET'])
 @auth_token_required
+@auth_request(role=3)
 def get_search_comments(page = 1):
     display_comments = Comments.query\
         .filter(Comments.verification > 0)
@@ -548,6 +575,7 @@ def get_search_comments(page = 1):
 
 @api1.route('/admin')
 @admin_token_required
+@auth_request(role=1)
 def get_admin():
     week_ago = datetime.today() - timedelta(days=7)
     data = {}

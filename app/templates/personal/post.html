@@ -30,16 +30,10 @@
     </div><!--w940-->
     <br/>
     <div class='listrecs'>
-      {% for rec in display %}
-        {{postmacro.render_post(rec, current_user, moment)}}
-      {% endfor %}
+      {{postmacro.initialize_recs(display)}}
     </div><!--listrecs-->
-    <div class='w940-center'>
-      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <script>
       var goto = "{{url_for('personal.post_ajax')}}";
-      var page = 1;
     </script>
     <script src="{{url_for('static', filename='js/personal/postjs.js')}}"></script>
   {% endblock %}

@@ -19,16 +19,15 @@ def about():
     display_recs = [possible for possible in temp if randint(1,3) == 2]
     return render_template('main/about.html', display=display_recs[:5])
 
-@main.route('/highlight_ajax')
-def load_comments():
-    id = int(request.args.get('id'))
+@main.route('/highlight_ajax/<int:id>')
+def load_comments(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
         .filter_by(posted_on = id)\
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/commentajax.html', d_c = display_comments.items)
+    return render_template('macros/commentmacro.html', d_c = display_comments.items)
 
 
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
@@ -43,7 +42,7 @@ def highlight(id):
     display_comments = display_recs.comments\
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
-        .paginate(1, per_page=session['limit'], error_out=False)
+        .paginate(1, per_page=current_user.display, error_out=False)
     if current_user.is_authenticated and display_recs.author_id == current_user.id:
         display_recs.new_comment = False
         db.session.add(display_recs)
@@ -129,7 +128,7 @@ def search_query(page = 1):
         display_recs = display_recs\
             .order_by(Recommendation.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        return render_template('ajax/postajax.html', display = display_recs.items)
+        return render_template('macros/postmacro.html', display = display_recs.items)
     else:
         display_comments = Comments.query\
             .filter(Comments.verification > 0)
@@ -148,7 +147,7 @@ def search_query(page = 1):
         display_comments = display_comments\
             .order_by(Comments.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        return render_template('ajax/commentajax.html', d_c = display_comments.items)
+        return render_template('macros/commentmacro.html', d_c = display_comments.items)
     
 @main.route('/search')
 def search():
@@ -159,19 +158,22 @@ def search():
 def surprise_ajax():
     temp = Recommendation.query\
         .filter(Recommendation.verification > 0)\
+        .filter(Recommendation.author_id != current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .limit(5*current_user.display)\
-        .from_self().order_by(func.random())\
-        .limit(current_user.display)
-    return render_template('ajax/postajax.html', display = temp)
+        .from_self()\
+        .order_by(func.random())\
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('macros/postmacro.html', display = temp.items)
 
 @main.route('/surprise')
 def surprise():
     display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)\
+        .filter(Recommendation.author_id != current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(current_user.display)\
+        .limit(5*current_user.display)\
         .from_self()\
         .order_by(func.random())\
-        .limit(current_user.display)
-    return render_template('main/surprise.html', display=display_recs)
+        .paginate(1, per_page=current_user.display, error_out=False)
+    return render_template('main/surprise.html', display=display_recs.items)

@@ -37,7 +37,7 @@ class API(db.Model):
     @staticmethod
     def access_request(requester, endpoint, role=3):
         access = 0
-        if role == 3:
+        if role == 3 and not requester.is_administrator():
             fifteen_mins_ago = datetime.utcnow() - timedelta(minutes=15)
             access = API.query\
                 .filter_by(requester = requester.id)\
@@ -45,7 +45,7 @@ class API(db.Model):
                 .filter(API.timestamp > fifteen_mins_ago)\
                 .count()
         if access < 15:
-            to_add = API(requester=requester.id, endpoint=endpoint, role=role)
+            to_add = API(requester=requester.id, endpoint=endpoint, role=requester.role_id)
             db.session.add(to_add)
             db.session.commit()
             return True

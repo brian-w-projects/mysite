@@ -189,7 +189,7 @@ def inspiration_ajax():
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/postajax.html', display = display_recs.items)   
+    return render_template('macros/postmacro.html', display = display_recs.items)   
 
 @personal.route('/inspiration')
 @login_required
@@ -210,7 +210,7 @@ def post_ajax():
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/postajax.html', display = display_recs.items)
+    return render_template('macros/postmacro.html', display = display_recs.items)
 
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
@@ -236,20 +236,18 @@ def post():
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('personal/post.html', form=form, display=display_recs.items)
 
-@personal.route('/_profileCom')
-def profileCom_ajax():
-    id = int(request.args.get('id'))
+@personal.route('/_profileCom/<int:id>')
+def profileCom_ajax(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
         .filter_by(comment_by=id)\
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/commentajax.html', d_c = display_comments.items)
+    return render_template('macros/commentmacro.html', d_c = display_comments.items)
 
-@personal.route('/_profile')
-def profile_ajax():
-    id = int(request.args.get('id'))
+@personal.route('/_profile/<int:id>')
+def profile_ajax(id):
     page = int(request.args.get('page'))
     if(current_user.id == id):
         private = 0
@@ -260,7 +258,7 @@ def profile_ajax():
         .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out = False)
-    return render_template('ajax/postajax.html', display = display_recs.items)
+    return render_template('macros/postmacro.html', display = display_recs.items)
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')

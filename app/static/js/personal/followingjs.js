@@ -32,7 +32,7 @@ $(function(){
             datatype:'json',
             data: {'id': id, 'page':page},
             success: function(x){
-                $('.listrecs').append(x);
+                $('.loadMore').before(x);
                if($('.empty').length){
                     $('.loadMore').hide();
                 }

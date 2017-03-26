@@ -45,7 +45,7 @@
       <br/>
       <div class='listrecs'>
         {% for rec in display %}
-          {{postmacro.render_post(rec, current_user, moment)}}
+          {{postmacro.render_post(rec)}}
         {% endfor %}
       </div><!--listrecs-->
     {% endblock %}

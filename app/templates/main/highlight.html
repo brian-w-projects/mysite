@@ -28,16 +28,11 @@
       {{ flashmacro.render_flash(get_flashed_messages()) }}
     </div><!--w940-->
     <div class='listrecs'>
-      {{postmacro.render_post(rec, current_user, moment)}}
+      {{postmacro.render_post(rec)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {% for com in d_c %}
-        {{commentmacro.render_post(com, current_user, moment)}}
-      {% endfor %}
+      {{commentmacro.initialize_comments(d_c)}}
     </div><!--listcomments-->
-    <div class='w940-center'>
-      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <div class='w940'>
       <div class='w940-center'>
         {% if current_user.is_authenticated %}
@@ -54,9 +49,7 @@
     </div><!--w940-->
     <script>
       var id = {{rec.author.id}};
-      var rec_id = {{rec.id}};
-      var page = 1;
-      var goto = "{{url_for('main.load_comments')}}";
+      var gotoCom = "{{url_for('main.load_comments', id=rec.id)}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/main/highlightjs.js')}}"></script>

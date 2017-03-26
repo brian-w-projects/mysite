@@ -30,14 +30,18 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <br/>
-    <div class='listrecs'></div>
-    <div class='w940-center'>
-      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
+    <div class='listrecs'>
+      {{postmacro.initialize_recs(display)}}
+      <a><p id='ajax_recs' class='loadMore special-link'>Load More</p></a>
+    </div><!--listrecs-->
+    <div class='listcomments'>
+      {{commentmacro.initialize_comments(display)}}
+      <a><p id='ajax_comments' class='loadMoreCom special-link'>Load More</p></a>
+    </div><!--listcomments-->
     <script>
-      var goto = "{{url_for('main.search_ajax')}}";
-      var gotoM = "{{url_for('main.more_ajax')}}";
-      var page = 1;
+      var goto_initial = "{{url_for('main.search_ajax')}}";
+      var gotoCom = "{{url_for('main.more_ajax')}}";
+      var goto = "{{url_for('main.more_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/main/searchjs.js')}}"></script>
     <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>

@@ -30,10 +30,10 @@
       {% else %}
         <p>You aren't following anyone! Go to a user's profile to start following them.</p>
       {% endif %}
+      {% if display_names|length == current_user.display %}
+        <a><p class='ajax loadMore special-link'>Load More</p></a>
+      {% endif %}
     </div><!--listrecs-->
-    <div class='w940-center'>
-      <a><p class='ajax loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <script>
       var goto = "{{url_for('personal.follow_ajax')}}";
       var gotoM = "{{url_for('personal.following_ajax')}}";

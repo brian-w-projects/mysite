@@ -76,27 +76,14 @@
     <br/>
     <br/>
     <div class='listrecs'>
-      {% for rec in display %}
-        {{postmacro.render_post(rec, current_user, moment)}}
-      {% endfor %}
+      {{postmacro.initialize_recs(display)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {% for com in d_c %}
-        {{commentmacro.render_post(com, current_user, moment)}}
-      {% endfor %}
+      {{commentmacro.initialize_comments(d_c)}}
     </div><!--listcomments-->
-    <div class='w940-center'>
-      <a><p class='ajax loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
-      <div class='w940-center'>
-      <a><p class='ajax loadMoreCom special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <script>
-      var id = {{id}};
-      var page = 1;
-      var pageCom = 1;
-      var gotoP = "{{url_for('personal.profile_ajax')}}";
-      var gotoC = "{{url_for('personal.profileCom_ajax')}}";
+      var goto = "{{url_for('personal.profile_ajax', id=id)}}";
+      var gotoCom = "{{url_for('personal.profileCom_ajax', id=id)}}";
       var gotoF = "{{url_for('personal.follow_ajax')}}";
       var gotoE = "{{url_for('personal.update')}}";
     </script>
