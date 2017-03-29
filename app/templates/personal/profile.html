@@ -76,10 +76,10 @@
     <br/>
     <br/>
     <div class='listrecs'>
-      {{postmacro.initialize_recs(display)}}
+      {{recmacro.initialize_recs(display, moment, current_user)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {{commentmacro.initialize_comments(d_c)}}
+      {{commentmacro.initialize_comments(d_c, moment, current_user)}}
     </div><!--listcomments-->
     <script>
       var goto = "{{url_for('personal.profile_ajax', id=id)}}";

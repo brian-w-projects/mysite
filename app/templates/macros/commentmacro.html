@@ -1,6 +1,4 @@
-{{moment.include_moment()}}
-
-{% macro render_post(com) %}
+{% macro render_comment(com, moment, current_user) %}
   {% if com.verification != 0 %}
     <div class='rec1'>
       <div class='postHeaderDiv'>
@@ -42,19 +40,21 @@
   {% endif %}
 {% endmacro %}
 
-{% macro initialize_comments(d_c) %}
-  {% for com in d_c %}
-    {{render_post(com)}}
-  {% endfor %}
-  {% if d_c|length == current_user.display %}
+{% macro initialize_comments(d_c, moment, current_user) %}
+  {{ajax(d_c, moment, current_user)}}
+  {% if d_c.pages != d_c.page %}
     <a><p id='ajax_comments' class='loadMoreCom special-link'>Load More</p></a>
   {% endif %}
   <script src="{{url_for('static', filename='js/speciality/ajax_comment_js.js')}}"></script>
 {% endmacro %}
 
-{% for com in d_c %}
-  {{render_post(com)}}
-{% endfor %}
-{% if d_c|length != current_user.display %}
-  <em class='emptyCom'></em>
-{% endif %}
+{% macro ajax(d_c, moment, current_user) %}
+  {% for com in d_c.items %}
+    {{render_comment(com, moment, current_user)}}
+  {% endfor %}
+{% endmacro %}
+
+{% macro search_initialize() %}
+  <a><p id='ajax_comments' class='loadMoreCom special-link'>Load More</p></a>
+  <script src="{{url_for('static', filename='js/speciality/ajax_comment_js.js')}}"></script>
+{% endmacro %}

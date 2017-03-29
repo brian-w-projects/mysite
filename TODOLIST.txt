@@ -10,8 +10,9 @@
 
 Refactoring:
     - remove ajax.html folder, incorporate into macros similar to recs and comments
-    - combine javascript for following/unfollowing, displaying characters remaining
+        - combine javascript and ajax for:
+            - Following/Unfollowing
+            - Display Remaining Characters
+            - All Mod Ajax
     
     - rename variables for consistant snake_naming
-
-

@@ -13,7 +13,7 @@
       <h2 class='rec'>Surprise Me</h2>
     </div><!--w940-->
     <div class='listrecs'>
-      {{postmacro.initialize_recs(display)}}
+      {{recmacro.initialize_recs(display, moment, current_user)}}
     </div><!--listrecs-->
     <script>
       var goto = "{{url_for('main.surprise_ajax')}}"

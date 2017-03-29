@@ -2,10 +2,11 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/postmacro.html' as postmacro with context %}
-  {% import 'macros/commentmacro.html' as commentmacro with context %}
+  {% import 'macros/recmacro.html' as recmacro %}
+  {% import 'macros/commentmacro.html' as commentmacro %}
+  {% import 'macros/followingmacro.html' as followingmacro %}
+  {% import 'macros/followedmacro.html' as followedmacro %}
   {% import 'macros/flashmacro.html' as flashmacro %}
-  {% import 'macros/namemacro.html' as namemacro %}
   <head>
     {% block head %}
       <meta charset='utf-8'>

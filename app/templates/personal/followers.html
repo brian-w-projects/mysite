@@ -16,28 +16,10 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {% if display_names|length != 0 %}
-        {% for name in display_names %}
-          {{namemacro.render_name2(name, current_user, moment)}}
-          {% set highlight = name.user.posts.filter(Recommendation.verification > 0)
-            .order_by(Recommendation.timestamp.desc()).first() %}
-          {% if highlight != None %}
-            {{postmacro.render_post(highlight, current_user, moment)}}
-          {% else %}
-            <br/>
-          {% endif %}
-        {% endfor %}
-      {% else %}
-        <p>Nobody is following you! Post some Recs to get followers.</p>
-      {% endif %}
-      {% if display_names|length == current_user.display %}
-        <a><p class='ajax loadMore special-link'>Load More</p></a>
-      {% endif %}
+      {{followedmacro.initialize_followed_by(display, moment, current_user, Recommendation)}}
     </div><!--listrecs-->
     <script>
-      var id = {{user.id}};
-      var goto = "{{url_for('personal.followers_ajax')}}";
-      var page = 1;
+      var goto = "{{url_for('personal.followers_ajax', id=user.id)}}";
     </script>
     <script src="{{url_for('static', filename='js/personal/followersjs.js')}}"></script>
   {% endblock %}

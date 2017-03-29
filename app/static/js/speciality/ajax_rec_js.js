@@ -1,5 +1,6 @@
 /* global $ */
 /* global goto */
+/* global flask_moment_render_all*/
 
 var page = 1;
 
@@ -13,10 +14,11 @@ $(function(){
            datatype:'json',
            data: {'page': page},
            success: function(x){
-               $('.loadMore').before(x);
-               if($('.empty').length){
+               $('.loadMore').before(x['ajax_request']);
+               if(x['last'] == true){
                    $('.loadMore').hide();
                }
+              flask_moment_render_all();
            }
         });
     });

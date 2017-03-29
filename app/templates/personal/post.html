@@ -30,7 +30,7 @@
     </div><!--w940-->
     <br/>
     <div class='listrecs'>
-      {{postmacro.initialize_recs(display)}}
+      {{recmacro.initialize_recs(display, moment, current_user)}}
     </div><!--listrecs-->
     <script>
       var goto = "{{url_for('personal.post_ajax')}}";

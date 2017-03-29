@@ -2,6 +2,7 @@
 /* global goto_initial */
 /* global page */
 /* global pageCom */
+/* global flask_moment_render_all*/
 
 $(function(){
     $('.loadMore').hide();
@@ -21,16 +22,17 @@ $(function(){
                 $('.loadMore').hide();
                 $('.loadMoreCom').hide();
                 if($('.type').val() == 'Recs'){
-                    $('.loadMore').before(x);
-                    if(!$('.empty').length){
+                    $('.loadMore').before(x['ajax_request']);
+                    if(x['last'] == false){
                         $('.loadMore').show();
                     }
                 }else{
-                    $('.loadMoreCom').before(x);
-                    if(!$('.emptyCom').length){
+                    $('.loadMoreCom').before(x['ajax_request']);
+                    if(x['last'] == false){
                         $('.loadMoreCom').show();
                     }
                 }
+                flask_moment_render_all();
                 
              
            }

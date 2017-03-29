@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, request, abort, flash
+from flask import render_template, session, redirect, url_for, request, abort, flash, jsonify, get_template_attribute
 from . import main
 from .forms import SearchForm, CommentForm
 from .. import db
@@ -8,6 +8,7 @@ from ..decorators import is_administrator
 from ..email import send_email
 from random import randint, sample
 from datetime import datetime, timedelta
+from flask_moment import _moment
 from sqlalchemy.sql.expression import func, select
 
 @main.route('/about')
@@ -27,7 +28,9 @@ def load_comments(id):
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('macros/commentmacro.html', d_c = display_comments.items)
+    to_return = get_template_attribute('macros/commentmacro.html', 'ajax')
+    return jsonify({'last': display_comments.page == display_comments.pages,
+        'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
 
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
@@ -62,7 +65,7 @@ def highlight(id):
         else:
             flash(u'\u2717 Comment cannot be empty')
         return redirect(url_for('main.highlight', id=id))
-    return render_template('main/highlight.html', rec=display_recs, d_c=display_comments.items, 
+    return render_template('main/highlight.html', rec=display_recs, d_c=display_comments, 
         form=form)
 
 @main.route('/')
@@ -128,7 +131,9 @@ def search_query(page = 1):
         display_recs = display_recs\
             .order_by(Recommendation.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        return render_template('macros/postmacro.html', display = display_recs.items)
+        to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+        return jsonify({'last': display_recs.page == display_recs.pages,
+            'ajax_request': to_return(display_recs, _moment, current_user)}) 
     else:
         display_comments = Comments.query\
             .filter(Comments.verification > 0)
@@ -147,7 +152,9 @@ def search_query(page = 1):
         display_comments = display_comments\
             .order_by(Comments.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        return render_template('macros/commentmacro.html', d_c = display_comments.items)
+        to_return = get_template_attribute('macros/commentmacro.html', 'ajax')
+        return jsonify({'last': display_comments.page == display_comments.pages,
+            'ajax_request': to_return(display_comments, _moment, current_user)}) 
     
 @main.route('/search')
 def search():
@@ -156,7 +163,7 @@ def search():
     
 @main.route('/_surprise')
 def surprise_ajax():
-    temp = Recommendation.query\
+    display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)\
         .filter(Recommendation.author_id != current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
@@ -164,7 +171,9 @@ def surprise_ajax():
         .from_self()\
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('macros/postmacro.html', display = temp.items)
+    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    return jsonify({'last': display_recs.page == display_recs.pages,
+        'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @main.route('/surprise')
 def surprise():
@@ -176,4 +185,4 @@ def surprise():
         .from_self()\
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('main/surprise.html', display=display_recs.items)
+    return render_template('main/surprise.html', display=display_recs)

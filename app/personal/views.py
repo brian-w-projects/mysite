@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, abort, flash
+from flask import render_template, request, redirect, url_for, session, abort, flash, get_template_attribute, jsonify
 from . import personal
 from .forms import ChangeForm, PostForm, EditForm, CommentEditForm, DeleteForm
 from flask_login import login_user, logout_user, login_required, current_user
@@ -7,6 +7,7 @@ from .. import db
 from ..email import send_email
 from datetime import datetime
 import json
+from flask_moment import _moment
 
 @personal.route('/commentdelete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -105,20 +106,20 @@ def edit(post_id):
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
-@personal.route('/_followers')
+@personal.route('/_followers/<int:id>')
 @login_required
-def followers_ajax():
-    id = int(request.args.get('id'))
+def followers_ajax(id):
     page = int(request.args.get('page'))
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
-    to_return = user\
+    display_names = user\
         .followed_by\
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/followerajax.html', display = to_return.items, 
-        Recommendation=Recommendation)
+    to_return = get_template_attribute('macros/followedmacro.html', 'ajax')
+    return jsonify({'last': display_names.page == display_names.pages,
+        'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
 
 @personal.route('/followers/<int:id>')
 @personal.route('/followers')
@@ -128,11 +129,11 @@ def followers(id=-1):
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
-    to_return = user\
+    display_names = user\
         .followed_by\
         .order_by(Followers.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/followers.html', display_names=to_return.items, 
+    return render_template('personal/followers.html', display=display_names, 
         user=user, Recommendation=Recommendation)
 
 @personal.route('/_follow')
@@ -150,18 +151,18 @@ def follow_ajax():
         db.session.commit()
         return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
 
-@personal.route('/_following')
-def following_ajax():
-    id = int(request.args.get('id'))
+@personal.route('/_following/<int:id>')
+def following_ajax(id):
     page = int(request.args.get('page'))
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
-    to_return = user.following\
+    display_names = user.following\
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('ajax/followingajax.html', display_names = to_return.items, 
-        Recommendation=Recommendation, user=user)
+    to_return = get_template_attribute('macros/followingmacro.html', 'ajax')
+    return jsonify({'last': display_names.page == display_names.pages,
+        'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
 
 
 @personal.route('/following/<int:id>')
@@ -172,11 +173,11 @@ def following(id=-1):
     user = Users.query\
         .filter_by(id=id)\
         .first_or_404()
-    to_return = user\
+    display_names = user\
         .following\
         .order_by(Followers.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/following.html', display_names=to_return.items, 
+    return render_template('personal/following.html', display=display_names, 
         user = user, Recommendation=Recommendation)
 
 @personal.route('/_inspiration')
@@ -189,7 +190,9 @@ def inspiration_ajax():
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('macros/postmacro.html', display = display_recs.items)   
+    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    return jsonify({'last': display_recs.page == display_recs.pages,
+        'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @personal.route('/inspiration')
 @login_required
@@ -200,7 +203,7 @@ def inspiration():
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/inspiration.html', display=display_recs.items)
+    return render_template('personal/inspiration.html', display=display_recs)
 
 @personal.route('/_post')
 @login_required
@@ -210,7 +213,10 @@ def post_ajax():
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('macros/postmacro.html', display = display_recs.items)
+    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    return jsonify({'last': display_recs.page == display_recs.pages,
+        'ajax_request': to_return(display_recs, _moment, current_user)})
+    
 
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
@@ -234,7 +240,7 @@ def post():
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/post.html', form=form, display=display_recs.items)
+    return render_template('personal/post.html', form=form, display=display_recs)
 
 @personal.route('/_profileCom/<int:id>')
 def profileCom_ajax(id):
@@ -244,7 +250,9 @@ def profileCom_ajax(id):
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    return render_template('macros/commentmacro.html', d_c = display_comments.items)
+    to_return = get_template_attribute('macros/commentmacro.html', 'ajax')
+    return jsonify({'last': display_comments.page == display_comments.pages,
+        'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
 @personal.route('/_profile/<int:id>')
 def profile_ajax(id):
@@ -258,7 +266,9 @@ def profile_ajax(id):
         .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out = False)
-    return render_template('macros/postmacro.html', display = display_recs.items)
+    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    return jsonify({'last': display_recs.page == display_recs.pages,
+        'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')
@@ -303,8 +313,8 @@ def profile(id=-1):
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/profile.html', user=user, display=display_recs.items, 
-        d_c=display_comments.items, id=id, com_count = com_count, rec_count=rec_count)
+    return render_template('personal/profile.html', user=user, display=display_recs, 
+        d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
 
 @personal.route('/_token')
 @login_required

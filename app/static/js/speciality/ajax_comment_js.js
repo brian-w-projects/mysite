@@ -1,5 +1,6 @@
 /* global $ */
 /* global gotoCom */
+/* global flask_moment_render_all */
 
 var pageCom = 1;
 
@@ -13,10 +14,11 @@ $(function(){
            datatype:'json',
            data: {'page': pageCom},
            success: function(x){
-               $('.loadMoreCom').before(x);
-               if($('.emptyCom').length){
+               $('.loadMoreCom').before(x['ajax_request']);
+               if(x['last'] == true){
                    $('.loadMoreCom').hide();
                }
+               flask_moment_render_all();
            }
         });
     });

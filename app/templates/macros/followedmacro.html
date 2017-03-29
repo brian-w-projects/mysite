@@ -1,0 +1,51 @@
+{% import 'macros/recmacro.html' as recmacro %}
+
+{% macro render_followed_by(name, moment, current_user) %}
+  <div class='name'>
+    {% if current_user.is_authenticated and current_user.following.filter_by(following=name.follower).first() %}
+      <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
+    {% else %}
+      <button class='rec change to_check' id='{{name.following}}'>Follow</button>
+    {% endif %}
+    <a href="{{url_for('personal.profile', id=name.follower)}}">
+      <p class='followName special-link'>
+        {{name.user.username}}
+        <br/>
+        Follower Since: {{moment(name.timestamp).fromNow()}}
+        <br/>
+        {% if current_user.is_authenticated %}
+          {% if current_user.following.filter_by(following=name.follower).first() %}
+            You are following this user.
+          {% else %}
+            You are NOT following this user.
+          {% endif %}
+        {% endif %}
+      </p>
+    </a>
+  </div><!--name-->
+{% endmacro %}
+
+{% macro initialize_followed_by(display, moment, current_user, Recommendation) %}
+  {% if display.items|length != 0 %}
+    {{ajax(display, moment, current_user, Recommendation)}}
+  {% else %}
+    <p>Nobody is following you! Post some Recs to get followers.</p>
+  {% endif %}
+  {% if display.pages != display.page %}
+    <a><p id='ajax_recs' class='loadMore special-link'>Load More</p></a>
+  {% endif %}
+  <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
+{% endmacro %}
+
+{% macro ajax(display, moment, current_user, Recommendation) %}
+  {% for name in display.items %}
+    {{render_followed_by(name, moment, current_user)}}
+    {% set highlight = name.user.posts.filter(Recommendation.verification > 0)
+        .order_by(Recommendation.timestamp.desc()).first() %}
+    {% if highlight != None %}
+      {{recmacro.render_rec(highlight, moment, current_user)}}
+    {% else %}
+      <br/>
+    {% endif %}
+  {% endfor %}
+{% endmacro %}

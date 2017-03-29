@@ -28,10 +28,10 @@
       {{ flashmacro.render_flash(get_flashed_messages()) }}
     </div><!--w940-->
     <div class='listrecs'>
-      {{postmacro.render_post(rec)}}
+      {{recmacro.render_rec(rec, moment, current_user)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {{commentmacro.initialize_comments(d_c)}}
+      {{commentmacro.initialize_comments(d_c, moment, current_user)}}
     </div><!--listcomments-->
     <div class='w940'>
       <div class='w940-center'>
