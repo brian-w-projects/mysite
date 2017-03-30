@@ -68,7 +68,7 @@
 /*COMMENTS*/
 
 /*FOLLOWING/FOLLOWER STYLE */
-.followName{
+.name_header{
     margin-top: 5px;
     margin-bottom: 0px;
     border: 1px solid black;
@@ -76,5 +76,11 @@
     background-color: #ffffff;
     text-align: center;
     font-size: larger;
+    padding: 5px;
+}
+
+.name_header_display{
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 /*FOLLOWING/FOLLOWER STYLE */

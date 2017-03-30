@@ -15,17 +15,10 @@
           {{rec.author.username}}
         </a>
       </h2>
-      {% if current_user.is_authenticated and current_user.id != rec.author_id %}
-        <button class='rec change highlight-bottom width-set' id='follow'>
-          {% if current_user.following.filter_by(following=rec.author_id).first() %}
-            Following
-          {% else %}
-            Follow
-          {% endif %}
-        </button>
-        <br/>
-      {% endif %}
-      {{ flashmacro.render_flash(get_flashed_messages()) }}
+      {{flashmacro.render_flash(get_flashed_messages())}}
+      {{buttonmacro.follow_button(rec.author, current_user)}}
+      {{buttonmacro.initialize_follow_button()}}
+      <br/>
     </div><!--w940-->
     <div class='listrecs'>
       {{recmacro.render_rec(rec, moment, current_user)}}
@@ -50,9 +43,8 @@
     <script>
       var id = {{rec.author.id}};
       var gotoCom = "{{url_for('main.load_comments', id=rec.id)}}";
-      var gotoF = "{{url_for('personal.follow_ajax')}}";
+      var goto_follow = "{{url_for('personal.follow_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/main/highlightjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

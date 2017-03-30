@@ -139,17 +139,19 @@ def followers(id=-1):
 @personal.route('/_follow')
 @login_required
 def follow_ajax():
-    id = request.args.get('id')
-    if request.args.get('follow') == 'true':
+    id = int(request.args.get('id'))
+    if current_user.id == id:
+        return jsonify({'added':False}) 
+    user = current_user.following.filter_by(following=id).first()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'added':False}) 
+    else:
         addition = Followers(follower=current_user.id, following=id)
         db.session.add(addition)
         db.session.commit()
-        return json.dumps({'added':True}), 200, {'ContentType':'application/json'} 
-    else:
-        to_delete = current_user.following.filter_by(following=id).first()
-        db.session.delete(to_delete)
-        db.session.commit()
-        return json.dumps({'added':False}), 200, {'ContentType':'application/json'} 
+        return jsonify({'added':True})
 
 @personal.route('/_following/<int:id>')
 def following_ajax(id):

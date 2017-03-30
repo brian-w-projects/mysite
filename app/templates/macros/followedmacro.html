@@ -1,27 +1,10 @@
 {% import 'macros/recmacro.html' as recmacro %}
+{% import 'macros/buttonmacro.html' as buttonmacro %}
 
-{% macro render_followed_by(name, moment, current_user) %}
-  <div class='name'>
-    {% if current_user.is_authenticated and current_user.following.filter_by(following=name.follower).first() %}
-      <button class='rec change to_check' id='{{name.following}}'>Unfollow</button>
-    {% else %}
-      <button class='rec change to_check' id='{{name.following}}'>Follow</button>
-    {% endif %}
-    <a href="{{url_for('personal.profile', id=name.follower)}}">
-      <p class='followName special-link'>
-        {{name.user.username}}
-        <br/>
-        Follower Since: {{moment(name.timestamp).fromNow()}}
-        <br/>
-        {% if current_user.is_authenticated %}
-          {% if current_user.following.filter_by(following=name.follower).first() %}
-            You are following this user.
-          {% else %}
-            You are NOT following this user.
-          {% endif %}
-        {% endif %}
-      </p>
-    </a>
+{% macro render_name_header(name, current_user) %}
+  <div class='name_header'>
+    <p class='rec name_header_display'>{{name.user.username}}</p>
+    {{buttonmacro.follow_button(name.user, current_user)}}
   </div><!--name-->
 {% endmacro %}
 
@@ -39,7 +22,7 @@
 
 {% macro ajax(display, moment, current_user, Recommendation) %}
   {% for name in display.items %}
-    {{render_followed_by(name, moment, current_user)}}
+    {{render_name_header(name, current_user)}}
     {% set highlight = name.user.posts.filter(Recommendation.verification > 0)
         .order_by(Recommendation.timestamp.desc()).first() %}
     {% if highlight != None %}

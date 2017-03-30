@@ -1,30 +1,6 @@
 /* global $ */
-/* global goto */
-/* global gotoF */
-/* global id */
-/* global page */
-/* global rec_id */
 
 $(function(){
-    $('#follow').on('click', function(){
-        $.ajax({
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-            url: gotoF,
-            datatype:'json',
-            data: {'id': id, 'follow':$('#follow').text().trim()=='Follow'},
-            success: function(x){
-                var y = $.parseJSON(x);
-                if(y['added'] == true){
-                    $('#follow').text('Following');
-                }
-                else{
-                    $('#follow').text('Follow');
-                }
-            }
-        });
-    });
-    
     var $count = 250 - $('.textentry').val().length;
     $('.chars-left').text($count);
     

@@ -11,31 +11,9 @@ $(function(){
     $('.loadMoreCom').hide();
     $('.listcomments').hide();
     
-    $('#follow').on('click', function(){
+    $('.follow_button').on('click', function(){
         if($(this).text().trim() == 'Edit'){
             window.location.href = gotoE;
-        }
-        else{
-            $.ajax({
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                url: gotoF,
-                datatype:'json',
-                data: {'id': id, 'follow': $(this).text().trim() == 'Follow'},
-                success: function(x){
-                    var y = $.parseJSON(x);
-                    if(y['added'] == true)
-                    {
-                        $('#follow').text('Following');
-                        $('.f_count').html(parseInt($('.f_count').text())+1);
-                    }
-                    else
-                    {
-                        $('#follow').text('Follow');
-                        $('.f_count').html(parseInt($('.f_count').text())-1);
-                    }
-                }
-            });
         }
     });
     

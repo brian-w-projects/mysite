@@ -37,15 +37,16 @@
       <div class='profile-box'>
         <h2 class='rec'>{{user.username}}</h2>
         {% if current_user.is_authenticated %}
-          <button class='rec width-set' id='follow'>
+          <button class='rec width-set follow_button' id='{{id}}'>
             {% if current_user.id == user.id %}
               Edit
             {% elif current_user.following.filter_by(following=user.id).count() != 0 %}
-              Following
+              Unfollow
             {% else %}
               Follow
-            {% endif %}           
+            {% endif %}
           </button>
+          {{buttonmacro.initialize_follow_button()}}
         {% endif %}
         <div class='realign'></div>
         <div class='profile-left'>
@@ -84,7 +85,7 @@
     <script>
       var goto = "{{url_for('personal.profile_ajax', id=id)}}";
       var gotoCom = "{{url_for('personal.profileCom_ajax', id=id)}}";
-      var gotoF = "{{url_for('personal.follow_ajax')}}";
+      var goto_follow = "{{url_for('personal.follow_ajax')}}";
       var gotoE = "{{url_for('personal.update')}}";
     </script>
     <script src="{{url_for('static', filename='js/personal/profilejs.js')}}"></script>

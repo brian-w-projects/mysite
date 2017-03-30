@@ -17,12 +17,12 @@
     </div><!--w940-->
     <div class='listrecs'>
       {{followingmacro.initialize_following(display, moment, current_user, Recommendation)}}
+      {{buttonmacro.initialize_follow_button()}}
     </div><!--listrecs-->
     <script>
-      var gotoM = "{{url_for('personal.follow_ajax')}}";
       var goto = "{{url_for('personal.following_ajax', id=user.id)}}";
+      var goto_follow = "{{url_for('personal.follow_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/personal/followingjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

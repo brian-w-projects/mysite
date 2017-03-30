@@ -1,0 +1,13 @@
+{% macro follow_button(name, current_user) %}
+  {% if current_user.is_authenticated %}
+    {% if current_user.following.filter_by(following=name.id).first() %}
+        <button id='{{name.id}}' class='rec follow_button width-set'>Unfollow</button>
+      {% else %}
+        <button id='{{name.id}}' class='rec follow_button width-set'>Follow</button>
+      {% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro initialize_follow_button() %}
+  <script src="{{url_for('static', filename='js/speciality/follow_button_js.js')}}"></script>
+{% endmacro %}
