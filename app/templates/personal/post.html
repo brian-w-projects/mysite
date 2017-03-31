@@ -14,13 +14,13 @@
         <h2 class='rec'>Make a Rec</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
-          {{form.title.label(class='rec')}} {{form.title(class='entry titleentry')}}
-          <p class='chars-format'>Characters Left: <span class='chars-left-title'>100</span></p>
+          {{form.title.label(class='rec')}} {{form.title(class='entry rec_title_entry')}}
+          <p class='chars-format'>Characters Left: <span class='rec_title_chars_left'>100</span></p>
           <br/>
           {{form.public.label(class='rec')}} {{form.public(class='click', checked=True)}}
           <br/>
-          <p class='chars-format'>Characters Left: <span class='chars-left'>1000</span></p>
-          {{form.text(class='textentry')}}
+          <p class='chars-format'>Characters Left: <span class='rec_chars_left'>1000</span></p>
+          {{form.text(class='rec_text_entry')}}
           <br/>
           <br/>
           {{form.csrf_token}}
@@ -35,7 +35,7 @@
     <script>
       var goto = "{{url_for('personal.post_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/personal/postjs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
   {% endblock %}
 </body>
 </html>

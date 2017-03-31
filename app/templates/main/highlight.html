@@ -31,8 +31,8 @@
         {% if current_user.is_authenticated %}
           <h2 class='rec'>Comment</h2>
           <form method='POST'>
-            <p class='chars-format'>Characters Left: <span class='chars-left'>250</span></p>
-            {{form.text(class='textentry')}}
+            <p class='chars-format'>Characters Left: <span class='comment_chars_left'>250</span></p>
+            {{form.text(class='comment_text_entry')}}
             <br/>
             {{form.csrf_token}}
             {{form.submit(class='rec', id='submit')}}

@@ -16,13 +16,13 @@
         <h2 class='rec'>{{current_user.username}}</h2>
         {{flashmacro.render_flash(get_flashed_messages())}}
         <form method='POST'>
-          {{form.title.label(class='rec')}} {{form.title(class='entry titleentry')}}
-          <p class='chars-format'>Characters Left: <span class='chars-left-title'></span></p>
+          {{form.title.label(class='rec')}} {{form.title(class='entry rec_title_entry')}}
+          <p class='chars-format'>Characters Left: <span class='rec_title_chars_left'></span></p>
           <br/>
           {{form.public.label(class='rec')}} {{form.public(class='click', default=form.public.data)}}
           <br/>
-          <p class='chars-format'>Characters Left: <span class='chars-left'></span></p>
-          {{form.text(class='textentry')}}
+          <p class='chars-format'>Characters Left: <span class='rec_chars_left'></span></p>
+          {{form.text(class='rec_text_entry')}}
           <br/>
           <div class='fieldset'>
             {{form.delete.label(class='rec')}} {{form.delete(class='click')}}
@@ -36,7 +36,7 @@
         </form>
       </div><!--w940-center-->
     </div><!--w940-->
-    <script src="{{url_for('static', filename='js/personal/editjs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
   {% endblock %}
 </body>
 </html>

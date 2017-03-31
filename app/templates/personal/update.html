@@ -15,9 +15,9 @@
         {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
           {{form.about_me.label(class='rec')}}
-          <p class='chars-format'>Characters Left: <span class='chars-left'></span></p>
+          <p class='chars-format'>Characters Left: <span class='about_me_chars_left'></span></p>
           <br/>
-          {{form.about_me(class='textentry')}}
+          {{form.about_me(class='about_me_text_entry')}}
           <br/>
           <div class='fieldset'>
             {{form.password.label(class='rec')}} {{form.password(class='entry')}}
@@ -36,7 +36,7 @@
         </form>
       </div><!--w940-center-->
     </div><!--w940-->
-    <script src="{{url_for('static', filename='js/personal/updatejs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
   {% endblock %}
 </body>
 </html>

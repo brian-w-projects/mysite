@@ -16,23 +16,13 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listcomments'>
-      {% for com in d_c %}
-        <div class='button'>
-          <button class='rec to_check verify' id='{{com.id}}'>Verify</button>
-          <button class='rec to_check private' id='{{com.id}}'>Delete</button>
-          <br/>
-        </div><!--button-->
-        {{commentmacro.render_post(com, current_user, moment)}}
-      {% endfor %}
+      {{moderator_comment_macro.initialize_moderate(d_c, moment, current_user)}}
+      {{buttonmacro.initialize_mod_button()}}
     </div><!--listcomments-->
-    <div class='w940-center'>
-      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
      <script>
-      var goto = "{{url_for('mod.verify_com_ajax')}}";
-      var gotoM = "{{url_for('mod.moderate_com_ajax')}}";
+      var gotoCom = "{{url_for('mod.verify_com_ajax')}}";
+      var goto_mod = "{{url_for('mod.moderate_com_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/mod/verifycomjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

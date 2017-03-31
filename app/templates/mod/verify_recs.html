@@ -16,23 +16,13 @@
       </div><!--w940-center-->
     </div><!--w940-->
     <div class='listrecs'>
-      {% for rec in display %}
-        <div class='button'>
-          <button class='rec to_check verify' id='{{rec.id}}'>Verify</button>
-          <button class='rec to_check private' id='{{rec.id}}'>Make Private</button>
-          <br/>
-        </div><!--button-->
-        {{postmacro.render_post(rec, current_user, moment)}}
-      {% endfor %}
+      {{moderator_rec_macro.initialize_moderate(display, moment, current_user)}}
+      {{buttonmacro.initialize_mod_button()}}
     </div><!--listrecs-->
-    <div class='w940-center'>
-      <a><p id='ajax' class='loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
      <script>
       var goto = "{{url_for('mod.verify_ajax')}}";
-      var gotoM = "{{url_for('mod.moderate_ajax')}}";
+      var goto_mod = "{{url_for('mod.moderate_ajax')}}";
     </script>
-    <script src="{{url_for('static', filename='js/mod/verifyjs.js')}}"></script>
   {% endblock %}
 </body>
 </html>

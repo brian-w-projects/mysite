@@ -2,7 +2,7 @@
 /* global goto_follow */
 
 $(function(){
-    $(':button').each(function(){
+    $('.follow_button').each(function(){
         var $to_mod = $(this);
         var $id = $(this).attr('id');
         $to_mod.on('click', function(){

@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, jsonify, get_template_attribute
+from flask_moment import _moment
 from . import mod
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -21,36 +22,36 @@ def moderate_ajax():
         rec.verification = 2
         db.session.add(rec)
         db.session.commit()
-        return json.dumps({'verified':True}), 200, {'ContentType':'application/json'} 
+        return jsonify({'verify': True})
     else:
         rec = Recommendation.query.filter_by(id=id).first_or_404()
         rec.verification = 0
         rec.made_private = True
         db.session.add(rec)
         db.session.commit()
-        return json.dumps({'verified':False}), 200, {'ContentType':'application/json'} 
+        return jsonify({'verify': False})
 
 @mod.route('/_verify')
 @login_required
 @is_moderator
 def verify_ajax():
-    session['offset'] += current_user.display
+    page = int(request.args.get('page'))
     display_recs = Recommendation.query\
         .filter_by(verification=1)\
         .order_by(Recommendation.timestamp.asc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/modpostajax.html', display = display_recs)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    to_return = get_template_attribute('macros/moderator_rec_macro.html', 'ajax')        
+    return jsonify({'last': display_recs.page == display_recs.pages,
+        'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @mod.route('/verify')
 @login_required
 @is_moderator
 def verify():
-    session['offset'] = 0
     display_recs = Recommendation.query\
         .filter_by(verification=1)\
         .order_by(Recommendation.timestamp.asc())\
-        .limit(current_user.display)
+        .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('mod/verify_recs.html', display=display_recs)
 
 @mod.route('/_moderate_com')
@@ -66,33 +67,33 @@ def moderate_com_ajax():
         com.verification = 2
         db.session.add(com)
         db.session.commit()
-        return json.dumps({'verified':True}), 200, {'ContentType':'application/json'} 
+        return jsonify({'verify': True})
     else:
         com = Comments.query.filter_by(id=id).first_or_404()
         com.verificition = 0
         db.session.add(com)
         db.session.commit()
-        return json.dumps({'verified':False}), 200, {'ContentType':'application/json'} 
+        return jsonify({'verify': False})
 
 @mod.route('/_verify_comments')    
 @login_required
 @is_moderator
 def verify_com_ajax():
-    session['offset'] += current_user.display
+    page = int(request.args.get('page'))
     display_comments = Comments.query\
         .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/modcommentajax.html', d_c = display_comments)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    to_return = get_template_attribute('macros/moderator_comment_macro.html', 'ajax')
+    return jsonify({'last': display_comments.page == display_comments.pages,
+        'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
 @mod.route('/verify_comments')
 @login_required
 @is_moderator
 def verify_comments():
-    session['offest'] = 0
     display_comments = Comments.query\
         .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
-        .limit(current_user.display)
+        .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('mod/verify_comments.html', d_c=display_comments)
