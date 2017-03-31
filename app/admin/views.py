@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, abort, flash
+from flask import render_template, request, redirect, url_for, session, abort, flash, jsonify, get_template_attribute
 from . import admin
 # from .forms import 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -8,6 +8,7 @@ from .. import db
 from ..email import send_email
 from datetime import datetime, timedelta
 import json
+from flask_moment import _moment
 
 @admin.route('/splash')
 @login_required
@@ -43,48 +44,50 @@ def admin_splash():
     return render_template('admin/admin_splash.html', data=data, RecModerations=RecModerations,
         ComModerations=ComModerations, week_ago=week_ago)
 
-@admin.route('/_mod_history_com_ajax')
+@admin.route('/_mod_history_com_ajax/<int:id>')
 @login_required
 @is_administrator
-def mod_com_ajax():
-    id = request.args.get('id')
-    session['offset'] += current_user.display
+def mod_com_ajax(id):
+    page = int(request.args.get('page'))
     mod = Users.query\
         .filter(Users.role_id != 3)\
-        .filter_by(id=id).first_or_404()
+        .filter_by(id=id)\
+        .first_or_404()
     mod_coms = mod.com_mods\
         .order_by(ComModerations.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/modhistorycomajax.html', d_c = mod_coms)
+        .paginate(page=page, per_page=current_user.display, error_out=False)
+    to_return = get_template_attribute('macros/mod_comment_action_macro.html', 'ajax')
+    return jsonify({'last': mod_coms.page == mod_coms.pages,
+        'ajax_request': to_return(mod_coms, _moment, current_user)}) 
 
-@admin.route('/_mod_history_rec_ajax')
+@admin.route('/_mod_history_rec_ajax/<int:id>')
 @login_required
 @is_administrator
-def mod_rec_ajax():
-    id = request.args.get('id')
-    session['offset'] += current_user.display
+def mod_rec_ajax(id):
+    page = int(request.args.get('page'))
     mod = Users.query\
         .filter(Users.role_id != 3)\
-        .filter_by(id=id).first_or_404()
+        .filter_by(id=id)\
+        .first_or_404()
     mod_recs = mod.rec_mods\
         .order_by(RecModerations.timestamp.desc())\
-        .offset(session['offset'])\
-        .limit(current_user.display)
-    return render_template('ajax/modhistoryrecajax.html', display=mod_recs)
+        .paginate(page=page, per_page=current_user.display, error_out=False)
+    to_return = get_template_attribute('macros/mod_rec_action_macro.html', 'ajax')
+    return jsonify({'last': mod_recs.page == mod_recs.pages,
+        'ajax_request': to_return(mod_recs, _moment, current_user)}) 
 
 @admin.route('/mod_history/<int:id>')
 @login_required
 @is_administrator
 def mod_history(id):
-    session['offset'] = 0
     mod = Users.query\
         .filter(Users.role_id != 3)\
-        .filter_by(id=id).first_or_404()
+        .filter_by(id=id)\
+        .first_or_404()
     mod_recs = mod.rec_mods\
         .order_by(RecModerations.timestamp.desc())\
-        .limit(current_user.display)
+        .paginate(1, per_page=current_user.display, error_out=False)
     mod_coms = mod.com_mods\
         .order_by(ComModerations.timestamp.desc())\
-        .limit(current_user.display)
+        .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('admin/mod_history.html', mod=mod, mod_recs=mod_recs, mod_coms=mod_coms)

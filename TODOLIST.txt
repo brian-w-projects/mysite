@@ -9,8 +9,5 @@
 
 
 Refactoring:
-    - remove ajax.html folder, incorporate into macros similar to recs and comments
-        - combine javascript and ajax for:
-            - All Admin Ajax
-    
     - rename variables for consistant snake_naming
+    - combine comment/rec swap java script from profile and mod history?

@@ -18,49 +18,14 @@
     <br/>
     <br/>
     <div class='listrecs'>
-      {% for rec_mod in mod_recs %}
-        <div class='action-header'>
-          <p class='rec'>
-            {% if rec_mod.action %}
-              Accepted
-            {% else %}
-              Made Private
-            {% endif %}
-          </p>
-          <p>
-            {{moment(rec_mod.timestamp).fromNow()}}
-          </p>
-        </div><!--action-header-->
-        {{postmacro.render_post(rec_mod.rec, current_user, moment)}}
-      {% endfor %}
+      {{mod_rec_action_macro.initialize_rec_moderations(mod_recs, moment, current_user)}}
     </div><!--listrecs-->
     <div class='listcomments'>
-      {% for rec_com in mod_coms %}
-        <div class='action-header'>
-          <p class='rec'>
-            {% if rec_com.action %}
-              Accepted
-            {% else %}
-              Deleted
-            {% endif %}
-          </p>
-          <p>
-            {{moment(rec_com.timestamp).fromNow()}}
-          </p>
-        </div><!--action-header-->
-        {{commentmacro.render_post(rec_com.com, current_user, moment)}}
-      {% endfor %}
+      {{mod_comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
     </div><!--listcomments-->
-    <div class='w940-center'>
-      <a><p class='ajax loadMore special-link'>Load More</p></a>
-    </div><!--w940-center-->
-      <div class='w940-center'>
-      <a><p class='ajax loadMoreCom special-link'>Load More</p></a>
-    </div><!--w940-center-->
     <script>
-      var id = {{mod.id}};
-      var gotoP = "{{url_for('admin.mod_rec_ajax')}}";
-      var gotoC = "{{url_for('admin.mod_com_ajax')}}";
+      var goto = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";
+      var gotoCom = "{{url_for('admin.mod_com_ajax', id=mod.id)}}";
     </script>
     <script src="{{url_for('static', filename='js/admin/modhistoryjs.js')}}"></script>
   {% endblock %}

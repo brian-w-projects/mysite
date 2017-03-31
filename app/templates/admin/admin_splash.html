@@ -43,9 +43,7 @@
         </div><!--data-box-->
 
         <h2 class='rec'>Total mods: {{data['mods_count']}}</h2>
-        {% for mod in data['mods'] %}
-          {{ modmacro.mod_display(mod, moment, RecModerations, ComModerations, week_ago) }}
-        {% endfor %}
+        {{ modmacro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago) }}
       </div><!--w940-center-->
     </div><!--w940-->
   {% endblock %}
