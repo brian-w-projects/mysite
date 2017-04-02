@@ -1,13 +1,14 @@
 1. Integrate Celery to send emails
 2. incorporate sslify to keep links secure and remove external from url_for
+3. Mobile Pages?
 
 
 
-1. Add Error handling in main (400, 404, 500, 405)
-    -mime_type json and html always returning true
-2. Finish api page with descriptions
 
-
-Refactoring:
+Refractoring:
     - rename variables for consistant snake_naming
     - combine comment/rec swap java script from profile and mod history?
+    - combine header/flashed messages into abstract code?
+    - remove unneeded markup
+    - update markup to be html5 complient
+    - complete refractoring

@@ -1,7 +1,10 @@
-{% macro render_api(header, methods, authorization, description, example) %}
+{% macro render_api(headers, methods, authorization, description_lines, example) %}
 <div class='api_element_container'>
   <div class='api_element_header'>
-    {{header}}
+    {% for single_header in headers %}
+      {{single_header}}
+      <br/>
+    {% endfor %}
   </div><!--api_element_header-->
   <div class='api_element_text'>
     <p>
@@ -10,9 +13,9 @@
     <p>
       Methods: {{methods}}
     </p>
-    <p>
-      {{description}}
-    </p>
+    {% for description in description_lines %}
+      <p>{{description}}</p>
+    {% endfor %}
     <p class='example'>
       {{example}}
     </p>

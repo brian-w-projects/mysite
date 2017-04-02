@@ -13,6 +13,11 @@
       <div class='w940-center'>
         <h2 class='rec'>Update Profile</h2>
         {{ flashmacro.render_flash(get_flashed_messages()) }}
+        <p>Interested in our API? 
+          <a class='special-link' href="{{url_for('personal.token')}}">
+            Click Here
+          </a>
+        </p>
         <form method="POST">
           {{form.about_me.label(class='rec')}}
           <p class='chars-format'>Characters Left: <span class='about_me_chars_left'></span></p>
