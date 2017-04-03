@@ -1,4 +1,4 @@
-{% macro render_rec(rec, moment, current_user) %}
+{% macro render_rec(rec, moment, current_user, attributes=True) %}
   <div class='rec1'>
     <a href="{{url_for('main.highlight', id=rec.id)}}">
       <h3 class='postTitle'>
@@ -28,9 +28,14 @@
           </p>
         </a>
       {% endif %}
-      <p class='postHeader rec'>Comments: {{rec.comments.filter(rec.verification > 0).count()}}</p>
+      <p class='postHeader rec'>Comments: {{rec.comments.filter_by(verification=1).count()
+        + rec.comments.filter_by(verification=2).count()}}</p>
       {% if current_user.id == rec.author_id and rec.new_comment == True %}
         <p class='postHeader rec'>New Comment!</p>
+      {% endif %}
+      {% if attributes %}
+        <p class='toggle_show'>&#11021;</p>
+        <p id='{{rec.id}}'class='toggle_comments'>&#128172;</p>
       {% endif %}
     </div><!--postheaderdiv-->
     <p class='postText'>
@@ -40,17 +45,17 @@
   <br/>
 {% endmacro %}
 
-{% macro initialize_recs(display, moment, current_user) %}
-  {{ajax(display, moment, current_user)}}
+{% macro initialize_recs(display, moment, current_user, attributes=True) %}
+  {{ajax(display, moment, current_user, attributes)}}
   {% if display.pages != display.page %}
     <p id='ajax_recs' class='loadMore special-link'>Load More</p>
   {% endif %}
   <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
 {% endmacro %}
 
-{% macro ajax(display, moment, current_user) %}
+{% macro ajax(display, moment, current_user, attributes=True) %}
   {% for rec in display.items %}
-    {{render_rec(rec, moment, current_user)}}
+    {{render_rec(rec, moment, current_user, attributes)}}
   {% endfor %}
 {% endmacro %}
 

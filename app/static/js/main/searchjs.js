@@ -23,6 +23,7 @@ $(function(){
                 $('.loadMoreCom').hide();
                 if($('.type').val() == 'Recs'){
                     $('.loadMore').before(x['ajax_request']);
+                    load_rec_attributes(); //from ajax_rec_js
                     if(x['last'] == false){
                         $('.loadMore').show();
                     }

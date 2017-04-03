@@ -9,7 +9,20 @@ from ..email import send_email
 from random import randint, sample
 from datetime import datetime, timedelta
 from flask_moment import _moment
-from sqlalchemy.sql.expression import func, select
+from sqlalchemy.sql.expression import func, select, or_
+
+@main.route('/rec_inline_comment_ajax')
+def rec_inline_comment_ajax():
+    id = int(request.args.get('id'))
+    display_comments = Comments.query\
+        .filter_by(posted_on = id)\
+        .filter(Comments.verification != 0)\
+        .order_by(Comments.timestamp.desc())\
+        .paginate(1, per_page=5, error_out=False)
+    if len(display_comments.items) == 0:
+        return jsonify({'ajax_request': ''}) 
+    to_return = get_template_attribute('macros/commentmacro.html', 'ajax_div_wrapper')
+    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
 @main.route('/about')
 def about():
@@ -43,7 +56,7 @@ def highlight(id):
     if display_recs.verification == 0 and (not current_user.is_authenticated or display_recs.author_id != current_user.id):
         abort(403)
     display_comments = display_recs.comments\
-        .filter(Comments.verification != 0)\
+        .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
     if current_user.is_authenticated and display_recs.author_id == current_user.id:
@@ -74,29 +87,21 @@ def index():
     if current_user.is_authenticated:
         if current_user.is_administrator():
             return redirect(url_for('admin.admin_splash'))
-        initial_grab = Recommendation.query\
+        my_list = [max(x.title.split(), key=len) for x in current_user.posts\
+            .order_by(Recommendation.timestamp.desc())\
+            .limit(10)]
+        display_recs = Recommendation.query\
             .filter(Recommendation.verification > 0)\
             .filter(Recommendation.author_id != current_user.id)\
+            .filter(or_(*[Recommendation.title.contains(list_ele) for list_ele in my_list]))\
             .order_by(Recommendation.timestamp.desc())\
-            .limit(100)
-        my_list = current_user.posts\
-            .order_by(Recommendation.timestamp.desc())\
-            .limit(10)
-        for my_rec in my_list:
-            for to_add in initial_grab.from_self().filter(Recommendation.title.contains(my_rec.title)):
-                display_recs.append(to_add)
-            if len(display_recs) >= 50:
-                break
-        if len(display_recs) >=5:
-            display_recs = sample(display_recs, 5)
-        elif len(display_recs) == 0:
-            temp = Recommendation.query\
-                .filter(Recommendation.verification > 0)\
-                .filter(Recommendation.author_id != current_user.id)\
-                .order_by(Recommendation.timestamp.desc())\
-                .limit(50)
-            display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('main/index.html', display = display_recs[:5])
+            .limit(100)\
+            .from_self()\
+            .order_by(func.random())\
+            .limit(5)\
+            .from_self()\
+            .paginate(1, per_page=5, error_out=False)
+    return render_template('main/index.html', display = display_recs)
 
 @main.route('/_search', methods=['POST'])
 def search_ajax():

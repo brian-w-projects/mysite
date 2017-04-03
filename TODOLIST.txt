@@ -4,6 +4,7 @@
 
 
 
+1. Add subscriber jquery animiations
 
 Refractoring:
     - rename variables for consistant snake_naming

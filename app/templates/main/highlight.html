@@ -21,7 +21,7 @@
       <br/>
     </div><!--w940-->
     <div class='listrecs'>
-      {{recmacro.render_rec(rec, moment, current_user)}}
+      {{recmacro.render_rec(rec, moment, current_user, attributes=False)}}
     </div><!--listrecs-->
     <div class='listcomments'>
       {{commentmacro.initialize_comments(d_c, moment, current_user)}}

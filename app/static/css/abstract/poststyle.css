@@ -26,7 +26,7 @@
 
 .postHeaderDiv{
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     border-bottom: 1px solid black;
     padding-left: 10px;
     padding-right: 10px;
@@ -84,3 +84,12 @@
     margin-bottom: 5px;
 }
 /*FOLLOWING/FOLLOWER STYLE */
+
+/*TOGGLE SHOWING STYLE */
+.toggle_show, .toggle_comments{
+    float: right;
+    margin: 0 10px 0 0;
+    cursor: pointer;
+    font-size: 25px;
+}
+/*TOGGLE SHOWING STYLE */

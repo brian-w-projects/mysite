@@ -52,6 +52,13 @@
   {% endfor %}
 {% endmacro %}
 
+{% macro ajax_div_wrapper(d_c, moment, current_user) %}
+  <div class='w940-center'>
+    </br>
+    {{ajax(d_c, moment, current_user)}}
+  </div><!--w940-center-->
+{% endmacro %}
+
 {% macro search_initialize() %}
   <a><p id='ajax_comments' class='loadMoreCom special-link'>Load More</p></a>
   <script src="{{url_for('static', filename='js/speciality/ajax_comment_js.js')}}"></script>
