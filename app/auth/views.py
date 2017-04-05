@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from . import auth
 from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
 from flask_login import login_user, logout_user, login_required, current_user
@@ -102,17 +102,17 @@ def logout():
 def subscribe_ajax():
     username = request.args.get('username').strip().lower()
     if Users.query.filter_by(username=username).first():
-        return json.dumps({'exists':True}), 200, {'ContentType':'application/json'} 
+        return jsonify({'exists':True})
     else:
-        return json.dumps({'exists':False}), 200, {'ContentType':'application/json'} 
+        return jsonify({'exists':False})
 
 @auth.route('/_subscribe_email')
 def subscribe_email_ajax():
     email = request.args.get('email').strip().lower()
     if Users.query.filter_by(email=email).first():
-        return json.dumps({'exists':True}), 200, {'ContentType':'application/json'} 
+        return jsonify({'exists':True})
     else:
-        return json.dumps({'exists':False}), 200, {'ContentType':'application/json'} 
+        return jsonify({'exists':False})
 
 @auth.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -136,7 +136,7 @@ def subscribe():
                     flash(u'\u2717 Email already in use')
         else:
             if 'username' in form.errors:
-                flash(u'\u2717 Username must be at least 4 characters')
+                flash(u'\u2717 Username must be between 5 and 12 characters')
             if 'email' in form.errors:
                 flash(u'\u2717 Email address is required for registration')
             if 'password' in form.errors:

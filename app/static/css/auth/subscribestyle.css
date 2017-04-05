@@ -1,3 +1,9 @@
 span{
     font-family: sans-serif;
 }
+
+.exists_container{
+    margin-left: 10px;
+    border: 1px solid black;
+    display: inline-block;
+}

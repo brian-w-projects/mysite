@@ -13,24 +13,34 @@
     <div class='w940'>
       <div class='w940-center'>
         <h2 class='rec'>Register</h2>
+        {{flashmacro.render_flash(get_flashed_messages())}}
         <p>Already a member?
           <a class='special-link' href="{{url_for('auth.login')}}">
             Login
           </a>
         </p>
-        {{ flashmacro.render_flash(get_flashed_messages()) }}
         <form method="POST">
           {{form.username.label(class='rec')}} {{form.username(class='entry username')}}
-          <span class='nameexists'></span>
+          <div class='exists_container'>
+            <span class='nameexists'></span>
+          </div><!--exists_container-->
           <br/>
           {{form.email.label(class='rec')}} {{form.email(class='entry email')}}
-          <span class='emailexists'></span>
+          <div class='exists_container'>
+            <span class='emailexists'></span>
+          </div><!--exists_container-->
           <br/>
           <div class='fieldset'>
             {{form.password.label(class='rec')}} {{form.password(class='entry')}}
             <br/>
             {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
           </div><!--fieldset-->
+          <div class='exists_container'>
+            <span class='passwordexists'></span>
+          </div><!--exists_container-->
+          <div class='exists_container'>
+            <span class='passwordconfirmexists'></span>
+          </div>
           <div class='realign'></div>
           {{form.token.label(class='rec')}} {{form.token(class='entry')}}
           <br/>
@@ -48,6 +58,7 @@
       var gotoE = "{{url_for('auth.subscribe_email_ajax')}}";
     </script>
     <script src="{{url_for('static', filename='js/auth/subscribejs.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
   {% endblock %}
 </body>
 </html>
