@@ -12,5 +12,4 @@ Refractoring:
     - combine header/flashed messages into abstract code?
     - remove unneeded markup
     - update markup to be html5 complient
-    - implement jquery best practices
     - complete refractoring

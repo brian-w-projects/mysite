@@ -1,28 +1,41 @@
 /* global $ */
 /* global goto_follow */
 
-$(function(){
-    $('.follow_button').each(function(){
-        var $to_mod = $(this);
-        var $id = $(this).attr('id');
-        $to_mod.on('click', function(){
-            $.ajax({
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                url: goto_follow,
-                datatype:'json',
-                data: {'id': $id},
-                success: function(x){
-                    if(x['added'] == true){
+(function($, window, docuement){
+   
+   var $follow_button = $('.follow_button');
+   var $follower_count = $('.f_count');
+   
+   
+   $(function(){
+        $follow_button.each(function(){
+            var $to_mod = $(this);
+            var $id = $(this).attr('id');
+            $to_mod.on('click', function(){
+                follow_ajax({'id': $id}).done(function(data){
+                    if(data['added'] == true){
                         $to_mod.html('Unfollow');
-                        $('.f_count').html(parseInt($('.f_count').text())+1);
-                        
+                        if($follower_count.length){
+                            $follower_count.html(parseInt($follower_count.text(), 10)+1);
+                        }
                     }else{
                         $to_mod.html('Follow');
-                        $('.f_count').html(parseInt($('.f_count').text())-1);
+                        if($follower_count.length){
+                            $follower_count.html(parseInt($follower_count.text(), 10)-1);
+                        }
                     }
-                }
-            });
-        }); 
+                });
+            }); 
+        });
     });
-});
+    
+    function follow_ajax(id_info){
+        return  $.ajax({
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            url: goto_follow,
+            datatype:'json',
+            data: id_info
+        });
+    }
+}(window.jQuery, window, document));
