@@ -1,285 +1,281 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
 {% import 'macros/apimacro.html' as apimacro %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me - API Token</title>
-    <link href="{{url_for('static', filename='css/personal/tokenstyle.css')}}" type='text/css' rel='stylesheet'/>
-  {% endblock %}
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-        <h2 class='rec'>API Token</h2>
-        {{ flashmacro.render_flash(get_flashed_messages()) }}
-        <input class='api_entry'/>
-        <button class='rec copy to_check'>Copy</button>
-        <button class='rec reload to_check'>&#8635;</button>
-        <br/>
-        <div class='api_welcome'>
-          <h2 class='rec'>Welcome!</h2>
-          <p>
-            This site has a comprehensive api available for use with the above token.
-            This token will provide full access to the site and has no expiration date.
-            As such, it should remain private. You are encouraged to change your token if
-            it should ever become compromised.
-          </p>
-          <p>
-            Below you will find documentation for all the features available in this api.
-          </p>
-        </div><!--api_welcome-->
-          {{apimacro.render_api([url_for('api1.get_token', _scheme='https', _external='True')],
-            'GET', 'username/password',
-            ['Retrieves token associated with this account.'],
-            '{ "token": "eyJhbGci..." }'
-          )}}
-          {{apimacro.render_api([url_for('api1.get_new_token', _scheme='https', _external='True')],
-            'GET', 'username/password',
-            ['Provides a new token associated with this account.'],
-            '{ "token": "eyJhbGci..." }'
-          )}}
-          <h2 class='rec'>/recs</h2>
-          <p>These requests interact with the site's recommendations.</p>
-          {{apimacro.render_api([url_for('api1.get_rec', id=1, _scheme='https', _external='True')],
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - API Token</title>
+  <link href="{{url_for('static', filename='css/personal/tokenstyle.css')}}" type='text/css' rel='stylesheet'/>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+      <h2 class='rec'>API Token</h2>
+      {{ flashmacro.render_flash(get_flashed_messages()) }}
+      <input class='api_entry'/>
+      <button class='rec copy to_check'>Copy</button>
+      <button class='rec reload to_check'>&#8635;</button>
+      <br/>
+      <div class='api_welcome'>
+        <h2 class='rec'>Welcome!</h2>
+        <p>
+          This site has a comprehensive api available for use with the above token.
+          This token will provide full access to the site and has no expiration date.
+          As such, it should remain private. You are encouraged to change your token if
+          it should ever become compromised.
+        </p>
+        <p>
+          Below you will find documentation for all the features available in this api.
+        </p>
+      </div><!--api_welcome-->
+        {{apimacro.render_api([url_for('api1.get_token', _scheme='https', _external='True')],
+          'GET', 'username/password',
+          ['Retrieves token associated with this account.'],
+          '{ "token": "eyJhbGci..." }'
+        )}}
+        {{apimacro.render_api([url_for('api1.get_new_token', _scheme='https', _external='True')],
+          'GET', 'username/password',
+          ['Provides a new token associated with this account.'],
+          '{ "token": "eyJhbGci..." }'
+        )}}
+        <h2 class='rec'>/recs</h2>
+        <p>These requests interact with the site's recommendations.</p>
+        {{apimacro.render_api([url_for('api1.get_rec', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves relevent information about the rec identified by id number.'],
+          '{"author": "cheryl92", "author_id": 64, "comment_count": 2, "id": 2, "text": "Nunc nisl...",
+            "timestamp": "Sat, 14 Jan 2017 00:00:00 GMT", "title": "Donec..."}'
+        )}}
+        {{apimacro.render_api([url_for('api1.put_rec', id=1, _scheme='https', _external='True')],
+          'PUT', 'token',
+          ['Modify the existing rec identified by id number. Modify "text", "title", and/or "public".',
+            '"text" must be a string between 1 and 1000 characters.',
+            '"title" must be a string between 1 and 100 characters.',
+            '"public" must be True or False'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.delete_rec', id=1, _scheme='https', _external='True')],
+          'DELETE', 'token',
+          ['Permently delete the existing rec identified by id number.'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.post_rec', _scheme='https', _external='True')],
+          'POST', 'token',
+          ['Post a new rec under associated with the linked user. Add "text", "title" and "public"',
+            '"text" must be a string between 1 and 1000 characters.',
+            '"title" must be a string between 1 and 100 characters.',
+            '"public" must be True or False'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.get_rec_comments', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves the comments posted on the rec indicated by id number.'],
+          '{"399": { "author_id": 21, "author_username": "deborah63", "comment": "Morbi...",
+            "id": 399, "posted_on": 74, "timestamp": "Mon, 13 Feb 2017 00:00:00 GMT"}}'
+        )}}
+        {{apimacro.render_api([url_for('api1.post_rec_comments', id=1, _scheme='https', _external='True')],
+          'POST', 'token',
+          ['Posts comment on rec indicated by id number. Add "text"',
+            '"text" must be between 1 and 250 characters long'],
+          ''
+        )}}
+        <h2 class='rec'>/comments</h2>
+        <p>These requests interact with the site's recommendations.</p>
+        {{apimacro.render_api([url_for('api1.get_comments', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrives the comment identified by the id number.'],
+          '{"author_id": 22, "author_username": "sharon70", "comment": "Praesent...",
+            "id": 50, "posted_on": 345, "timestamp": "Sun, 12 Feb 2017 00:00:00 GMT"}',
+        )}}
+        {{apimacro.render_api([url_for('api1.edit_comments', id=1, _scheme='https', _external='True')],
+          'PUT', 'token',
+          ['Modifies the comment indicated by id number. Modify "text"',
+            '"text" must be between 1 and 250 characters long.'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.delete_comments', id=1, _scheme='https', _external='True')],
+          'DELETE', 'token',
+          ['Permently deletes the comment indicated by id number.'],
+          ''
+        )}}
+        <h2 class='rec'>/Users</h2>
+        <p>Retrives information related to the site's users</p>
+        {{apimacro.render_api([url_for('api1.get_user', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves public information about user indicated by id number.'],
+          '{"about_me": "Morbi...", "comments": 5, "confirmed": true, "display": 10,
+            "followed_by_count": 1, "following_count": 5, "id": 1,
+            "member_since": "Thu, 12 May 2016 00:00:00 GMT", "recs": 5,
+            "username": "kimberly67"}',
+        )}}
+        {{apimacro.render_api([url_for('api1.get_user_recs', id=1, _scheme='https', _external='True'),
+          url_for('api1.get_user_recs', id=1, page=2, _scheme='https', _external='True')],
             'GET', 'token',
-            ['Retrieves relevent information about the rec identified by id number.'],
-            '{"author": "cheryl92", "author_id": 64, "comment_count": 2, "id": 2, "text": "Nunc nisl...",
-              "timestamp": "Sat, 14 Jan 2017 00:00:00 GMT", "title": "Donec..."}'
-          )}}
-          {{apimacro.render_api([url_for('api1.put_rec', id=1, _scheme='https', _external='True')],
-            'PUT', 'token',
-            ['Modify the existing rec identified by id number. Modify "text", "title", and/or "public".',
-              '"text" must be a string between 1 and 1000 characters.',
-              '"title" must be a string between 1 and 100 characters.',
-              '"public" must be True or False'],
-            ''
-          )}}
-          {{apimacro.render_api([url_for('api1.delete_rec', id=1, _scheme='https', _external='True')],
-            'DELETE', 'token',
-            ['Permently delete the existing rec identified by id number.'],
-            ''
-          )}}
-          {{apimacro.render_api([url_for('api1.post_rec', _scheme='https', _external='True')],
-            'POST', 'token',
-            ['Post a new rec under associated with the linked user. Add "text", "title" and "public"',
-              '"text" must be a string between 1 and 1000 characters.',
-              '"title" must be a string between 1 and 100 characters.',
-              '"public" must be True or False'],
-            ''
-          )}}
-          {{apimacro.render_api([url_for('api1.get_rec_comments', id=1, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrieves the comments posted on the rec indicated by id number.'],
-            '{"399": { "author_id": 21, "author_username": "deborah63", "comment": "Morbi...",
-              "id": 399, "posted_on": 74, "timestamp": "Mon, 13 Feb 2017 00:00:00 GMT"}}'
-          )}}
-          {{apimacro.render_api([url_for('api1.post_rec_comments', id=1, _scheme='https', _external='True')],
-            'POST', 'token',
-            ['Posts comment on rec indicated by id number. Add "text"',
-              '"text" must be between 1 and 250 characters long'],
-            ''
-          )}}
-          <h2 class='rec'>/comments</h2>
-          <p>These requests interact with the site's recommendations.</p>
-          {{apimacro.render_api([url_for('api1.get_comments', id=1, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrives the comment identified by the id number.'],
-            '{"author_id": 22, "author_username": "sharon70", "comment": "Praesent...",
-              "id": 50, "posted_on": 345, "timestamp": "Sun, 12 Feb 2017 00:00:00 GMT"}',
-          )}}
-          {{apimacro.render_api([url_for('api1.edit_comments', id=1, _scheme='https', _external='True')],
-            'PUT', 'token',
-            ['Modifies the comment indicated by id number. Modify "text"',
-              '"text" must be between 1 and 250 characters long.'],
-            ''
-          )}}
-          {{apimacro.render_api([url_for('api1.delete_comments', id=1, _scheme='https', _external='True')],
-            'DELETE', 'token',
-            ['Permently deletes the comment indicated by id number.'],
-            ''
-          )}}
-          <h2 class='rec'>/Users</h2>
-          <p>Retrives information related to the site's users</p>
-          {{apimacro.render_api([url_for('api1.get_user', id=1, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrieves public information about user indicated by id number.'],
-            '{"about_me": "Morbi...", "comments": 5, "confirmed": true, "display": 10,
-              "followed_by_count": 1, "following_count": 5, "id": 1,
-              "member_since": "Thu, 12 May 2016 00:00:00 GMT", "recs": 5,
-              "username": "kimberly67"}',
-          )}}
-          {{apimacro.render_api([url_for('api1.get_user_recs', id=1, _scheme='https', _external='True'),
-            url_for('api1.get_user_recs', id=1, page=2, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves recs in quantity set by user. Optional page parameter can be passed to 
-                retrieve following pages'],
-              '{"1":{...}, "200":{...}}'
-          )}}
-          {{apimacro.render_api([url_for('api1.get_user_comments', id=1, _scheme='https', _external='True'),
-            url_for('api1.get_user_comments', id=1, page=2, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrieves comments in quantity set by user. Optional page parameter can be passed to 
+            ['Retrieves recs in quantity set by user. Optional page parameter can be passed to 
               retrieve following pages'],
             '{"1":{...}, "200":{...}}'
+        )}}
+        {{apimacro.render_api([url_for('api1.get_user_comments', id=1, _scheme='https', _external='True'),
+          url_for('api1.get_user_comments', id=1, page=2, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves comments in quantity set by user. Optional page parameter can be passed to 
+            retrieve following pages'],
+          '{"1":{...}, "200":{...}}'
+        )}}
+        {{apimacro.render_api([url_for('api1.put_user', _scheme='https', _external='True')],
+          'PUT', 'token',
+          ['Modifies user indicated by id number. Modify, "display", "about_me", and/or "updates"',
+            '"display" must be either 10, 20 or 50',
+            '"about_me" must be between 0 and 500 characters',
+            '"updates" must be either True or False. True indicates you wish to receive updates,
+            False indicates that you do not'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.get_user_following', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrives the users that the user indicated by id number is following.'],
+          '{"count": 5, "following": { "305": "Fri, 30 Sep 2016 00:00:00 GMT",
+            "331": "Thu, 15 Dec 2016 00:00:00 GMT",
+            "4": "Mon, 14 Nov 2016 00:00:00 GMT",
+            "467": "Sun, 15 Jan 2017 00:00:00 GMT",
+            "470": "Mon, 13 Mar 2017 00:00:00 GMT"}}'
+        )}}
+        {{apimacro.render_api([url_for('api1.get_user_followed_by', id=1, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrives the users that are following the user indicated by id number'],
+          '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 00:00:00 GMT"}}',
+        )}}
+        <h2 class='rec'>/follow</h2>
+        <p>Retrieves information related to following and unfollowing users</p>
+        {{apimacro.render_api([url_for('api1.put_follower', id=1, _scheme='https', _external='True')],
+          'PUT', 'token',
+          ['Adds user indicated by id number to requesting user\'s following list'],
+          ''
+        )}}
+        {{apimacro.render_api([url_for('api1.delete_follow', id=1, _scheme='https', _external='True')],
+          'DELETE', 'token',
+          ['Removes user indicated by id number from requesting user\'s following list'],
+          ''
+        )}}
+        <h2 class='rec'>/search</h2>
+        <p>Retrieves information related to searches</p>
+        {{apimacro.render_api([url_for('api1.get_search_recs', _scheme='https', _external='True'),
+          url_for('api1.get_search_recs', page=2, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves recs as specified by the search parameters "term", "user" and "date". Optional
+            page parameter retrieves additional pages of information.',
+            '"term" search rec titles for matches',
+            '"user" searches for recs only from matching user',
+            '"date" searches for recs before indicated date. Must be in MM/DD/YYYY format'],
+          '{"1":{...}, "200":{...}}'
+        )}}
+        {{apimacro.render_api([url_for('api1.get_search_comments', _scheme='https', _external='True'),
+          url_for('api1.get_search_comments', page=2, _scheme='https', _external='True')],
+          'GET', 'token',
+          ['Retrieves comments as specified by the search parameters "term", "user" and "date". Optional
+            page parameter retrieves additional pages of infomration.'],
+          '{"1":{...}, "400":{...}, "49":{...}}'
+        )}}
+        {% if current_user.is_administrator() %}
+          <h2 class='rec'>/admin</h2>
+          <p>Retrives information relevant to administrators</p>
+          {{apimacro.render_api([url_for('api1.get_admin', _scheme='https', _external='True')],
+            'GET', 'token',
+            ['Retrieves relevant site information for the administrator.'],
+            '"comments_to_mod": 0, "mods": {"1": "Example"}, "mods_count": 2,
+              "recent_account": 40, "recent_comments": 100, "recent_logins": 20,
+              "recent_recs": 100, "recs_to_mod": 14, "total_accounts": 1000,
+              "total_comments": 15000, "total_recs": 10000}'
           )}}
-          {{apimacro.render_api([url_for('api1.put_user', _scheme='https', _external='True')],
+          <h2 class='rec'>/mods</h2>
+          <p>Retrieves information about the moderations made by moderators</p>
+          {{apimacro.render_api([url_for('api1.get_mod_rec_history', id=1, _scheme='https', _external='True')],
+            'GET', 'token',
+            ['Retrieves all moderations on recs made by moderator indicated by id number'],
+            '{"recs_approved": {}, "recs_private": {"242": {"action": true,
+              "author": 31, "id": 242, "mod_by": 1, "mod_on": 52,
+              "text": "Suspend...",
+              "timestamp": "Tue, 21 Mar 2017 23:22:11 GMT",
+              "title": "Quis...",}}}',
+          )}}
+          {{apimacro.render_api([url_for('api1.get_mod_com_history', id=1, _scheme='https', _external='True')],
+            'GET', 'token',
+            ['Retrieves all moderations on comments made by moderator indicated by id number'],
+            '{"comments_approved": {"328": { "action": false, "author": 57, "id": 328,
+              "mod_by": 1, "mod_on": 4, "posted_on": 96, "text": "Nam...",
+              "timestamp": "Tue, 21 Mar 2017 23:35:29 GMT"}},"comments_private": {}}'
+          )}}
+          <h2 class='rec'>/Moderations</h2>
+          <p>Retrives information related to specific moderations</p>
+          {{apimacro.render_api([url_for('api1.get_rec_mods', id=1, _scheme='https', _external='True')],
+            'GET', 'token',
+            ['Retrives rec moderation indicated by id number.'],
+            '{"action": true, "author": 47, "id": 1, "mod_by": 2, "mod_on": 481,
+              "text": "Suspen...",
+              "timestamp": "Sun, 15 Jan 2017 00:00:00 GMT",
+              "title": "Donec..."}'
+          )}}
+          {{apimacro.render_api([url_for('api1.put_rec_mods', id=1, _scheme='https', _external='True')],
             'PUT', 'token',
-            ['Modifies user indicated by id number. Modify, "display", "about_me", and/or "updates"',
-              '"display" must be either 10, 20 or 50',
-              '"about_me" must be between 0 and 500 characters',
-              '"updates" must be either True or False. True indicates you wish to receive updates,
-              False indicates that you do not'],
+            ['Reverses rec moderation decision on moderation indicated by id number'],
             ''
           )}}
-          {{apimacro.render_api([url_for('api1.get_user_following', id=1, _scheme='https', _external='True')],
+          {{apimacro.render_api([url_for('api1.get_com_mods', id=1, _scheme='https', _external='True')],
             'GET', 'token',
-            ['Retrives the users that the user indicated by id number is following.'],
-            '{"count": 5, "following": { "305": "Fri, 30 Sep 2016 00:00:00 GMT",
-              "331": "Thu, 15 Dec 2016 00:00:00 GMT",
-              "4": "Mon, 14 Nov 2016 00:00:00 GMT",
-              "467": "Sun, 15 Jan 2017 00:00:00 GMT",
-              "470": "Mon, 13 Mar 2017 00:00:00 GMT"}}'
+            ['Retrives comment moderation indicated by id number.'],
+            '{"action": false, "author": 85, "id": 1, "mod_by": 2, "mod_on": 400,
+              "posted_on": 122, "text": "Duis...",
+              "timestamp": "Mon, 09 Jan 2017 00:00:00 GMT"}'
           )}}
-          {{apimacro.render_api([url_for('api1.get_user_followed_by', id=1, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrives the users that are following the user indicated by id number'],
-            '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 00:00:00 GMT"}}',
-          )}}
-          <h2 class='rec'>/follow</h2>
-          <p>Retrieves information related to following and unfollowing users</p>
-          {{apimacro.render_api([url_for('api1.put_follower', id=1, _scheme='https', _external='True')],
+          {{apimacro.render_api([url_for('api1.put_com_mods', id=1, _scheme='https', _external='True')],
             'PUT', 'token',
-            ['Adds user indicated by id number to requesting user\'s following list'],
+            ['Reverses comment moderation decision on moderation indicated by id number'],
             ''
           )}}
-          {{apimacro.render_api([url_for('api1.delete_follow', id=1, _scheme='https', _external='True')],
-            'DELETE', 'token',
-            ['Removes user indicated by id number from requesting user\'s following list'],
+        {% endif %}
+        {% if current_user.is_moderator() %}
+          <h2 class='rec'>/moderate</h2>
+          <p>Retrieves information relates to recs and comments that require moderation</p>
+          {{apimacro.render_api([url_for('api1.get_moderate_recs', _scheme='https', _external='True'),
+            url_for('api1.get_moderate_recs', page=2, _scheme='https', _external='True')],
+            'GET', 'token',
+            ['Retrieves 10 oldest recs in need of moderation. Use optional page parameter to
+              obtain newer recs in need of moderation.'],
+            '{"126": {"author": "sandra65", "author_id": 43, "comment_count": 0,
+              "id": 126, "text": "Donec...",
+              "timestamp": "Tue, 20 Sep 2016 00:00:00 GMT",
+              "title": "Morbi non quam nec dui luctus rutrum."},...}'
+          )}}
+          {{apimacro.render_api([url_for('api1.moderate_recs', id=1, _scheme='https', _external='True')],
+            'POST', 'token',
+            ['Moderates the rec indicated by id number. Add "action"',
+              '"action" must be True or False. True indicates rec is appropriate. False indicates
+              rec is inappropriate.'],
             ''
           )}}
-          <h2 class='rec'>/search</h2>
-          <p>Retrieves information related to searches</p>
-          {{apimacro.render_api([url_for('api1.get_search_recs', _scheme='https', _external='True'),
-            url_for('api1.get_search_recs', page=2, _scheme='https', _external='True')],
+          {{apimacro.render_api([url_for('api1.get_moderate_comments', _scheme='https', _external='True'),
+            url_for('api1.get_moderate_comments', page=2, _scheme='https', _external='True')],
             'GET', 'token',
-            ['Retrieves recs as specified by the search parameters "term", "user" and "date". Optional
-              page parameter retrieves additional pages of information.',
-              '"term" search rec titles for matches',
-              '"user" searches for recs only from matching user',
-              '"date" searches for recs before indicated date. Must be in MM/DD/YYYY format'],
-            '{"1":{...}, "200":{...}}'
+            ['Retrieves 10 oldest comments in need of moderation. Use optional page parameter to
+              obtain newer comments in need of moderation.'],
+            '{"14": { "author_id": 8, "author_username": "annie82",
+              "comment": "Curabi...", "id": 14, "posted_on": 110,
+              "timestamp": "Wed, 08 Mar 2017 00:00:00 GMT"},}'
           )}}
-          {{apimacro.render_api([url_for('api1.get_search_comments', _scheme='https', _external='True'),
-            url_for('api1.get_search_comments', page=2, _scheme='https', _external='True')],
-            'GET', 'token',
-            ['Retrieves comments as specified by the search parameters "term", "user" and "date". Optional
-              page parameter retrieves additional pages of infomration.'],
-            '{"1":{...}, "400":{...}, "49":{...}}'
+          {{apimacro.render_api([url_for('api1.moderate_comments', id=1, _scheme='https', _external='True')],
+            'POST', 'token',
+            ['Moderates the comment indicated by id number. Add "action"',
+              '"action" must be True or False. True indicates comment is appropriate. False indicates
+              comment is inappropriate.'],
+            ''
           )}}
-          {% if current_user.is_administrator() %}
-            <h2 class='rec'>/admin</h2>
-            <p>Retrives information relevant to administrators</p>
-            {{apimacro.render_api([url_for('api1.get_admin', _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves relevant site information for the administrator.'],
-              '"comments_to_mod": 0, "mods": {"1": "Example"}, "mods_count": 2,
-                "recent_account": 40, "recent_comments": 100, "recent_logins": 20,
-                "recent_recs": 100, "recs_to_mod": 14, "total_accounts": 1000,
-                "total_comments": 15000, "total_recs": 10000}'
-            )}}
-            <h2 class='rec'>/mods</h2>
-            <p>Retrieves information about the moderations made by moderators</p>
-            {{apimacro.render_api([url_for('api1.get_mod_rec_history', id=1, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves all moderations on recs made by moderator indicated by id number'],
-              '{"recs_approved": {}, "recs_private": {"242": {"action": true,
-                "author": 31, "id": 242, "mod_by": 1, "mod_on": 52,
-                "text": "Suspend...",
-                "timestamp": "Tue, 21 Mar 2017 23:22:11 GMT",
-                "title": "Quis...",}}}',
-            )}}
-            {{apimacro.render_api([url_for('api1.get_mod_com_history', id=1, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves all moderations on comments made by moderator indicated by id number'],
-              '{"comments_approved": {"328": { "action": false, "author": 57, "id": 328,
-                "mod_by": 1, "mod_on": 4, "posted_on": 96, "text": "Nam...",
-                "timestamp": "Tue, 21 Mar 2017 23:35:29 GMT"}},"comments_private": {}}'
-            )}}
-            <h2 class='rec'>/Moderations</h2>
-            <p>Retrives information related to specific moderations</p>
-            {{apimacro.render_api([url_for('api1.get_rec_mods', id=1, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrives rec moderation indicated by id number.'],
-              '{"action": true, "author": 47, "id": 1, "mod_by": 2, "mod_on": 481,
-                "text": "Suspen...",
-                "timestamp": "Sun, 15 Jan 2017 00:00:00 GMT",
-                "title": "Donec..."}'
-            )}}
-            {{apimacro.render_api([url_for('api1.put_rec_mods', id=1, _scheme='https', _external='True')],
-              'PUT', 'token',
-              ['Reverses rec moderation decision on moderation indicated by id number'],
-              ''
-            )}}
-            {{apimacro.render_api([url_for('api1.get_com_mods', id=1, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrives comment moderation indicated by id number.'],
-              '{"action": false, "author": 85, "id": 1, "mod_by": 2, "mod_on": 400,
-                "posted_on": 122, "text": "Duis...",
-                "timestamp": "Mon, 09 Jan 2017 00:00:00 GMT"}'
-            )}}
-            {{apimacro.render_api([url_for('api1.put_com_mods', id=1, _scheme='https', _external='True')],
-              'PUT', 'token',
-              ['Reverses comment moderation decision on moderation indicated by id number'],
-              ''
-            )}}
-          {% endif %}
-          {% if current_user.is_moderator() %}
-            <h2 class='rec'>/moderate</h2>
-            <p>Retrieves information relates to recs and comments that require moderation</p>
-            {{apimacro.render_api([url_for('api1.get_moderate_recs', _scheme='https', _external='True'),
-              url_for('api1.get_moderate_recs', page=2, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves 10 oldest recs in need of moderation. Use optional page parameter to
-                obtain newer recs in need of moderation.'],
-              '{"126": {"author": "sandra65", "author_id": 43, "comment_count": 0,
-                "id": 126, "text": "Donec...",
-                "timestamp": "Tue, 20 Sep 2016 00:00:00 GMT",
-                "title": "Morbi non quam nec dui luctus rutrum."},...}'
-            )}}
-            {{apimacro.render_api([url_for('api1.moderate_recs', id=1, _scheme='https', _external='True')],
-              'POST', 'token',
-              ['Moderates the rec indicated by id number. Add "action"',
-                '"action" must be True or False. True indicates rec is appropriate. False indicates
-                rec is inappropriate.'],
-              ''
-            )}}
-            {{apimacro.render_api([url_for('api1.get_moderate_comments', _scheme='https', _external='True'),
-              url_for('api1.get_moderate_comments', page=2, _scheme='https', _external='True')],
-              'GET', 'token',
-              ['Retrieves 10 oldest comments in need of moderation. Use optional page parameter to
-                obtain newer comments in need of moderation.'],
-              '{"14": { "author_id": 8, "author_username": "annie82",
-                "comment": "Curabi...", "id": 14, "posted_on": 110,
-                "timestamp": "Wed, 08 Mar 2017 00:00:00 GMT"},}'
-            )}}
-            {{apimacro.render_api([url_for('api1.moderate_comments', id=1, _scheme='https', _external='True')],
-              'POST', 'token',
-              ['Moderates the comment indicated by id number. Add "action"',
-                '"action" must be True or False. True indicates comment is appropriate. False indicates
-                comment is inappropriate.'],
-              ''
-            )}}
-          {% endif %}
-      </div><!--w940-center-->
-    </div><!--w940-->
-    <script>
-      var api = "{{current_user.api}}";
-      var goto = "{{url_for('personal.token_ajax')}}"
-    </script>
-    <script src="{{url_for('static', filename='js/personal/tokenjs.js')}}"></script>
-  {% endblock %}
-</body>
-</html>
+        {% endif %}
+    </div><!--w940-center-->
+  </div><!--w940-->
+  <script>
+    var api = "{{current_user.api}}";
+    var goto = "{{url_for('personal.token_ajax')}}"
+  </script>
+  <script src="{{url_for('static', filename='js/personal/tokenjs.js')}}"></script>
+{% endblock %}

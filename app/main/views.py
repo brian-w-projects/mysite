@@ -26,12 +26,16 @@ def rec_inline_comment_ajax():
 
 @main.route('/about')
 def about():
-    temp = Recommendation.query\
+    display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
-        .limit(50)
-    display_recs = [possible for possible in temp if randint(1,3) == 2]
-    return render_template('main/about.html', display=display_recs[:5])
+        .limit(50)\
+        .from_self()\
+        .order_by(func.random())\
+        .limit(5)\
+        .from_self()\
+        .paginate(1, per_page=5, error_out=False)
+    return render_template('main/about.html', display=display_recs)
 
 @main.route('/highlight_ajax/<int:id>')
 def load_comments(id):

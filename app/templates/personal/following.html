@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me - Following {{user.username}}</title>
-  {% endblock %}
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-        <h2 class='rec'>{{user.username}} Following</h2>
-        {{ flashmacro.render_flash(get_flashed_messages()) }}
-      </div><!--w940-center-->
-    </div><!--w940-->
-    <div class='listrecs'>
-      {{followingmacro.initialize_following(display, moment, current_user, Recommendation)}}
-      {{buttonmacro.initialize_follow_button()}}
-    </div><!--listrecs-->
-    <script>
-      var goto = "{{url_for('personal.following_ajax', id=user.id)}}";
-      var goto_follow = "{{url_for('personal.follow_ajax')}}";
-      var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
-    </script>
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Following {{user.username}}</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+      <h2 class='rec'>{{user.username}} Following</h2>
+      {{ flashmacro.render_flash(get_flashed_messages()) }}
+    </div><!--w940-center-->
+  </div><!--w940-->
+  <div class='listrecs'>
+    {{followingmacro.initialize_following(display, moment, current_user, Recommendation)}}
+    {{buttonmacro.initialize_follow_button()}}
+  </div><!--listrecs-->
+  <script>
+    var goto = "{{url_for('personal.following_ajax', id=user.id)}}";
+    var goto_follow = "{{url_for('personal.follow_ajax')}}";
+    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+  </script>
+{% endblock %}

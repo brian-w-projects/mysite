@@ -1,83 +1,82 @@
 <!DOCTYPE html>
-<html>
 {% extends 'abstract/threecolumn.html' %}
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me</title>
-    <link href="{{url_for('static', filename='css/speciality/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
-    <link href="{{url_for('static', filename='css/main/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
-  {% endblock %}
-</head>
-  <body>
-    {% block maincontent %}
-      <div class='w220'>
-        <ul class='normlist'>
-          <li class='first'>Where</li>
-          <li class='second'>will you go?</li>
-          <li class='first'>What</li>
-          <li class='second'>will you do?</li>
-          <li class='first'>Who</li>
-          <li class='second'>will you be?</li>
-        </ul><!--normlist-->
-      </div><!--w220-->
-      <div class='w700 slider'>
-        <div class='slide-viewer'>
-          <div class='slide-group'>
-            <div class='slide slide-1'>
-              <img src="{{url_for('static', filename='images/speciality/one.jpeg')}}"/>
-            </div><!--slide-1-->
-            <div class='slide slide-2'>
-              <img src="{{url_for('static', filename='images/speciality/two.jpeg')}}"/>
-            </div><!--slide-2-->
-            <div class='slide slide-3'>
-              <img src="{{url_for('static', filename='images/speciality/three.jpeg')}}"/>
-            </div><!--slide-3-->
-            <div class='slide slide-4'>
-              <img src="{{url_for('static', filename='images/speciality/four.jpeg')}}"/>
-            </div><!--slide-4-->
-          </div><!--slide-group-->
-        </div><!--slide-viewer-->
-        <div class='slide-buttons'></div>
-      </div><!--w700 slider-->
-      <script src="{{url_for('static', filename='js/speciality/photoslider.js')}}"></script>
-      <br/>
-      <br/>
-      <div class='listrecs'>
-        {% if display.items|length > 0 %}
-          {{recmacro.initialize_recs(display, moment, current_user)}}
-        {% endif %}
-      </div><!--listrecs-->
-      <script>
-        var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
-      </script>
-    {% endblock %}
-    {% block c1 %}
-      <h3 class='rec'>Make Recs</h3>
-      <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align-center medium'/>
-      <p>
-        We live in such an amazing world. It is time to get out and explore it! 
-        Make recommendations for the activites that inspire you, the adventures that
-        spark you and the products that motivate you. You'll be passing your passion
-        on to others around the world!
-      </p>
-    {% endblock %}
-    {% block c2 %}
-      <h3 class='rec'>Get Recs</h3>
-      <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align-center medium'/>
-      <p>
-        Find recs from other people just like you. See what shapes and inspires the
-        life of others and share in their experience. Your next adventure is right
-        around the corner!
-      </p>
-    {% endblock %}
-    {% block c3 %}
-      <h3 class='rec'>Live Life</h3>
-      <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align-center medium'/>
-      <p>
-        Recs is the revoluationary platform that allows you to be you. Find your
-        inspiration and live it. Do it. Rec it. The only limit is you.
-      </p>
-    {% endblock %}
-  </body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me</title>
+  <link href="{{url_for('static', filename='css/speciality/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/main/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w220'>
+    <ul class='normlist'>
+      <li class='first'>Where</li>
+      <li class='second'>will you go?</li>
+      <li class='first'>What</li>
+      <li class='second'>will you do?</li>
+      <li class='first'>Who</li>
+      <li class='second'>will you be?</li>
+    </ul><!--normlist-->
+  </div><!--w220-->
+  <div class='w700 slider'>
+    <div class='slide-viewer'>
+      <div class='slide-group'>
+        <div class='slide slide-1'>
+          <img src="{{url_for('static', filename='images/speciality/one.jpeg')}}"/>
+        </div><!--slide-1-->
+        <div class='slide slide-2'>
+          <img src="{{url_for('static', filename='images/speciality/two.jpeg')}}"/>
+        </div><!--slide-2-->
+        <div class='slide slide-3'>
+          <img src="{{url_for('static', filename='images/speciality/three.jpeg')}}"/>
+        </div><!--slide-3-->
+        <div class='slide slide-4'>
+          <img src="{{url_for('static', filename='images/speciality/four.jpeg')}}"/>
+        </div><!--slide-4-->
+      </div><!--slide-group-->
+    </div><!--slide-viewer-->
+    <div class='slide-buttons'></div>
+  </div><!--w700 slider-->
+  <script src="{{url_for('static', filename='js/speciality/photoslider.js')}}"></script>
+  <br/>
+  <br/>
+  <div class='listrecs'>
+    {% if display.items|length > 0 %}
+      {{recmacro.initialize_recs(display, moment, current_user)}}
+    {% endif %}
+  </div><!--listrecs-->
+  <script>
+    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+  </script>
+{% endblock %}
+
+{% block c1 %}
+  <h3 class='rec'>Make Recs</h3>
+  <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align-center medium'/>
+  <p>
+    We live in such an amazing world. It is time to get out and explore it! 
+    Make recommendations for the activites that inspire you, the adventures that
+    spark you and the products that motivate you. You'll be passing your passion
+    on to others around the world!
+  </p>
+{% endblock %}
+
+{% block c2 %}
+  <h3 class='rec'>Get Recs</h3>
+  <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align-center medium'/>
+  <p>
+    Find recs from other people just like you. See what shapes and inspires the
+    life of others and share in their experience. Your next adventure is right
+    around the corner!
+  </p>
+{% endblock %}
+
+{% block c3 %}
+  <h3 class='rec'>Live Life</h3>
+  <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align-center medium'/>
+  <p>
+    Recs is the revoluationary platform that allows you to be you. Find your
+    inspiration and live it. Do it. Rec it. The only limit is you.
+  </p>
+{% endblock %}

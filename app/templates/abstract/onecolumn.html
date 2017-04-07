@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 {% extends 'abstract/base.html' %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <link href="{{url_for('static', filename='css/abstract/onecolumnstyle.css')}}" type="text/css" rel='stylesheet'/>
-  {% endblock %}
-</head>
-<body>
-  {% block content %}
-    <div id='maincontent'>
-      {% block maincontent %}
-      {% endblock %}
-    </div><!--content-->
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <link href="{{url_for('static', filename='css/abstract/onecolumnstyle.css')}}" type="text/css" rel='stylesheet'/>
+{% endblock %}
+
+{% block content %}
+  <div id='maincontent'>
+    {% block maincontent %}
+    {% endblock %}
+  </div><!--content-->
+{% endblock %}

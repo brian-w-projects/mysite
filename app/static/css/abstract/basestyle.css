@@ -4,22 +4,22 @@ body{
     font-family: Georgia, 'Times New Roman', serif;
 }
 
-#header, #content, #footer{
+header, #content, footer{
     background-color: #efefef;
 }
 
-#content, #footer{
+#content, footer{
     overflow: auto;
     overflow-y: hidden;
     height: 100%;
 }
 
 
-#header{
+header{
     padding: 10px 10px 15px 10px;
 }
 
-#footer{
+footer{
     clear: both;
     text-align: center;
 }
@@ -30,7 +30,7 @@ body{
     src: url('../../fonts/reckoner_bold.ttf')
 }
 
-#logo{
+hgroup{
     text-align: center;
     font-family: 'reckoner_bold', Impact, fantasy;
     font-size: 32pt;
@@ -57,7 +57,7 @@ h1{
 
 /*NAVBAR*/
 
-#nav{
+nav{
     height: 40px;
 }
 
@@ -72,7 +72,7 @@ li{
 }
 
 
-#nav a:hover{
+nav a:hover{
     background-color: #000000;
     color: #ffffff;
 }

@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me - Surprise Me</title>
-  {% endblock %}
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <h2 class='rec'>Surprise Me</h2>
-    </div><!--w940-->
-    <div class='listrecs'>
-      {{recmacro.initialize_recs(display, moment, current_user)}}
-    </div><!--listrecs-->
-    <script>
-      var goto = "{{url_for('main.surprise_ajax')}}"
-      var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
-    </script>
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Surprise Me</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <h2 class='rec'>Surprise Me</h2>
+  </div><!--w940-->
+  <div class='listrecs'>
+    {{recmacro.initialize_recs(display, moment, current_user)}}
+  </div><!--listrecs-->
+  <script>
+    var goto = "{{url_for('main.surprise_ajax')}}"
+    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+  </script>
+{% endblock %}

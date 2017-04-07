@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me - Mod Verify Comments</title>
-    <link href="{{url_for('static', filename='css/mod/verifystyle.css')}}" type='text/css', rel='stylesheet'/>
-  {% endblock %}
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-         <h2 class='rec'>Verify Comments</h2>
-      </div><!--w940-center-->
-    </div><!--w940-->
-    <div class='listcomments'>
-      {{moderator_comment_macro.initialize_moderate(d_c, moment, current_user)}}
-      {{buttonmacro.initialize_mod_button()}}
-    </div><!--listcomments-->
-     <script>
-      var gotoCom = "{{url_for('mod.verify_com_ajax')}}";
-      var goto_mod = "{{url_for('mod.moderate_com_ajax')}}";
-    </script>
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Mod Verify Comments</title>
+  <link href="{{url_for('static', filename='css/mod/verifystyle.css')}}" type='text/css', rel='stylesheet'/>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+       <h2 class='rec'>Verify Comments</h2>
+    </div><!--w940-center-->
+  </div><!--w940-->
+  <div class='listcomments'>
+    {{moderator_comment_macro.initialize_moderate(d_c, moment, current_user)}}
+    {{buttonmacro.initialize_mod_button()}}
+  </div><!--listcomments-->
+   <script>
+    var gotoCom = "{{url_for('mod.verify_com_ajax')}}";
+    var goto_mod = "{{url_for('mod.moderate_com_ajax')}}";
+  </script>
+{% endblock %}

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-        <h2 class='rec'>404 Error</h2>
-        <p>Sorry, the page you were looking for could not be found.</p>
-      </div><!--w940-center-->
-    </div><!--w940-->
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - 404</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+      <h2 class='rec'>404 Error</h2>
+      <p>Sorry, the page you were looking for could not be found.</p>
+    </div><!--w940-center-->
+  </div><!--w940-->
+{% endblock %}

@@ -23,12 +23,12 @@
     {% endblock %}
   </head>
   <body>
-    <div id='header'>
+    <header>
       {% block header %}
-        <div id='logo'>
+        <hgroup>
           <h1>Recommend Me</h1>
-        </div><!--logo-->
-        <div id='nav'>
+        </hgroup>
+        <nav>
           <div class='signin'>
             {% if current_user.is_authenticated %}
               <p>{{current_user.username}}</p>
@@ -66,17 +66,17 @@
               </div><!--submenu-->
             </div><!--submenu-container-->
           </ul>
-        </div><!--nav-->
+        </nav>
       {% endblock %}
-    </div><!--header-->
+    </header>
     <div id='content'>
       {% block content %}
       {% endblock %}
     </div><!--content-->
-    <div id='footer'>
+    <footer>
       {% block footer %}
         <p>Recommend Me - 2017&#169</p>
       {% endblock %}
-    </div><!--footer-->
+    </footer>
   </body>
 </html>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-        <h2 class='rec'>400 Error</h2>
-        <p>This request header is malformed.</p>
-        <p>Please check request.</p>
-      </div><!--w940-center-->
-    </div><!--w940-->
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - 400</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+      <h2 class='rec'>400 Error</h2>
+      <p>This request header is malformed.</p>
+      <p>Please check request.</p>
+    </div><!--w940-center-->
+  </div><!--w940-->
+{% endblock %}

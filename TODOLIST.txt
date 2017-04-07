@@ -4,12 +4,7 @@
 
 
 
-1. Add subscriber jquery animiations
-
 Refractoring:
     - rename variables for consistant snake_naming
-    - combine comment/rec swap java script from profile and mod history?
     - combine header/flashed messages into abstract code?
-    - remove unneeded markup
-    - update markup to be html5 complient
     - complete refractoring

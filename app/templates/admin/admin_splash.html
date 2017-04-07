@@ -1,51 +1,47 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
 {% import 'macros/modmacro.html' as modmacro %}
-<html>
-<head>
-  {% block head %}
-    {{super()}}
-    <title>Recommend Me - Admin</title>
-    <link href="{{url_for('static', filename='css/admin/adminsplashstyle.css')}}" type='text/css', rel='stylesheet'/>
-  {% endblock %}
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <div class='w940-center'>
-        <h2 class='rec'>Admin</h2>
-        <div class='data-box'>
-          <div class='left-box w225'>
-            <p>Total account: {{data['count']}}</p>
-            <p>Recent accounts: {{data['recent_account']}}</p>
-            <p>Recent logins: {{data['recent_logins']}}</p>
-          </div><!--left-box-->
-          <div class='middle-box w225'>
-            <p>Total recs: {{data['total_recs']}}</p>
-            <p>Recent recs: {{data['recent_recs']}}</p>
-            <p>
-              <a class='mod-link special-link' 
-                href="{{url_for('mod.verify')}}">
-                Recs to Verify: {{data['recs_to_mod']}}
-              </a>
-            </p>
-          </div><!--middle-box-->
-          <div class='right-box w225'>
-            <p>Total comments: {{data['total_comments']}}</p>
-            <p>Recent comments: {{data['recent_comments']}}</p>
-            <p>
-              <a class='mod-link special-link' 
-                href="{{url_for('mod.verify_comments')}}">
-                Comments to Verify: {{data['comments_to_mod']}}
-              </a>
-            </p>
-          </div><!--right-box-->
-        </div><!--data-box-->
 
-        <h2 class='rec'>Total mods: {{data['mods_count']}}</h2>
-        {{ modmacro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago) }}
-      </div><!--w940-center-->
-    </div><!--w940-->
-  {% endblock %}
-</body>
-</html>
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Admin</title>
+  <link href="{{url_for('static', filename='css/admin/adminsplashstyle.css')}}" type='text/css', rel='stylesheet'/>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+      <h2 class='rec'>Admin</h2>
+      <div class='data-box'>
+        <div class='left-box w225'>
+          <p>Total account: {{data['count']}}</p>
+          <p>Recent accounts: {{data['recent_account']}}</p>
+          <p>Recent logins: {{data['recent_logins']}}</p>
+        </div><!--left-box-->
+        <div class='middle-box w225'>
+          <p>Total recs: {{data['total_recs']}}</p>
+          <p>Recent recs: {{data['recent_recs']}}</p>
+          <p>
+            <a class='mod-link special-link' 
+              href="{{url_for('mod.verify')}}">
+              Recs to Verify: {{data['recs_to_mod']}}
+            </a>
+          </p>
+        </div><!--middle-box-->
+        <div class='right-box w225'>
+          <p>Total comments: {{data['total_comments']}}</p>
+          <p>Recent comments: {{data['recent_comments']}}</p>
+          <p>
+            <a class='mod-link special-link' 
+              href="{{url_for('mod.verify_comments')}}">
+              Comments to Verify: {{data['comments_to_mod']}}
+            </a>
+          </p>
+        </div><!--right-box-->
+      </div><!--data-box-->
+
+      <h2 class='rec'>Total mods: {{data['mods_count']}}</h2>
+      {{ modmacro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago) }}
+    </div><!--w940-center-->
+  </div><!--w940-->
+{% endblock %}

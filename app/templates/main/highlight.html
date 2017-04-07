@@ -1,51 +1,47 @@
 <!DOCTYPE html>
 {% extends 'abstract/onecolumn.html' %}
-<html>
-<head>
- {% block head %}
-    {{super()}}
-    <title>Recommend Me - Rec {{rec.author.id}}</title>
-  {% endblock %} 
-</head>
-<body>
-  {% block maincontent %}
-    <div class='w940'>
-      <h2>
-        <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id)}}">
-          {{rec.author.username}}
-        </a>
-      </h2>
-      {{flashmacro.render_flash(get_flashed_messages())}}
-      {{buttonmacro.follow_button(rec.author, current_user)}}
-      {{buttonmacro.initialize_follow_button()}}
-      <br/>
-    </div><!--w940-->
-    <div class='listrecs'>
-      {{recmacro.render_rec(rec, moment, current_user, attributes=False)}}
-    </div><!--listrecs-->
-    <div class='listcomments'>
-      {{commentmacro.initialize_comments(d_c, moment, current_user)}}
-    </div><!--listcomments-->
-    <div class='w940'>
-      <div class='w940-center'>
-        {% if current_user.is_authenticated %}
-          <h2 class='rec'>Comment</h2>
-          <form method='POST'>
-            <p class='chars-format'>Characters Left: <span class='comment_chars_left'>250</span></p>
-            {{form.text(class='comment_text_entry')}}
-            <br/>
-            {{form.csrf_token}}
-            {{form.submit(class='rec', id='submit')}}
-          </form>
-        {% endif %}
-      </div><!--w940-center-->
-    </div><!--w940-->
-    <script>
-      var id = {{rec.author.id}};
-      var gotoCom = "{{url_for('main.load_comments', id=rec.id)}}";
-      var goto_follow = "{{url_for('personal.follow_ajax')}}";
-    </script>
-    <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
-  {% endblock %}
-</body>
-</html>
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Rec {{rec.author.id}}</title>
+{% endblock %} 
+
+{% block maincontent %}
+  <div class='w940'>
+    <h2>
+      <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id)}}">
+        {{rec.author.username}}
+      </a>
+    </h2>
+    {{flashmacro.render_flash(get_flashed_messages())}}
+    {{buttonmacro.follow_button(rec.author, current_user)}}
+    {{buttonmacro.initialize_follow_button()}}
+    <br/>
+  </div><!--w940-->
+  <div class='listrecs'>
+    {{recmacro.render_rec(rec, moment, current_user, attributes=False)}}
+  </div><!--listrecs-->
+  <div class='listcomments'>
+    {{commentmacro.initialize_comments(d_c, moment, current_user)}}
+  </div><!--listcomments-->
+  <div class='w940'>
+    <div class='w940-center'>
+      {% if current_user.is_authenticated %}
+        <h2 class='rec'>Comment</h2>
+        <form method='POST'>
+          <p class='chars-format'>Characters Left: <span class='comment_chars_left'>250</span></p>
+          {{form.text(class='comment_text_entry')}}
+          <br/>
+          {{form.csrf_token}}
+          {{form.submit(class='rec', id='submit')}}
+        </form>
+      {% endif %}
+    </div><!--w940-center-->
+  </div><!--w940-->
+  <script>
+    var id = {{rec.author.id}};
+    var gotoCom = "{{url_for('main.load_comments', id=rec.id)}}";
+    var goto_follow = "{{url_for('personal.follow_ajax')}}";
+  </script>
+  <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
+{% endblock %}
