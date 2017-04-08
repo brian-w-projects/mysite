@@ -1,0 +1,16 @@
+{% macro render_flash(messages) %}
+  {% if messages %}
+    <script src="{{url_for('static', filename='js/macro/flashjs.js')}}"></script>
+    <div class='flash_border'>
+      <div class='flash_messages'>
+        {% for message in messages %}
+          <p class='flash_message'>{{ message }}</p>
+        {% endfor %}
+      </div><!--flash_messages-->
+      <div class='flash_close'>
+        <p><a href='#'>&#9447</a></p>
+      </div><!--flash_close-->
+    </div><!--flash_border-->
+    <br/>
+  {% endif %}
+{% endmacro %}

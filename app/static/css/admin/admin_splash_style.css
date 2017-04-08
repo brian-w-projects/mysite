@@ -1,0 +1,33 @@
+/*ADMIN DATA*/
+.outer_data_box{
+    overflow: hidden;
+}
+
+.data_box{
+    background-color: #ffffff;
+}
+
+.data_box>p{
+    margin: 10px;
+}
+/*ADMIN DATA*/
+
+/*MOD DISPLAY*/
+.mod_display{
+    width: 500px;
+    margin: 0 auto;
+    border: 1px solid black;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.headline{
+    border-top: 1px solid black;
+    border-bottom: 2px solid black;
+}
+
+.headline>p{
+    display: inline-block;
+    margin:5px;
+}
+/*MOD DISPLAY*/

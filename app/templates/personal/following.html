@@ -8,17 +8,17 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
-      <h2 class='rec'>{{user.username}} Following</h2>
-      {{ flashmacro.render_flash(get_flashed_messages()) }}
-    </div><!--w940-center-->
+    <div class='w940_center'>
+      <h2>{{user.username}} Following</h2>
+      {{ flash_macro.render_flash(get_flashed_messages()) }}
+    </div><!--w940_center-->
   </div><!--w940-->
   <div class='listrecs'>
     {{followingmacro.initialize_following(display, moment, current_user, Recommendation)}}
     {{buttonmacro.initialize_follow_button()}}
   </div><!--listrecs-->
   <script>
-    var goto = "{{url_for('personal.following_ajax', id=user.id)}}";
+    var goto_rec = "{{url_for('personal.following_ajax', id=user.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>

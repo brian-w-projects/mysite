@@ -1,0 +1,11 @@
+/*SUBSCRIPTION FORM FEEDBACK */
+
+.name_valid, .email_valid, .password_valid, .password_confirm_valid{
+    font-family: sans-serif;
+}
+
+.exists_container{
+    margin-left: 10px;
+    display: inline-block;
+}
+/*SUBSCRIPTION FORM FEEDBACK */

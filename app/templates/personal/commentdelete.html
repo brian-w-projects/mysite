@@ -9,11 +9,11 @@
 {% block maincontent %}
   <div class='w940'>
     <h2>
-      <a class='rec special-link' href="{{url_for('personal.profile', id=rec.author.id)}}">
+      <a class='black_hover_link' href="{{url_for('personal.profile', id=rec.author.id)}}">
         {{rec.author.username}}
       </a>
     </h2>
-    {{ flashmacro.render_flash(get_flashed_messages()) }}
+    {{ flash_macro.render_flash(get_flashed_messages()) }}
   </div><!--w940-->
   <div class='listrecs'>
     {{recmacro.render_post(rec, moment, current_user)}}
@@ -22,13 +22,13 @@
     {{commentmacro.render_comment(com, moment, current_user)}}
   </div><!--listcomments-->
   <div class='w940'>
-    <div class='w940-center'>
+    <div class='w940_center'>
       <form method='POST'>
-        {{form.delete.label(class='rec')}} {{form.delete(class='entry')}}
+        {{form.delete.label(class='reckoner')}} {{form.delete(class='entry')}}
         <br/>
         {{form.csrf_token}}
-        {{form.submit(class='rec', id='submit')}}
+        {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940-center-->
+    </div><!--w940_center-->
   </div><!--w940-->
 {% endblock %}

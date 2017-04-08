@@ -7,17 +7,17 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2 class='rec'>Go and have an adventure. When you are done, Rec it to everyone.</p>
-  <img src="{{url_for('static', filename='images/main/aboutrec.jpg')}}" class='align-center splash'/>
+  <h2>Go and have an adventure. When you are done, Rec it to everyone.</p>
+  <img src="{{url_for('static', filename='images/main/aboutrec.jpg')}}" class='align_center large_splash'/>
   <h2>
-    <a class='special-link rec' href="{{url_for('auth.subscribe')}}">
+    <a class='black_hover_link' href="{{url_for('auth.subscribe')}}">
           Ready to Start? Register Here
     </a>
   </h2>
 {% endblock %}
 
 {% block c1 %}
-  <h3 class='rec'>Step 1</h3>
+  <h3 class='reckoner'>Step 1</h3>
   <p>
     Have an adventure and Rec it for everyone to see. Your adventure can be
     anything. Travel to a new location! Try a new restaurant! Experience a
@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block c2 %}
-  <h3 class='rec'>Step 2</h3>
+  <h3 class='reckoner'>Step 2</h3>
   <p>
     Find Recs that inspire you to have a new adventure. Find the people whose
     journeys amaze you. Connect with users around the world. Find others
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block c3 %}
-  <h3 class='rec'>Step 3</h3>
+  <h3 class='reckoner'>Step 3</h3>
   <p>
     Live a better life! Find the adventure inside you. Your Recs can be public
     or private so be sure to Rec everything! 
@@ -44,9 +44,9 @@
 
 {% block post %}
   <div class='w940'>
-    <div class='w940-center'>
-      <h2 class='rec'>Check out some recent Recs</h2>
-    </div><!--w940-center-->
+    <div class='w940_center'>
+      <h2>Check out some recent Recs</h2>
+    </div><!--w940_center-->
   </div><!--w940-->
   <div class='listrecs'>
     {% if display.items|length > 0 %}

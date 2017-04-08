@@ -3,7 +3,7 @@
 
 {% macro render_name_header(name, current_user) %}
   <div class='name_header'>
-    <p class='rec name_header_display'>{{name.user.username}}</p>
+    <p class='reckoner name_header_display'>{{name.user.username}}</p>
     {{buttonmacro.follow_button(name.user, current_user)}}
   </div><!--name-->
 {% endmacro %}
@@ -15,7 +15,7 @@
     <p>Nobody is following you! Post some Recs to get followers.</p>
   {% endif %}
   {% if display.pages != display.page %}
-    <a><p id='ajax_recs' class='loadMore special-link'>Load More</p></a>
+    <a><p id='ajax_recs' class='loadMore black_hover_link'>Load More</p></a>
   {% endif %}
   <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
 {% endmacro %}

@@ -1,7 +1,7 @@
 (function($, window, docuement){
     
     $(function(){
-        $('.flash-close').on('click', function(){
+        $('.flash_close').on('click', function(){
             $(this).parent().hide();
         });
     });

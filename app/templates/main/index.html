@@ -5,19 +5,17 @@
   {{super()}}
   <title>Recommend Me</title>
   <link href="{{url_for('static', filename='css/speciality/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
-  <link href="{{url_for('static', filename='css/main/indexstyle.css')}}" type='text/css' rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/main/index_style.css')}}" type='text/css' rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
   <div class='w220'>
-    <ul class='normlist'>
-      <li class='first'>Where</li>
-      <li class='second'>will you go?</li>
-      <li class='first'>What</li>
-      <li class='second'>will you do?</li>
-      <li class='first'>Who</li>
-      <li class='second'>will you be?</li>
-    </ul><!--normlist-->
+    <div class='first'>Where</div>
+    <div class='second'>will you go?</div>
+    <div class='first'>What</div>
+    <div class='second'>will you do?</div>
+    <div class='first'>Who</div>
+    <div class='second'>will you be?</div>
   </div><!--w220-->
   <div class='w700 slider'>
     <div class='slide-viewer'>
@@ -52,8 +50,8 @@
 {% endblock %}
 
 {% block c1 %}
-  <h3 class='rec'>Make Recs</h3>
-  <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align-center medium'/>
+  <h3 class='reckoner'>Make Recs</h3>
+  <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align_center medium'/>
   <p>
     We live in such an amazing world. It is time to get out and explore it! 
     Make recommendations for the activites that inspire you, the adventures that
@@ -63,8 +61,8 @@
 {% endblock %}
 
 {% block c2 %}
-  <h3 class='rec'>Get Recs</h3>
-  <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align-center medium'/>
+  <h3 class='reckoner'>Get Recs</h3>
+  <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align_center medium'/>
   <p>
     Find recs from other people just like you. See what shapes and inspires the
     life of others and share in their experience. Your next adventure is right
@@ -73,8 +71,8 @@
 {% endblock %}
 
 {% block c3 %}
-  <h3 class='rec'>Live Life</h3>
-  <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align-center medium'/>
+  <h3 class='reckoner'>Live Life</h3>
+  <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align_center medium'/>
   <p>
     Recs is the revoluationary platform that allows you to be you. Find your
     inspiration and live it. Do it. Rec it. The only limit is you.

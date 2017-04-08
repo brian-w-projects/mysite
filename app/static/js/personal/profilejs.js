@@ -1,4 +1,4 @@
-/* global gotoE */
+/* global goto_edit */
 
 (function($, window, document){
 
@@ -7,7 +7,7 @@
     $(function(){
         if($edit_button.length){
             $edit_button.on('click', function(){
-                window.location.href = gotoE;
+                window.location.href = goto_edit;
             });
         }
     });

@@ -10,15 +10,15 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
-      <h2 class='rec'>API Token</h2>
-      {{ flashmacro.render_flash(get_flashed_messages()) }}
+    <div class='w940_center'>
+      <h2>API Token</h2>
+      {{ flash_macro.render_flash(get_flashed_messages()) }}
       <input class='api_entry'/>
-      <button class='rec copy to_check'>Copy</button>
-      <button class='rec reload to_check'>&#8635;</button>
+      <button class='reckoner copy to_check'>Copy</button>
+      <button class='reckoner reload to_check'>&#8635;</button>
       <br/>
       <div class='api_welcome'>
-        <h2 class='rec'>Welcome!</h2>
+        <h2>Welcome!</h2>
         <p>
           This site has a comprehensive api available for use with the above token.
           This token will provide full access to the site and has no expiration date.
@@ -39,7 +39,7 @@
           ['Provides a new token associated with this account.'],
           '{ "token": "eyJhbGci..." }'
         )}}
-        <h2 class='rec'>/recs</h2>
+        <h2>/recs</h2>
         <p>These requests interact with the site's recommendations.</p>
         {{apimacro.render_api([url_for('api1.get_rec', id=1, _scheme='https', _external='True')],
           'GET', 'token',
@@ -80,7 +80,7 @@
             '"text" must be between 1 and 250 characters long'],
           ''
         )}}
-        <h2 class='rec'>/comments</h2>
+        <h2>/comments</h2>
         <p>These requests interact with the site's recommendations.</p>
         {{apimacro.render_api([url_for('api1.get_comments', id=1, _scheme='https', _external='True')],
           'GET', 'token',
@@ -99,7 +99,7 @@
           ['Permently deletes the comment indicated by id number.'],
           ''
         )}}
-        <h2 class='rec'>/Users</h2>
+        <h2>/Users</h2>
         <p>Retrives information related to the site's users</p>
         {{apimacro.render_api([url_for('api1.get_user', id=1, _scheme='https', _external='True')],
           'GET', 'token',
@@ -146,7 +146,7 @@
           ['Retrives the users that are following the user indicated by id number'],
           '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 00:00:00 GMT"}}',
         )}}
-        <h2 class='rec'>/follow</h2>
+        <h2>/follow</h2>
         <p>Retrieves information related to following and unfollowing users</p>
         {{apimacro.render_api([url_for('api1.put_follower', id=1, _scheme='https', _external='True')],
           'PUT', 'token',
@@ -158,7 +158,7 @@
           ['Removes user indicated by id number from requesting user\'s following list'],
           ''
         )}}
-        <h2 class='rec'>/search</h2>
+        <h2>/search</h2>
         <p>Retrieves information related to searches</p>
         {{apimacro.render_api([url_for('api1.get_search_recs', _scheme='https', _external='True'),
           url_for('api1.get_search_recs', page=2, _scheme='https', _external='True')],
@@ -178,7 +178,7 @@
           '{"1":{...}, "400":{...}, "49":{...}}'
         )}}
         {% if current_user.is_administrator() %}
-          <h2 class='rec'>/admin</h2>
+          <h2>/admin</h2>
           <p>Retrives information relevant to administrators</p>
           {{apimacro.render_api([url_for('api1.get_admin', _scheme='https', _external='True')],
             'GET', 'token',
@@ -188,7 +188,7 @@
               "recent_recs": 100, "recs_to_mod": 14, "total_accounts": 1000,
               "total_comments": 15000, "total_recs": 10000}'
           )}}
-          <h2 class='rec'>/mods</h2>
+          <h2>/mods</h2>
           <p>Retrieves information about the moderations made by moderators</p>
           {{apimacro.render_api([url_for('api1.get_mod_rec_history', id=1, _scheme='https', _external='True')],
             'GET', 'token',
@@ -206,7 +206,7 @@
               "mod_by": 1, "mod_on": 4, "posted_on": 96, "text": "Nam...",
               "timestamp": "Tue, 21 Mar 2017 23:35:29 GMT"}},"comments_private": {}}'
           )}}
-          <h2 class='rec'>/Moderations</h2>
+          <h2>/Moderations</h2>
           <p>Retrives information related to specific moderations</p>
           {{apimacro.render_api([url_for('api1.get_rec_mods', id=1, _scheme='https', _external='True')],
             'GET', 'token',
@@ -235,7 +235,7 @@
           )}}
         {% endif %}
         {% if current_user.is_moderator() %}
-          <h2 class='rec'>/moderate</h2>
+          <h2>/moderate</h2>
           <p>Retrieves information relates to recs and comments that require moderation</p>
           {{apimacro.render_api([url_for('api1.get_moderate_recs', _scheme='https', _external='True'),
             url_for('api1.get_moderate_recs', page=2, _scheme='https', _external='True')],
@@ -271,11 +271,11 @@
             ''
           )}}
         {% endif %}
-    </div><!--w940-center-->
+    </div><!--w940_center-->
   </div><!--w940-->
   <script>
     var api = "{{current_user.api}}";
-    var goto = "{{url_for('personal.token_ajax')}}"
+    var goto_rec = "{{url_for('personal.token_ajax')}}"
   </script>
   <script src="{{url_for('static', filename='js/personal/tokenjs.js')}}"></script>
 {% endblock %}

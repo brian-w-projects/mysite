@@ -8,10 +8,10 @@
     var $password = $('#password');
     var $password_confirm = $('#password_confirm');
     
-    var $username_exists = $('.nameexists');
-    var $email_exists = $('.emailexists');
-    var $password_exists = $('.passwordexists');
-    var $password_confirm_exists = $('.passwordconfirmexists');
+    var $username_exists = $('.name_valid');
+    var $email_exists = $('.email_valid');
+    var $password_exists = $('.password_valid');
+    var $password_confirm_exists = $('.password_confirm_valid');
 
     $(function(){
         $username.on('keyup', function(){

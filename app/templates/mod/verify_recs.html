@@ -4,21 +4,20 @@
 {% block head %}
   {{super()}}
   <title>Recommend Me - Mod Verify Recs</title>
-  <link href="{{url_for('static', filename='css/mod/verifystyle.css')}}" type='text/css', rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
-       <h2 class='rec'>Verify Recs</h2>
-    </div><!--w940-center-->
+    <div class='w940_center'>
+       <h2>Verify Recs</h2>
+    </div><!--w940_center-->
   </div><!--w940-->
   <div class='listrecs'>
     {{moderator_rec_macro.initialize_moderate(display, moment, current_user)}}
     {{buttonmacro.initialize_mod_button()}}
   </div><!--listrecs-->
    <script>
-    var goto = "{{url_for('mod.verify_ajax')}}";
+    var goto_rec = "{{url_for('mod.verify_ajax')}}";
     var goto_mod = "{{url_for('mod.moderate_ajax')}}";
   </script>
 {% endblock %}

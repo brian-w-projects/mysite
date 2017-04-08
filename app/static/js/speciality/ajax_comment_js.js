@@ -1,4 +1,4 @@
-/* global gotoCom */
+/* global goto_comment */
 /* global flask_moment_render_all */
 
 (function($, window, document){
@@ -25,7 +25,7 @@
         return $.ajax({
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
-            url: gotoCom,
+            url: goto_comment,
             datatype:'json',
             data: page_info
         });

@@ -1,9 +1,9 @@
 {% macro follow_button(name, current_user) %}
   {% if current_user.is_authenticated %}
     {% if current_user.following.filter_by(following=name.id).first() %}
-        <button id='{{name.id}}' class='rec follow_button width-set'>Unfollow</button>
+        <button id='{{name.id}}' class='reckoner follow_button button_width_set'>Unfollow</button>
       {% else %}
-        <button id='{{name.id}}' class='rec follow_button width-set'>Follow</button>
+        <button id='{{name.id}}' class='reckoner follow_button button_width_set'>Follow</button>
       {% endif %}
   {% endif %}
 {% endmacro %}
@@ -14,8 +14,8 @@
 
 {% macro mod_button(id) %}
   <div class='button'>
-    <button class='rec mod_button verify' id='{{id}}'>Verify</button>
-    <button class='rec mod_button private' id='{{id}}'>Moderate</button>
+    <button class='reckoner mod_button verify' id='{{id}}'>Verify</button>
+    <button class='reckoner mod_button private' id='{{id}}'>Moderate</button>
     <br/>
   </div><!--button-->
 {% endmacro %}

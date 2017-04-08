@@ -4,52 +4,52 @@
 {% block head %}
   {{super()}}
   <title>Recommend Me - Subscribe</title>
-  <link href="{{url_for('static', filename='css/auth/subscribestyle.css')}}" type='text/css', rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/auth/subscribe_style.css')}}" type='text/css', rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
-      <h2 class='rec'>Register</h2>
-      {{flashmacro.render_flash(get_flashed_messages())}}
+    <div class='w940_center'>
+      <h2>Register</h2>
+      {{flash_macro.render_flash(get_flashed_messages())}}
       <p>Already a member?
-        <a class='special-link' href="{{url_for('auth.login')}}">
+        <a class='black_hover_link' href="{{url_for('auth.login')}}">
           Login
         </a>
       </p>
       <form method="POST">
-        {{form.username.label(class='rec')}} {{form.username(class='entry username')}}
+        {{form.username.label(class='reckoner')}} {{form.username(class='entry username')}}
         <div class='exists_container'>
-          <span class='nameexists'></span>
+          <span class='name_valid'></span>
         </div><!--exists_container-->
         <br/>
-        {{form.email.label(class='rec')}} {{form.email(class='entry email')}}
+        {{form.email.label(class='reckoner')}} {{form.email(class='entry email')}}
         <div class='exists_container'>
-          <span class='emailexists'></span>
+          <span class='email_valid'></span>
         </div><!--exists_container-->
         <br/>
         <div class='fieldset'>
-          {{form.password.label(class='rec')}} {{form.password(class='entry')}}
+          {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
           <br/>
-          {{form.password_confirm.label(class='rec')}} {{form.password_confirm(class='entry')}}
+          {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
         </div><!--fieldset-->
         <div class='exists_container'>
-          <span class='passwordexists'></span>
+          <span class='password_valid'></span>
         </div><!--exists_container-->
         <div class='exists_container'>
-          <span class='passwordconfirmexists'></span>
+          <span class='password_confirm_valid'></span>
         </div>
         <div class='realign'></div>
-        {{form.token.label(class='rec')}} {{form.token(class='entry')}}
+        {{form.token.label(class='reckoner')}} {{form.token(class='entry')}}
         <br/>
-        {{form.updates.label(class='rec')}} {{form.updates(checked=True, class='click')}}
+        {{form.updates.label(class='reckoner')}} {{form.updates(checked=True, class='click')}}
         <br/>
         {{form.recaptcha}}
         <br/>
         {{form.csrf_token}}
-        {{form.submit(class='rec', id='submit')}}
+        {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940-center-->
+    </div><!--w940_center-->
   </div><!--w940-->
   <script>
     var goto_username_check = "{{url_for('auth.subscribe_ajax')}}";

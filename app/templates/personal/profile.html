@@ -9,19 +9,19 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
+    <div class='w940_center'>
       {% if current_user.is_authenticated and current_user.is_moderator() and current_user.id == id %}
-        <h2 class='rec'>Welcome, Moderator</h2>
+        <h2>Welcome, Moderator</h2>
         <div class='profile-box'>
           <div class='profile-left'>
             <p>
-              <a class='profile-link special-link' 
+              <a class='profile-link black_hover_link' 
                 href="{{url_for('mod.verify')}}">
                 Unverified Recs: {{rec_count}}
               </a>
             </p>
             <p>
-              <a class='profile-link special-link' 
+              <a class='profile-link black_hover_link' 
                 href="{{url_for('mod.verify_comments')}}">
                 Unverified Comments: {{com_count}}
               </a>
@@ -29,14 +29,14 @@
           </div><!--profile-left-->
         </div><!-profile-box-->
       {% endif %}
-      <h2 class='rec'>Profile</h2>
-      {{ flashmacro.render_flash(get_flashed_messages()) }}
-    </div><!--w940-center-->
+      <h2>Profile</h2>
+      {{ flash_macro.render_flash(get_flashed_messages()) }}
+    </div><!--w940_center-->
     <div class='profile-box'>
-      <h2 class='rec'>{{user.username}}</h2>
+      <h2>{{user.username}}</h2>
       {% if current_user.is_authenticated %}
           {% if current_user.id == user.id %}
-            <button class='rec width-set edit_button' id='{{id}}'>Edit</button>
+            <button class='reckoner button_width_set edit_button' id='{{id}}'>Edit</button>
           {% else %}
             {{buttonmacro.follow_button(user, current_user)}}
           {% endif %}
@@ -51,13 +51,13 @@
         <p>Posts: {{user.posts.count()}}</p>
         <p>Comments: {{user.commented_on.count()}}</p>
         <p>
-          <a class='profile-link special-link' 
+          <a class='profile-link black_hover_link' 
             href="{{url_for('personal.followers', id=id)}}">
             Followers: <span class='f_count'>{{user.followed_by.count()}}</span>
           </a>
         </p>
         <p>
-          <a class='profile-link special-link' 
+          <a class='profile-link black_hover_link' 
             href="{{url_for('personal.following', id=user.id)}}">
             Following: {{user.following.count()}}
           </a>
@@ -65,7 +65,7 @@
       </div><!--profile-right-->
     </div><!--profile-box-->
     <div class='buttondiv'>
-      <button class='rec width-set' id='submit'>Comments</button>
+      <button class='reckoner width-set' id='submit'>Comments</button>
     </div><!--buttondiv-->
   </div><!--w940-->
   <br/>
@@ -77,10 +77,10 @@
     {{commentmacro.initialize_comments(d_c, moment, current_user)}}
   </div><!--listcomments-->
   <script>
-    var goto = "{{url_for('personal.profile_ajax', id=id)}}";
-    var gotoCom = "{{url_for('personal.profileCom_ajax', id=id)}}";
+    var goto_rec = "{{url_for('personal.profile_ajax', id=id)}}";
+    var goto_comment = "{{url_for('personal.profileCom_ajax', id=id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
-    var gotoE = "{{url_for('personal.update')}}";
+    var goto_edit = "{{url_for('personal.update')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>
   <script src="{{url_for('static', filename='js/personal/profilejs.js')}}"></script>

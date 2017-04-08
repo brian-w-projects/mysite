@@ -8,32 +8,32 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940-center'>
-      <h2 class='rec'>Log In</h2>
-      {{ flashmacro.render_flash(get_flashed_messages()) }}
+    <div class='w940_center'>
+      <h2>Log In</h2>
+      {{ flash_macro.render_flash(get_flashed_messages()) }}
       <form method="POST">
-        {{form.username.label(class='rec')}} {{form.username(class='entry')}}
+        {{form.username.label(class='reckoner')}} {{form.username(class='entry')}}
         <br/>
-        {{form.password.label(class='rec')}} {{form.password(class='entry')}}
+        {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
         <br/>
         {{form.csrf_token}}
-        {{form.submit(class='rec', id='submit')}}
+        {{form.submit(class='reckoner', id='submit')}}
       </form>
       <p>Forgot your username? 
-        <a class='special-link' href="{{url_for('auth.forgot_username')}}">
+        <a class='black_hover_link' href="{{url_for('auth.forgot_username')}}">
           Recover Username
         </a>
       </p>
       <p>Forgot your password?
-        <a class='special-link' href="{{url_for('auth.forgot_password')}}">
+        <a class='black_hover_link' href="{{url_for('auth.forgot_password')}}">
           Reset Password
         </a>
       </p>
       <p>Not a member?
-        <a class='special-link' href="{{url_for('auth.subscribe')}}">
+        <a class='black_hover_link' href="{{url_for('auth.subscribe')}}">
           Register Here
         </a>
       </p>
-    </div><!--w940-center-->
+    </div><!--w940_center-->
   </div><!--w940-->
 {% endblock %}

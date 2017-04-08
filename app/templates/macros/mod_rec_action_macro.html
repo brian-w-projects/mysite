@@ -1,8 +1,8 @@
 {% import 'macros/recmacro.html' as recmacro %}
 
 {% macro render_mod(rec_mod, moment, current_user) %}
-  <div class='action-header'>
-    <p class='rec'>
+  <div class='action_header'>
+    <p class='reckoner'>
       {% if rec_mod.action %}
         Accepted
       {% else %}
@@ -10,14 +10,14 @@
       {% endif %}
     </p>
     <p>{{moment(rec_mod.timestamp).fromNow()}}</p>
-  </div><!--action-header-->
+  </div><!--action_header-->
   {{recmacro.render_rec(rec_mod.rec, moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
   {{ajax(mod_recs, moment, current_user)}}
   {% if mod_recs.pages != mod_recs.page %}
-    <p id='ajax_recs' class='loadMore special-link'>Load More</p>
+    <p id='ajax_recs' class='loadMore black_hover_link'>Load More</p>
   {% endif %}
   <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
 {% endmacro %}

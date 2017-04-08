@@ -6,5 +6,6 @@
 
 Refractoring:
     - rename variables for consistant snake_naming
-    - combine header/flashed messages into abstract code?
+        - working through css, stopped on editstyle
+        - skipped over poststyle
     - complete refractoring

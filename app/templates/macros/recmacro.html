@@ -7,7 +7,7 @@
     </a>
     <div class='postHeaderDiv'>
       <a href="{{url_for('personal.profile', id=rec.author_id)}}">
-        <p class='postHeader special-link'>
+        <p class='postHeader black_hover_link'>
           {{rec.author.username}}
         </p>
       </a>
@@ -23,15 +23,15 @@
       </p>
       {% if rec.author_id==current_user.id %}
         <a href="{{url_for('personal.edit', post_id=rec.id)}}">
-          <p class='postHeader special-link'>
+          <p class='postHeader black_hover_link'>
             Edit
           </p>
         </a>
       {% endif %}
-      <p class='postHeader rec'>Comments: {{rec.comments.filter_by(verification=1).count()
+      <p class='postHeader reckoner'>Comments: {{rec.comments.filter_by(verification=1).count()
         + rec.comments.filter_by(verification=2).count()}}</p>
       {% if current_user.id == rec.author_id and rec.new_comment == True %}
-        <p class='postHeader rec'>New Comment!</p>
+        <p class='postHeader reckoner'>New Comment!</p>
       {% endif %}
       {% if attributes %}
         <p class='toggle_show'>&#11021;</p>
@@ -48,7 +48,7 @@
 {% macro initialize_recs(display, moment, current_user, attributes=True) %}
   {{ajax(display, moment, current_user, attributes)}}
   {% if display.pages != display.page %}
-    <p id='ajax_recs' class='loadMore special-link'>Load More</p>
+    <p id='ajax_recs' class='loadMore black_hover_link'>Load More</p>
   {% endif %}
   <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
 {% endmacro %}
@@ -60,6 +60,6 @@
 {% endmacro %}
 
 {% macro search_initialize() %}
-  <p id='ajax_recs' class='loadMore special-link'>Load More</p>
+  <p id='ajax_recs' class='loadMore black_hover_link'>Load More</p>
   <script src="{{url_for('static', filename='js/speciality/ajax_rec_js.js')}}"></script>
 {% endmacro %}
