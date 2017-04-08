@@ -2,8 +2,8 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/recmacro.html' as recmacro %}
-  {% import 'macros/commentmacro.html' as commentmacro %}
+  {% import 'macros/rec_macro.html' as rec_macro %}
+  {% import 'macros/comment_macro.html' as comment_macro %}
   {% import 'macros/followingmacro.html' as followingmacro %}
   {% import 'macros/followedmacro.html' as followedmacro %}
   {% import 'macros/buttonmacro.html' as buttonmacro %}
@@ -18,8 +18,9 @@
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
       <link href="{{url_for('static', filename='css/abstract/base_style.css')}}" type='text/css' rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/macros/flash_style.css')}}" type='text/css' rel='stylesheet'/>
-      <link href="{{url_for('static', filename='css/abstract/post_style.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/rec_comment_style.css')}}" type='text/css', rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/abstract/form_style.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/speciality/font-awesome.min.css')}}" type='text/css', rel='stylesheet'/>
     {% endblock %}
   </head>
   <body>

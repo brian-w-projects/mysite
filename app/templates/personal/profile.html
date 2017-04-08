@@ -4,7 +4,7 @@
 {% block head %}
   {{super()}}
   <title>Recommend Me - Profile {{user.username}}</title>
-  <link href="{{url_for('static', filename='css/personal/profilestyle.css')}}" type='text/css', rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/personal/profile_style.css')}}" type='text/css', rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
@@ -12,8 +12,8 @@
     <div class='w940_center'>
       {% if current_user.is_authenticated and current_user.is_moderator() and current_user.id == id %}
         <h2>Welcome, Moderator</h2>
-        <div class='profile-box'>
-          <div class='profile-left'>
+        <div class='profile_box'>
+          <div class='profile_left'>
             <p>
               <a class='profile-link black_hover_link' 
                 href="{{url_for('mod.verify')}}">
@@ -26,13 +26,13 @@
                 Unverified Comments: {{com_count}}
               </a>
             </p>
-          </div><!--profile-left-->
-        </div><!-profile-box-->
+          </div><!--profile_left-->
+        </div><!--profile_box-->
       {% endif %}
       <h2>Profile</h2>
       {{ flash_macro.render_flash(get_flashed_messages()) }}
     </div><!--w940_center-->
-    <div class='profile-box'>
+    <div class='profile_box'>
       <h2>{{user.username}}</h2>
       {% if current_user.is_authenticated %}
           {% if current_user.id == user.id %}
@@ -43,10 +43,10 @@
         {{buttonmacro.initialize_follow_button()}}
       {% endif %}
       <div class='realign'></div>
-      <div class='profile-left'>
+      <div class='profile_left'>
         <p>{{user.about_me}}</p>
-      </div><!--profile-left-->
-      <div class='profile-right'>
+      </div><!--profile_left-->
+      <div class='profile_right'>
         <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
         <p>Posts: {{user.posts.count()}}</p>
         <p>Comments: {{user.commented_on.count()}}</p>
@@ -62,8 +62,8 @@
             Following: {{user.following.count()}}
           </a>
         </p>
-      </div><!--profile-right-->
-    </div><!--profile-box-->
+      </div><!--profile_right-->
+    </div><!--profile_box-->
     <div class='buttondiv'>
       <button class='reckoner width-set' id='submit'>Comments</button>
     </div><!--buttondiv-->

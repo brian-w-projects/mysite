@@ -6,6 +6,10 @@
 
 Refractoring:
     - rename variables for consistant snake_naming
-        - working through css, stopped on editstyle
-        - skipped over poststyle
+        - update poststyle and comment style for all pages that use recs and comments
+        - test comments/recs on pages with New Comment! and Edit ability
+        - remove black_hover_link from everywhere
+        - implement font-awesome everywhere
     - complete refractoring
+        - combine fonts
+        

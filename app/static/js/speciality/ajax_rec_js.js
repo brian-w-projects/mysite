@@ -24,19 +24,23 @@
 
         window.load_rec_attributes = function(){
             $(document.body).on('click', '.toggle_comments', function(event){
-                var $insert_point = $(this).parent().parent();
-                var $to_modify_comments = $(this).parent().parent().next('.w940_center');
+                var $insert_point = $(this).closest('.single_post');
+                var $to_modify_comments = $insert_point.next('.list_comments');
                 if(!$to_modify_comments.length){
                     rec_comment_ajax({'id': $(this).attr('id')}).done(function(data){
                         $insert_point.after(data['ajax_request']);
                         flask_moment_render_all();
                     });
+                }else if($to_modify_comments.css('display') == 'none'){
+                    $to_modify_comments.show();
+                }else{
+                    $to_modify_comments.hide();
                 }
             });
             
             $(document.body).on('click', '.toggle_show', function(){
-                var $to_modify = $(this).parent().next();
-                var $to_modify_comments = $(this).parent().parent().next('.w940_center');
+                var $to_modify = $(this).closest('.post_header').next();
+                var $to_modify_comments = $(this).closest('.single_post').next('.list_comments');
                 if($to_modify.css('display') == 'none'){
                     $to_modify.slideDown();
                     $to_modify_comments.slideDown();
