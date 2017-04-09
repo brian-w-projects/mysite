@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,15 +8,15 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>{{user.username}} Following</h2>
-      {{ flash_macro.render_flash(get_flashed_messages()) }}
-    </div><!--w940_center-->
+      {{flash_macro.render_flash(get_flashed_messages())}}
+    </div><!--w940-center-->
   </div><!--w940-->
-  <div class='listrecs'>
-    {{followingmacro.initialize_following(display, moment, current_user, Recommendation)}}
-    {{buttonmacro.initialize_follow_button()}}
-  </div><!--listrecs-->
+  <div class='list-recs'>
+    {{following_macro.initialize_following(display, moment, current_user, Recommendation)}}
+    {{button_macro.initialize_follow_button()}}
+  </div><!--list-recs-->
   <script>
     var goto_rec = "{{url_for('personal.following_ajax', id=user.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";

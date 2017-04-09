@@ -41,10 +41,10 @@ def admin_splash():
         .filter_by(role_id = 2)
     data['mods_count'] = data['mods'].from_self()\
         .count()
-    return render_template('admin/admin_splash.html', data=data, RecModerations=RecModerations,
+    return render_template('admin/admin-splash.html', data=data, RecModerations=RecModerations,
         ComModerations=ComModerations, week_ago=week_ago)
 
-@admin.route('/_mod_history_com_ajax/<int:id>')
+@admin.route('/-mod-history-com_ajax/<int:id>')
 @login_required
 @is_administrator
 def mod_com_ajax(id):
@@ -56,11 +56,11 @@ def mod_com_ajax(id):
     mod_coms = mod.com_mods\
         .order_by(ComModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/mod_comment_action_macro.html', 'ajax')
+    to_return = get_template_attribute('macros/mod-comment-action-macro.html', 'ajax')
     return jsonify({'last': mod_coms.page == mod_coms.pages,
         'ajax_request': to_return(mod_coms, _moment, current_user)}) 
 
-@admin.route('/_mod_history_rec_ajax/<int:id>')
+@admin.route('/-mod-history-rec-ajax/<int:id>')
 @login_required
 @is_administrator
 def mod_rec_ajax(id):
@@ -72,11 +72,11 @@ def mod_rec_ajax(id):
     mod_recs = mod.rec_mods\
         .order_by(RecModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/mod_rec_action_macro.html', 'ajax')
+    to_return = get_template_attribute('macros/mod-rec-action-macro.html', 'ajax')
     return jsonify({'last': mod_recs.page == mod_recs.pages,
         'ajax_request': to_return(mod_recs, _moment, current_user)}) 
 
-@admin.route('/mod_history/<int:id>')
+@admin.route('/mod-history/<int:id>')
 @login_required
 @is_administrator
 def mod_history(id):
@@ -90,4 +90,4 @@ def mod_history(id):
     mod_coms = mod.com_mods\
         .order_by(ComModerations.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('admin/mod_history.html', mod=mod, mod_recs=mod_recs, mod_coms=mod_coms)
+    return render_template('admin/mod-history.html', mod=mod, mod_recs=mod_recs, mod_coms=mod_coms)

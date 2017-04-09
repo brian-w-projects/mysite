@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-{% extends 'abstract/threecolumn.html' %}
+{% extends 'abstract/three-column.html' %}
 
 {% block head %}
   {{super()}}
   <title>Recommend Me</title>
-  <link href="{{url_for('static', filename='css/speciality/photosliderstyle.css')}}" type='text/css' rel='stylesheet'/>
-  <link href="{{url_for('static', filename='css/main/index_style.css')}}" type='text/css' rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/speciality/photo-slider.css')}}" type='text/css' rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/main/index.css')}}" type='text/css' rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
@@ -36,14 +36,14 @@
     </div><!--slide-viewer-->
     <div class='slide-buttons'></div>
   </div><!--w700 slider-->
-  <script src="{{url_for('static', filename='js/speciality/photoslider.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/photo-slider.js')}}"></script>
   <br/>
   <br/>
-  <div class='listrecs'>
+  <div class='list-recs'>
     {% if display.items|length > 0 %}
-      {{recmacro.initialize_recs(display, moment, current_user)}}
+      {{rec_macro.initialize_recs(display, moment, current_user)}}
     {% endif %}
-  </div><!--listrecs-->
+  </div><!--list-recs-->
   <script>
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>
@@ -51,7 +51,7 @@
 
 {% block c1 %}
   <h3 class='reckoner'>Make Recs</h3>
-  <img src="{{url_for('static', filename='images/main/makerecs.jpg')}}" class='align_center medium'/>
+  <img src="{{url_for('static', filename='images/main/make-recs.jpg')}}" class='align-center medium'/>
   <p>
     We live in such an amazing world. It is time to get out and explore it! 
     Make recommendations for the activites that inspire you, the adventures that
@@ -62,7 +62,7 @@
 
 {% block c2 %}
   <h3 class='reckoner'>Get Recs</h3>
-  <img src="{{url_for('static', filename='images/main/getrecs.jpg')}}" class='align_center medium'/>
+  <img src="{{url_for('static', filename='images/main/get-recs.jpg')}}" class='align-center medium'/>
   <p>
     Find recs from other people just like you. See what shapes and inspires the
     life of others and share in their experience. Your next adventure is right
@@ -72,7 +72,7 @@
 
 {% block c3 %}
   <h3 class='reckoner'>Live Life</h3>
-  <img src="{{url_for('static', filename='images/main/livelife.jpg')}}" class='align_center medium'/>
+  <img src="{{url_for('static', filename='images/main/live-life.jpg')}}" class='align-center medium'/>
   <p>
     Recs is the revoluationary platform that allows you to be you. Find your
     inspiration and live it. Do it. Rec it. The only limit is you.

@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from flask_moment import _moment
 from sqlalchemy.sql.expression import func, select, or_
 
-@main.route('/rec_inline_comment_ajax')
+@main.route('/rec-inline-comment-ajax')
 def rec_inline_comment_ajax():
     id = int(request.args.get('id'))
     display_comments = Comments.query\
@@ -21,7 +21,7 @@ def rec_inline_comment_ajax():
         .paginate(1, per_page=5, error_out=False)
     if len(display_comments.items) == 0:
         return jsonify({'ajax_request': ''}) 
-    to_return = get_template_attribute('macros/comment_macro.html', 'ajax_div_wrapper')
+    to_return = get_template_attribute('macros/comment-macro.html', 'ajax_div_wrapper')
     return jsonify({'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
 @main.route('/about')
@@ -37,7 +37,7 @@ def about():
         .paginate(1, per_page=5, error_out=False)
     return render_template('main/about.html', display=display_recs)
 
-@main.route('/highlight_ajax/<int:id>')
+@main.route('/highlight-ajax/<int:id>')
 def load_comments(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
@@ -45,7 +45,7 @@ def load_comments(id):
         .filter(Comments.verification != 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/comment_macro.html', 'ajax')
+    to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
     return jsonify({'last': display_comments.page == display_comments.pages,
         'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
@@ -107,7 +107,7 @@ def index():
             .paginate(1, per_page=5, error_out=False)
     return render_template('main/index.html', display = display_recs)
 
-@main.route('/_search', methods=['POST'])
+@main.route('/-search', methods=['POST'])
 def search_ajax():
     session['type'] = request.form['type']
     session['search'] = request.form['search']
@@ -118,7 +118,7 @@ def search_ajax():
         session['date'] = ''
     return search_query()
     
-@main.route('/_additional_results')
+@main.route('/-additional-results')
 def more_ajax():
     return search_query(page = int(request.args.get('page')))
 
@@ -140,7 +140,7 @@ def search_query(page = 1):
         display_recs = display_recs\
             .order_by(Recommendation.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        to_return = get_template_attribute('macros/rec_macro.html', 'ajax')
+        to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({'last': display_recs.page == display_recs.pages,
             'ajax_request': to_return(display_recs, _moment, current_user)}) 
     else:
@@ -161,7 +161,7 @@ def search_query(page = 1):
         display_comments = display_comments\
             .order_by(Comments.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
-        to_return = get_template_attribute('macros/comment_macro.html', 'ajax')
+        to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
         return jsonify({'last': display_comments.page == display_comments.pages,
             'ajax_request': to_return(display_comments, _moment, current_user)}) 
     
@@ -170,7 +170,7 @@ def search():
     form = SearchForm(request.form)
     return render_template('main/search.html', form=form)
     
-@main.route('/_surprise')
+@main.route('/-surprise')
 def surprise_ajax():
     display_recs = Recommendation.query\
         .filter(Recommendation.verification > 0)\
@@ -180,7 +180,7 @@ def surprise_ajax():
         .from_self()\
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/rec_macro.html', 'ajax')
+    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 

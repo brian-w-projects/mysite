@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% extends 'abstract/one-column.html' %}
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Delete Comment {{rec.id}}</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <h2>
+      <a href="{{url_for('personal.profile', id=rec.author.id)}}">
+        {{rec.author.username}}
+      </a>
+    </h2>
+    {{flash_macro.render_flash(get_flashed_messages())}}
+  </div><!--w940-->
+  <div class='list-recs'>
+    {{rec_macro.render_rec(rec, moment, current_user)}}
+  </div><!--list-recs-->
+  <div class='list-comments'>
+    {{comment_macro.render_comment(com, moment, current_user)}}
+  </div><!--list-comments-->
+  <div class='w940'>
+    <div class='w940-center'>
+      <form method='POST'>
+        {{form.delete.label(class='reckoner')}} {{form.delete(class='entry')}}
+        <br/>
+        {{form.csrf_token}}
+        {{form.submit(class='reckoner', id='submit')}}
+      </form>
+    </div><!--w940-center-->
+  </div><!--w940-->
+{% endblock %}

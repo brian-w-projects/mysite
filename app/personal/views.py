@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 from flask_moment import _moment
 
-@personal.route('/commentdelete/<int:id>', methods=['GET', 'POST'])
+@personal.route('/comment-delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def comment_delete(id):
     form = DeleteForm(request.form)
@@ -32,9 +32,9 @@ def comment_delete(id):
             flash(u'\u2717 You must confirm deletion')
             return redirect(url_for('personal.comment_delete', id=id))
         return redirect(url_for('personal.comment_delete', id=id))
-    return render_template('personal/commentdelete.html', form=form, rec=display_recs, com=display_comments)
+    return render_template('personal/comment-delete.html', form=form, rec=display_recs, com=display_comments)
 
-@personal.route('/commentedit/<int:id>', methods=['GET', 'POST'])
+@personal.route('/comment-edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def comment_edit(id):
     form = CommentEditForm(request.form)
@@ -64,7 +64,7 @@ def comment_edit(id):
             flash(u'\u2717 Comment must contain text')
             return redirect(url_for('personal.comment_edit', id=id))
     form.text.data = display_comments.comment
-    return render_template('personal/commentedit.html', form=form, rec=display_recs, com=display_comments)
+    return render_template('personal/comment-edit.html', form=form, rec=display_recs, com=display_comments)
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -106,8 +106,7 @@ def edit(post_id):
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form)
 
-@personal.route('/_followers/<int:id>')
-@login_required
+@personal.route('/-followers/<int:id>')
 def followers_ajax(id):
     page = int(request.args.get('page'))
     user = Users.query\
@@ -117,7 +116,7 @@ def followers_ajax(id):
         .followed_by\
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/followedmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/followed-macro.html', 'ajax')
     return jsonify({'last': display_names.page == display_names.pages,
         'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
 
@@ -136,7 +135,7 @@ def followers(id=-1):
     return render_template('personal/followers.html', display=display_names, 
         user=user, Recommendation=Recommendation)
 
-@personal.route('/_follow')
+@personal.route('/-follow')
 @login_required
 def follow_ajax():
     id = int(request.args.get('id'))
@@ -153,7 +152,7 @@ def follow_ajax():
         db.session.commit()
         return jsonify({'added':True})
 
-@personal.route('/_following/<int:id>')
+@personal.route('/-following/<int:id>')
 def following_ajax(id):
     page = int(request.args.get('page'))
     user = Users.query\
@@ -162,7 +161,7 @@ def following_ajax(id):
     display_names = user.following\
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/followingmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/following-macro.html', 'ajax')
     return jsonify({'last': display_names.page == display_names.pages,
         'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
 
@@ -182,7 +181,7 @@ def following(id=-1):
     return render_template('personal/following.html', display=display_names, 
         user = user, Recommendation=Recommendation)
 
-@personal.route('/_inspiration')
+@personal.route('/-inspiration')
 @login_required
 def inspiration_ajax():
     page = int(request.args.get('page'))
@@ -192,7 +191,7 @@ def inspiration_ajax():
         .filter(Recommendation.verification > 0)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
@@ -207,7 +206,7 @@ def inspiration():
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('personal/inspiration.html', display=display_recs)
 
-@personal.route('/_post')
+@personal.route('/-post')
 @login_required
 def post_ajax():
     page = int(request.args.get('page'))
@@ -215,7 +214,7 @@ def post_ajax():
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)})
     
@@ -244,19 +243,19 @@ def post():
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('personal/post.html', form=form, display=display_recs)
 
-@personal.route('/_profileCom/<int:id>')
-def profileCom_ajax(id):
+@personal.route('/-profile-com/<int:id>')
+def profile_com_ajax(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
         .filter_by(comment_by=id)\
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/commentmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
     return jsonify({'last': display_comments.page == display_comments.pages,
         'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
-@personal.route('/_profile/<int:id>')
+@personal.route('/-profile/<int:id>')
 def profile_ajax(id):
     page = int(request.args.get('page'))
     if(current_user.id == id):
@@ -268,7 +267,7 @@ def profile_ajax(id):
         .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out = False)
-    to_return = get_template_attribute('macros/recmacro.html', 'ajax')
+    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
@@ -318,7 +317,7 @@ def profile(id=-1):
     return render_template('personal/profile.html', user=user, display=display_recs, 
         d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
 
-@personal.route('/_token')
+@personal.route('/-token')
 @login_required
 def token_ajax():
     current_user.generate_auth_token()

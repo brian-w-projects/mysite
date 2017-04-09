@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,19 +8,19 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Update Profile</h2>
-      {{ flash_macro.render_flash(get_flashed_messages()) }}
+      {{flash_macro.render_flash(get_flashed_messages())}}
       <p>Interested in our API? 
-        <a class='special-link' href="{{url_for('personal.token')}}">
+        <a href="{{url_for('personal.token')}}">
           Click Here
         </a>
       </p>
       <form method="POST">
         {{form.about_me.label(class='reckoner')}}
-        <p class='chars_format'>Characters Left: <span class='about_me_chars_left'></span></p>
+        <p class='chars-format'>Characters Left: <span class='about-me-chars-left'></span></p>
         <br/>
-        {{form.about_me(class='about_me_text_entry')}}
+        {{form.about_me(class='about-me-text-entry')}}
         <br/>
         <div class='fieldset'>
           {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
@@ -37,7 +37,7 @@
         <br/>
         {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
-  <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}

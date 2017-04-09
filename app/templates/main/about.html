@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/threecolumn.html' %}
+{% extends 'abstract/three-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,9 +8,9 @@
 
 {% block maincontent %}
   <h2>Go and have an adventure. When you are done, Rec it to everyone.</p>
-  <img src="{{url_for('static', filename='images/main/aboutrec.jpg')}}" class='align_center large_splash'/>
+  <img src="{{url_for('static', filename='images/main/about-rec.jpg')}}" class='align-center large-splash'/>
   <h2>
-    <a class='black_hover_link' href="{{url_for('auth.subscribe')}}">
+    <a href="{{url_for('auth.subscribe')}}">
           Ready to Start? Register Here
     </a>
   </h2>
@@ -42,17 +42,17 @@
   </p>
 {% endblock %}
 
-{% block post %}
+{% block postcontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Check out some recent Recs</h2>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
-  <div class='listrecs'>
+  <div class='list-recs'>
     {% if display.items|length > 0 %}
-      {{recmacro.initialize_recs(display, moment, current_user)}}
+      {{rec_macro.initialize_recs(display, moment, current_user)}}
     {% endif %}
-  </div><!--listrecs-->
+  </div><!--list-recs-->
   <script>
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>

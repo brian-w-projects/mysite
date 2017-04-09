@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends 'abstract/base.html' %}
+
+{% block head %}
+  {{super()}}
+  <link href="{{url_for('static', filename='css/abstract/three-column.css')}}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+  <div id='maincontent'>
+    {% block maincontent %}
+    {% endblock %}
+  </div><!--maincontent-->
+  <div class='c1'>
+    {% block c1 %}
+    {% endblock %}
+  </div><!--c1-->
+  <div class='c2'>
+    {% block c2 %}
+    {% endblock %}
+  </div><!--c2-->
+  <div class='c3'>
+    {% block c3 %}
+    {% endblock %}
+  </div><!--c3-->
+  <div class='postcontent'>
+    {% block postcontent %}
+    {% endblock %}
+  </div><!--postcontent-->
+{% endblock %}

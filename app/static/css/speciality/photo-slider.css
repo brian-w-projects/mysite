@@ -1,0 +1,40 @@
+.slide-viewer{
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    width: 700px;
+}
+
+.slide-group{
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.slide{
+    display: none;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.slide:first-child{
+    display: block;
+}
+
+.slide-buttons{
+    text-align: center;
+}
+
+.slide-btn{
+    background-color: #efefef;
+    border: 0;
+}
+
+.active{
+    background-color: #ffffff;
+}
+
+.slide-btn:hover{
+    cursor: pointer;
+}

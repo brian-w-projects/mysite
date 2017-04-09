@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,9 +8,9 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Log In</h2>
-      {{ flash_macro.render_flash(get_flashed_messages()) }}
+      {{flash_macro.render_flash(get_flashed_messages())}}
       <form method="POST">
         {{form.username.label(class='reckoner')}} {{form.username(class='entry')}}
         <br/>
@@ -20,20 +20,20 @@
         {{form.submit(class='reckoner', id='submit')}}
       </form>
       <p>Forgot your username? 
-        <a class='black_hover_link' href="{{url_for('auth.forgot_username')}}">
+        <a href="{{url_for('auth.forgot_username')}}">
           Recover Username
         </a>
       </p>
       <p>Forgot your password?
-        <a class='black_hover_link' href="{{url_for('auth.forgot_password')}}">
+        <a href="{{url_for('auth.forgot_password')}}">
           Reset Password
         </a>
       </p>
       <p>Not a member?
-        <a class='black_hover_link' href="{{url_for('auth.subscribe')}}">
+        <a href="{{url_for('auth.subscribe')}}">
           Register Here
         </a>
       </p>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
 {% endblock %}

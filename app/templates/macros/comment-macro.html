@@ -1,0 +1,67 @@
+{% macro render_comment(com, moment, current_user) %}
+  <div class='single-post'>
+    <div class='post-header'>
+      <ul class='post-header-list'>
+        <li>
+          <a href="{{url_for('personal.profile', id=com.comment_by)}}">
+            {{com.comm.username}}
+          </a>
+        </li>
+        <li>
+          {{moment(com.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
+        </li>
+        {% if current_user.is_authenticated %}
+          {% if current_user.posts.filter_by(id=com.posted_on).first() %}
+            <li>
+              <a href="{{url_for('personal.comment_delete', id=com.id)}}">
+                Delete
+              </a>
+            </li>
+          {% endif %}
+          {% if current_user.id == com.comment_by %}
+            <li>
+              <a href="{{url_for('personal.comment_edit', id=com.id)}}">
+                Edit
+              </a>
+            </li>
+          {% endif %}
+        {% endif %}
+        <li class='reckoner'>
+          <a href="{{url_for('main.highlight', id=com.posted_on)}}">
+            Rec
+          </a>
+        </li>
+      </ul>
+    </div><!--post-header-->
+    <p class='post-text'>
+      {{com.comment}}
+    </p>
+  </div><!--single-post-->
+  <br/>
+{% endmacro %}
+
+{% macro initialize_comments(d_c, moment, current_user) %}
+  {{ajax(d_c, moment, current_user)}}
+  {% if d_c.pages != d_c.page %}
+    <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
+  {% endif %}
+  <script src="{{url_for('static', filename='js/speciality/ajax-comment.js')}}"></script>
+{% endmacro %}
+
+{% macro ajax(d_c, moment, current_user) %}
+  {% for com in d_c.items %}
+    {{render_comment(com, moment, current_user)}}
+  {% endfor %}
+{% endmacro %}
+
+{% macro ajax_div_wrapper(d_c, moment, current_user) %}
+  <div class='list-comments'>
+    </br>
+    {{ajax(d_c, moment, current_user)}}
+  </div><!--list-comments-->
+{% endmacro %}
+
+{% macro search_initialize() %}
+  <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
+  <script src="{{url_for('static', filename='js/speciality/ajax-comment.js')}}"></script>
+{% endmacro %}

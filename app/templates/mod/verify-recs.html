@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'abstract/one-column.html' %}
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Mod Verify Recs</title>
+{% endblock %}
+
+{% block maincontent %}
+  <div class='w940'>
+    <div class='w940-center'>
+       <h2>Verify Recs</h2>
+    </div><!--w940-center-->
+  </div><!--w940-->
+  <div class='list-recs'>
+    {{moderator_rec_macro.initialize_moderate(display, moment, current_user)}}
+    {{button_macro.initialize_mod_button()}}
+  </div><!--list-recs-->
+   <script>
+    var goto_rec = "{{url_for('mod.verify_ajax')}}";
+    var goto_mod = "{{url_for('mod.moderate_ajax')}}";
+  </script>
+{% endblock %}

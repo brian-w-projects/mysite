@@ -1,0 +1,95 @@
+/*TEXT ENTRY FORM ELEMENTS*/
+.entry{
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid black;
+    font-size: 120%;
+    margin: 20px;
+    outline: 0;
+    padding: 10px;
+}
+
+.entry:hover, .entry:focus{
+    border-bottom: 2px solid black;
+    margin-bottom: 19px;
+}
+
+.api-entry{
+    background-color: #f9f09a;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: smaller;
+    margin: 20px;
+    padding: 5px;
+    width: 550px;
+}
+/*TEXT ENTRY FORM ELEMENTS*/
+
+/*CLICK ENTRY FORM ELEMENTS */
+.click{
+    margin: 20px;
+}
+/*CLICK ENTRY FORM ELEMENTS */
+
+/*TEXT AREA FORM ELEMENTS*/
+.about-me-text-entry, .comment-text-entry, .rec-text-entry{
+    border: 1px solid #000000;
+    border-radius: 10px;
+    height: 200px;
+    resize: none;
+    width: 600px;
+}
+
+.chars-format{
+    display: inline;
+    margin-left: 20px;
+}
+/*TEXT AREA FORM ELEMENTS*/
+
+/*BUTTON ELEMENTS*/
+.edit-button, .follow-button, .mod-button, #submit{
+    background: -webkit-gradient(linear, left top, left bottom, from(#beeae9), to(#a8cfce));
+    background: -moz-linear-gradient(top, #beeae9, #a8cfce);
+    background: -o-linear-gradient(top, #beeae9, #a8cfce);
+    background: -ms-linear-gradient(top, #beeae9, #a8cfce);
+    background-color: #b9e4e3;
+    border: 1px solid #efefef;
+    border-bottom: 2px solid #b2b2b2;
+    border-radius: 10px;
+    color: #444444;
+    text-shadow: 0px 1px 1px #fff;
+}
+
+.edit-button:hover, .follow-button:hover, .mod-button:hover, #submit:hover{
+    background: -webkit-gradient(linear, left top, left bottom, from(#a8cfce), to(#beeae9));
+    background: -moz-linear-gradient(top, #a8cfce, #beeae9);
+    background: -o-linear-gradient(top, #a8cfce, #beeae9);
+    background: -ms-linear-gradient(top, #a8cfce, #beeae9);
+    background-color: #a0dbc4;
+    border: 1px solid #a3a3a3;
+    border-top: 2px solid #b2b2b2;
+    color: #333333;
+}
+/*BUTTON ELEMENTS*/
+
+/*FIELD SET ELEMENTS */
+.fieldset{
+    border: 1px solid #000000;
+    border-radius: 10px;
+    float: left;
+    text-align: right;
+    width: 400px;
+}
+
+.realign{
+    clear:both;
+}
+/*FIELD SET ELEMENTS */
+
+/*BUTTON SIZING*/
+.button-width-set{
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+}
+/*BUTTON SIZING*/

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,31 +8,31 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Make a Rec</h2>
-      {{ flash_macro.render_flash(get_flashed_messages()) }}
+      {{flash_macro.render_flash(get_flashed_messages())}}
       <form method="POST">
-        {{form.title.label(class='reckoner')}} {{form.title(class='entry rec_title_entry')}}
-        <p class='chars_format'>Characters Left: <span class='rec_title_chars_left'>100</span></p>
+        {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
+        <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'>100</span></p>
         <br/>
         {{form.public.label(class='reckoner')}} {{form.public(class='click', checked=True)}}
         <br/>
-        <p class='chars_format'>Characters Left: <span class='rec_chars_left'>1000</span></p>
-        {{form.text(class='rec_text_entry')}}
+        <p class='chars-format'>Characters Left: <span class='rec-chars-left'>1000</span></p>
+        {{form.text(class='rec-text-entry')}}
         <br/>
         <br/>
         {{form.csrf_token}}
         {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
   <br/>
-  <div class='listrecs'>
-    {{recmacro.initialize_recs(display, moment, current_user)}}
-  </div><!--listrecs-->
+  <div class='list-recs'>
+    {{rec_macro.initialize_recs(display, moment, current_user)}}
+  </div><!--list-recs-->
   <script>
     var goto_rec = "{{url_for('personal.post_ajax')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>
-  <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}

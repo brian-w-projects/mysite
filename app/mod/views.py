@@ -9,7 +9,7 @@ from ..email import send_email
 from ..decorators import is_moderator
 import json
 
-@mod.route('/_moderate')
+@mod.route('/-moderate')
 @login_required
 @is_moderator
 def moderate_ajax():
@@ -31,7 +31,7 @@ def moderate_ajax():
         db.session.commit()
         return jsonify({'verify': False})
 
-@mod.route('/_verify')
+@mod.route('/-verify')
 @login_required
 @is_moderator
 def verify_ajax():
@@ -40,7 +40,7 @@ def verify_ajax():
         .filter_by(verification=1)\
         .order_by(Recommendation.timestamp.asc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/moderator_rec_macro.html', 'ajax')        
+    to_return = get_template_attribute('macros/moderator-rec-macro.html', 'ajax')        
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
@@ -52,9 +52,9 @@ def verify():
         .filter_by(verification=1)\
         .order_by(Recommendation.timestamp.asc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('mod/verify_recs.html', display=display_recs)
+    return render_template('mod/verify-recs.html', display=display_recs)
 
-@mod.route('/_moderate_com')
+@mod.route('/-moderate-com')
 @login_required
 @is_moderator
 def moderate_com_ajax():
@@ -75,7 +75,7 @@ def moderate_com_ajax():
         db.session.commit()
         return jsonify({'verify': False})
 
-@mod.route('/_verify_comments')    
+@mod.route('/-verify-comments')    
 @login_required
 @is_moderator
 def verify_com_ajax():
@@ -84,11 +84,11 @@ def verify_com_ajax():
         .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/moderator_comment_macro.html', 'ajax')
+    to_return = get_template_attribute('macros/moderator-comment-macro.html', 'ajax')
     return jsonify({'last': display_comments.page == display_comments.pages,
         'ajax_request': to_return(display_comments, _moment, current_user)}) 
 
-@mod.route('/verify_comments')
+@mod.route('/verify-comments')
 @login_required
 @is_moderator
 def verify_comments():
@@ -96,4 +96,4 @@ def verify_comments():
         .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('mod/verify_comments.html', d_c=display_comments)
+    return render_template('mod/verify-comments.html', d_c=display_comments)

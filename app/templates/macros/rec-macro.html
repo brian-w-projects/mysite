@@ -1,0 +1,69 @@
+{% macro render_rec(rec, moment, current_user, attributes=True) %}
+  <div class='single-post'>
+    <a href="{{url_for('main.highlight', id=rec.id)}}">
+      <h3 class='rec-title'>{{rec.title}}</h3>
+    </a>
+    <div class='post-header'>
+      <ul class='post-header-list'>
+        <li>
+          <a href="{{url_for('personal.profile', id=rec.author_id)}}">
+            {{rec.author.username}}
+          </a>
+        </li>
+        <li>
+          {% if rec.verification != 0 %}
+            Public
+          {% else %}
+            Private
+          {% endif %}
+        </li>
+        <li>
+          {{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
+        </li>
+        <li class='reckoner'>
+          Comments: {{rec.comments.filter_by(verification=1).count()
+          + rec.comments.filter_by(verification=2).count()}}
+        </li>
+        {% if current_user.id == rec.author_id and rec.new_comment == True %}
+          <li class='reckoner'>
+            New Comment!
+          </li>
+        {% endif %}
+        {% if attributes %}
+          <li>
+            {% if rec.author_id==current_user.id %}
+              <a href="{{url_for('personal.edit', post_id=rec.id)}}">
+                <i class='font-link fa fa-pencil-square-o fa-2x'></i>
+              </a>
+            {% endif %}
+            <i id='{{rec.id}}' class='font-link toggle-comments fa fa-comments-o fa-2x'></i>
+            <i class='font-link toggle-show fa fa-arrows-v fa-2x'></i>
+          </li>
+        {% endif %}
+      </ul>
+    </div><!--post-header-->
+    <p class='post-text'>
+      {{rec.text}}
+    </p>
+  </div><!--single-post-->
+  <br/>
+{% endmacro %}
+
+{% macro initialize_recs(display, moment, current_user, attributes=True) %}
+  {{ajax(display, moment, current_user, attributes)}}
+  {% if display.pages != display.page %}
+    <p id='ajax-recs' class='load-more'>Load More</p>
+  {% endif %}
+  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+{% endmacro %}
+
+{% macro ajax(display, moment, current_user, attributes=True) %}
+  {% for rec in display.items %}
+    {{render_rec(rec, moment, current_user, attributes)}}
+  {% endfor %}
+{% endmacro %}
+
+{% macro search_initialize() %}
+  <p id='ajax-recs' class='load-more'>Load More</p>
+  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+{% endmacro %}

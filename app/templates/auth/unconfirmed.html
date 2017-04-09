@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -8,15 +8,15 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Register</h2>
       <p>
         {{current_user.username}}, please confirm you account by clicking the link in the e-mail sent to: 
         {{current_user.email}}
       </p>
       <p>
-        <a class='black_hover_link' href="{{url_for('auth.confirmationsent', username=current_user.username,)}}">Resend Email</a>
+        <a href="{{url_for('auth.confirmationsent', username=current_user.username,)}}">Resend Email</a>
       </p>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
 {% endblock %}

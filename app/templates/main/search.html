@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
@@ -9,9 +9,9 @@
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>Search</h2>
-      {{ flash_macro.render_flash(get_flashed_messages()) }}
+      {{flash_macro.render_flash(get_flashed_messages())}}
       <form method='POST'>
         {{form.type.label(class='reckoner')}} {{form.type(class='entry type')}}
         <br/>
@@ -24,21 +24,21 @@
         {{form.csrf_token}}
         {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
   <br/>
-  <div class='listrecs'>
-    {{recmacro.search_initialize()}}
-  </div><!--listrecs-->
-  <div class='listcomments'>
-    {{commentmacro.search_initialize()}}
-  </div><!--listcomments-->
+  <div class='list-recs'>
+    {{rec_macro.search_initialize()}}
+  </div><!--list-recs-->
+  <div class='list-comments'>
+    {{comment_macro.search_initialize()}}
+  </div><!--list-comments-->
   <script>
     var goto_initial = "{{url_for('main.search_ajax')}}";
     var goto_comment = "{{url_for('main.more_ajax')}}";
     var goto_rec = "{{url_for('main.more_ajax')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
   </script>
-  <script src="{{url_for('static', filename='js/main/searchjs.js')}}"></script>
+  <script src="{{url_for('static', filename='js/main/search.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
 {% endblock %}

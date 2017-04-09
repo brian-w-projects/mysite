@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-{% extends 'abstract/onecolumn.html' %}
+{% extends 'abstract/one-column.html' %}
 
 {% block head %}
   {{super()}}
   <title>Recommend Me - Edit Rec</title>
-  <link href="{{url_for('static', filename='css/personal/edit_style.css')}}" 
+  <link href="{{url_for('static', filename='css/personal/edit.css')}}" 
     type='text/css' rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
   <div class='w940'>
-    <div class='w940_center'>
+    <div class='w940-center'>
       <h2>{{current_user.username}}</h2>
       {{flash_macro.render_flash(get_flashed_messages())}}
       <form method='POST'>
-        {{form.title.label(class='reckoner')}} {{form.title(class='entry rec_title_entry')}}
-        <p class='chars_format'>Characters Left: <span class='rec_title_chars_left'></span></p>
+        {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
+        <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'></span></p>
         <br/>
         {{form.public.label(class='reckoner')}} {{form.public(class='click', default=form.public.data)}}
         <br/>
-        <p class='chars_format'>Characters Left: <span class='rec_chars_left'></span></p>
-        {{form.text(class='rec_text_entry')}}
+        <p class='chars-format'>Characters Left: <span class='rec-chars-left'></span></p>
+        {{form.text(class='rec-text-entry')}}
         <br/>
-        <div class='edit_fieldset'>
+        <div class='edit-fieldset'>
           {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
           <br/>
           {{form.delete_confirm.label(class='reckoner')}} {{form.delete_confirm(class='click')}}
@@ -32,7 +32,7 @@
         <br/>
         {{form.submit(class='reckoner', id='submit')}}
       </form>
-    </div><!--w940_center-->
+    </div><!--w940-center-->
   </div><!--w940-->
-  <script src="{{url_for('static', filename='js/speciality/form_count_js.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}

@@ -6,10 +6,14 @@
 
 Refractoring:
     - rename variables for consistant snake_naming
-        - update poststyle and comment style for all pages that use recs and comments
-        - test comments/recs on pages with New Comment! and Edit ability
-        - remove black_hover_link from everywhere
-        - implement font-awesome everywhere
-    - complete refractoring
-        - combine fonts
+        - change a css to remove dotted line under edit button
+        - fix js on token, reloading api doesn't update
+        - remove rec buttons on comment-edit and comment-delete
+        - recheck all comment-delete and comment-edit
         
+    - complete refractoring
+        - remove realign/postclear for realigning elements
+        
+Formatting:
+    - CSS, URLS, FILENAMES: Hyphens
+    - JS, PYTHON, JINJA: Underscores

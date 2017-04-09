@@ -2,24 +2,24 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/rec_macro.html' as rec_macro %}
-  {% import 'macros/comment_macro.html' as comment_macro %}
-  {% import 'macros/followingmacro.html' as followingmacro %}
-  {% import 'macros/followedmacro.html' as followedmacro %}
-  {% import 'macros/buttonmacro.html' as buttonmacro %}
-  {% import 'macros/moderator_rec_macro.html' as moderator_rec_macro %}
-  {% import 'macros/moderator_comment_macro.html' as moderator_comment_macro %}
-  {% import 'macros/flash_macro.html' as flash_macro %}
-  {% import 'macros/mod_rec_action_macro.html' as mod_rec_action_macro %}
-  {% import 'macros/mod_comment_action_macro.html' as mod_comment_action_macro %}
+  {% import 'macros/rec-macro.html' as rec_macro %}
+  {% import 'macros/comment-macro.html' as comment_macro %}
+  {% import 'macros/following-macro.html' as following_macro %}
+  {% import 'macros/followed-macro.html' as followed_macro %}
+  {% import 'macros/button-macro.html' as button_macro %}
+  {% import 'macros/moderator-rec-macro.html' as moderator_rec_macro %}
+  {% import 'macros/moderator-comment-macro.html' as moderator_comment_macro %}
+  {% import 'macros/flash-macro.html' as flash_macro %}
+  {% import 'macros/mod-rec-action-macro.html' as mod_rec_action_macro %}
+  {% import 'macros/mod-comment-action-macro.html' as mod_comment_action_macro %}
   <head>
     {% block head %}
       <meta charset='utf-8'>
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
-      <link href="{{url_for('static', filename='css/abstract/base_style.css')}}" type='text/css' rel='stylesheet'/>
-      <link href="{{url_for('static', filename='css/macros/flash_style.css')}}" type='text/css' rel='stylesheet'/>
-      <link href="{{url_for('static', filename='css/abstract/rec_comment_style.css')}}" type='text/css', rel='stylesheet'/>
-      <link href="{{url_for('static', filename='css/abstract/form_style.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/base.css')}}" type='text/css' rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/macros/flash.css')}}" type='text/css' rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/rec-comment.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/abstract/form.css')}}" type='text/css', rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/speciality/font-awesome.min.css')}}" type='text/css', rel='stylesheet'/>
     {% endblock %}
   </head>
@@ -30,19 +30,19 @@
           <h1>Recommend Me</h1>
         </hgroup>
         <nav>
-          <div class='sign_in'>
+          <div class='sign-in'>
             {% if current_user.is_authenticated %}
               <p>{{current_user.username}}</p>
               <p><a href="{{url_for('auth.logout')}}">Sign Out</a></p>
             {% else %}
               <p><a href="{{url_for('auth.login')}}">Sign In</a></p>
             {% endif %}
-          </div><!--sign_in-->
-          <ul class='nav_bar'>
+          </div><!--sign-in-->
+          <ul class='nav-bar'>
             <li><a href="{{url_for('main.index')}}">Home</a></li>
             <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
-            <div class='submenu_container'>
-              <li class='submenu_header'><a href="{{url_for('personal.profile')}}">My Profile</a></li>
+            <div class='submenu-container'>
+              <li class='submenu-header'><a href="{{url_for('personal.profile')}}">My Profile</a></li>
               {% if current_user.is_authenticated %}
                 <div class='submenu'>
                   <a href="{{url_for('personal.inspiration')}}">My Inspiration</a>
@@ -50,22 +50,22 @@
                   <a href="{{url_for('personal.followers')}}">Followers</a>
                 </div><!--submenu-->
               {% endif %}
-            </div><!--submenu_container-->
-            <div class='submenu_container'>
-              <li class='submenu_header'><a href="{{url_for('main.search')}}">Search</a></li>
+            </div><!--submenu-container-->
+            <div class='submenu-container'>
+              <li class='submenu-header'><a href="{{url_for('main.search')}}">Search</a></li>
               <div class='submenu'>
                 <a href="{{url_for('main.search')}}">Search</a>
                 <a href="{{url_for('main.surprise')}}">Surprise Me</a>
               </div><!--submenu-->
-            </div><!--submenu_container-->
-            <div class='submenu_container'>
-              <li class='submenu_header'><a href=''>Settings</a></li>
+            </div><!--submenu-container-->
+            <div class='submenu-container'>
+              <li class='submenu-header'><a href=''>Settings</a></li>
               <div class='submenu'>
                 <a href="{{url_for('main.about')}}">About</a>
                 <a href="{{url_for('personal.update')}}">My Settings</a>
                 <a href="{{url_for('auth.logout')}}">Sign Out</a>
               </div><!--submenu-->
-            </div><!--submenu_container-->
+            </div><!--submenu-container-->
           </ul>
         </nav>
       {% endblock %}

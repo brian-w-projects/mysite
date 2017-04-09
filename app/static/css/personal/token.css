@@ -1,0 +1,21 @@
+/* API MACRO STYLE*/
+.api-element-container{
+    background-color: white;
+    border: 1px black solid;
+}
+
+.api-element-header{
+    border-bottom: 1px black solid;
+    font-size: large;
+    padding: 5px;
+    text-align: center;
+}
+
+.api-element-text{
+    padding: 5px;
+}
+
+.example{
+    font-family: Courier;
+}
+/* API MACRO STYLE*/

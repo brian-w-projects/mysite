@@ -18,7 +18,7 @@ def confirmationsent(username):
         user=username, token=token)
     return render_template('auth/confirmationsent.html')
 
-@auth.route('/forgot_password', methods=['GET', 'POST'])
+@auth.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     form = PasswordReset(request.form)
     if request.method == 'POST':
@@ -43,9 +43,9 @@ def forgot_password():
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
         return redirect(url_for('auth.forgot'))
-    return render_template('auth/forgot_password.html', form=form)
+    return render_template('auth/forgot-password.html', form=form)
 
-@auth.route('/forgot_username', methods=['GET', 'POST'])
+@auth.route('/forgot-username', methods=['GET', 'POST'])
 def forgot_username():
     form = UsernameRecover(request.form)
     if request.method == 'POST':
@@ -63,7 +63,7 @@ def forgot_username():
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
         return redirect(url_for('auth.forgot_username'))
-    return render_template('auth/forgot_username.html', form=form)
+    return render_template('auth/forgot-username.html', form=form)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -98,7 +98,7 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-@auth.route('/_subscribe')
+@auth.route('/-subscribe')
 def subscribe_ajax():
     username = request.args.get('username').strip().lower()
     if Users.query.filter_by(username=username).first():
@@ -106,7 +106,7 @@ def subscribe_ajax():
     else:
         return jsonify({'exists':False})
 
-@auth.route('/_subscribe_email')
+@auth.route('/-subscribe-email')
 def subscribe_email_ajax():
     email = request.args.get('email').strip().lower()
     if Users.query.filter_by(email=email).first():
