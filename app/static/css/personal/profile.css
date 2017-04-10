@@ -9,12 +9,12 @@
 
 .profile-left{
     float: left;
-    width: 620px;
+    width: 480px;
 }
 
 .profile-right{
     float: left;
-    width: 300px;
+    width: 250px;
 }
 
 .profile-left>p, .profile-right>p{

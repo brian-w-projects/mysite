@@ -9,36 +9,32 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Admin</h2>
-      <div class='outer-data-box'>
-        <div class='data-box w220'>
-          <p>Total account: {{data['count']}}</p>
-          <p>Recent accounts: {{data['recent_account']}}</p>
-          <p>Recent logins: {{data['recent_logins']}}</p>
-        </div><!--data-box-->
-        <div class='data-box w220'>
-          <p>Total recs: {{data['total_recs']}}</p>
-          <p>Recent recs: {{data['recent_recs']}}</p>
-          <p>
-            <a href="{{url_for('mod.verify')}}">
-              Recs to Verify: {{data['recs_to_mod']}}
-            </a>
-          </p>
-        </div><!--data-box-->
-        <div class='data-box w220'>
-          <p>Total comments: {{data['total_comments']}}</p>
-          <p>Recent comments: {{data['recent_comments']}}</p>
-          <p>
-            <a href="{{url_for('mod.verify_comments')}}">
-              Comments to Verify: {{data['comments_to_mod']}}
-            </a>
-          </p>
-        </div><!--data-box-->
-      </div><!--outer-data-box-->
-      <h2>Total mods: {{data['mods_count']}}</h2>
-      {{mod_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Admin</h2>
+  <div class='outer-data-box'>
+    <div class='data-box w220'>
+      <p>Total account: {{data['count']}}</p>
+      <p>Recent accounts: {{data['recent_account']}}</p>
+      <p>Recent logins: {{data['recent_logins']}}</p>
+    </div><!--data-box-->
+    <div class='data-box w220'>
+      <p>Total recs: {{data['total_recs']}}</p>
+      <p>Recent recs: {{data['recent_recs']}}</p>
+      <p>
+        <a href="{{url_for('mod.verify')}}">
+          Recs to Verify: {{data['recs_to_mod']}}
+        </a>
+      </p>
+    </div><!--data-box-->
+    <div class='data-box w220'>
+      <p>Total comments: {{data['total_comments']}}</p>
+      <p>Recent comments: {{data['recent_comments']}}</p>
+      <p>
+        <a href="{{url_for('mod.verify_comments')}}">
+          Comments to Verify: {{data['comments_to_mod']}}
+        </a>
+      </p>
+    </div><!--data-box-->
+  </div><!--outer-data-box-->
+  <h2>Total mods: {{data['mods_count']}}</h2>
+  {{mod_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
 {% endblock %}

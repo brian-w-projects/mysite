@@ -7,12 +7,11 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>My Inspiration</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>My Inspiration</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-recs'>
     {{rec_macro.initialize_recs(display, moment, current_user)}}
   </div><!--list-recs-->

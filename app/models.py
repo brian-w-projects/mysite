@@ -312,7 +312,7 @@ class Users(UserMixin, db.Model):
         return Users.get_random_string(10, chars)
 
     def generate_auth_token(self):
-        s = Serializer(current_app.config['SECRET_KEY'])
+        s = TimedSerializer(current_app.config['SECRET_KEY'])
         self.api = s.dumps({'id': self.id})
         db.session.add(self)
         db.session.commit()

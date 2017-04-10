@@ -7,9 +7,10 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
     <h2>Surprise Me</h2>
-  </div><!--w940-->
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-recs'>
     {{rec_macro.initialize_recs(display, moment, current_user)}}
   </div><!--list-recs-->

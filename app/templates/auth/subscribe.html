@@ -8,53 +8,49 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Register</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-      <p>Already a member?
-        <a href="{{url_for('auth.login')}}">
-          Login
-        </a>
-      </p>
-      <form method="POST">
-        {{form.username.label(class='reckoner')}} {{form.username(class='entry username')}}
-        <div class='exists-container'>
-          <span class='name-valid'></span>
-        </div><!--exists-container-->
-        <br/>
-        {{form.email.label(class='reckoner')}} {{form.email(class='entry email')}}
-        <div class='exists-container'>
-          <span class='email-valid'></span>
-        </div><!--exists-container-->
-        <br/>
-        <div class='fieldset'>
-          {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
-          <br/>
-          {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
-        </div><!--fieldset-->
-        <div class='exists-container'>
-          <span class='password-valid'></span>
-        </div><!--exists-container-->
-        <div class='exists-container'>
-          <span class='password-confirm-valid'></span>
-        </div>
-        <div class='realign'></div>
-        {{form.token.label(class='reckoner')}} {{form.token(class='entry')}}
-        <br/>
-        {{form.updates.label(class='reckoner')}} {{form.updates(checked=True, class='click')}}
-        <br/>
-        {{form.recaptcha}}
-        <br/>
-        {{form.csrf_token}}
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-    </div><!--w940-center-->
-  </div><!--w940-->
-  <script>
-    var goto_username_check = "{{url_for('auth.subscribe_ajax')}}";
-    var goto_email_check = "{{url_for('auth.subscribe_email_ajax')}}";
-  </script>
-  <script src="{{url_for('static', filename='js/auth/subscribe.js')}}"></script>
-  <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
+  <h2>Register</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <p>Already a member?
+    <a href="{{url_for('auth.login')}}">
+      Login
+    </a>
+  </p>
+  <form method="POST">
+    {{form.username.label(class='reckoner')}} {{form.username(class='entry username')}}
+    <div class='exists-container'>
+      <span class='name-valid'></span>
+    </div><!--exists-container-->
+    <br/>
+    {{form.email.label(class='reckoner')}} {{form.email(class='entry email')}}
+    <div class='exists-container'>
+      <span class='email-valid'></span>
+    </div><!--exists-container-->
+    <br/>
+    <div class='fieldset'>
+      {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+      <br/>
+      {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+    </div><!--fieldset-->
+    <div class='exists-container'>
+      <span class='password-valid'></span>
+    </div><!--exists-container-->
+    <div class='exists-container'>
+      <span class='password-confirm-valid'></span>
+    </div>
+    <div class='realign'></div>
+    {{form.token.label(class='reckoner')}} {{form.token(class='entry')}}
+    <br/>
+    {{form.updates.label(class='reckoner')}} {{form.updates(checked=True, class='click')}}
+    <br/>
+    {{form.recaptcha}}
+    <br/>
+    {{form.csrf_token}}
+    {{form.submit(class='reckoner', id='submit')}}
+  </form>
+<script>
+var goto_username_check = "{{url_for('auth.subscribe_ajax')}}";
+var goto_email_check = "{{url_for('auth.subscribe_email_ajax')}}";
+</script>
+<script src="{{url_for('static', filename='js/auth/subscribe.js')}}"></script>
+<script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
 {% endblock %}

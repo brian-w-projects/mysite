@@ -7,33 +7,29 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Log In</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-      <form method="POST">
-        {{form.username.label(class='reckoner')}} {{form.username(class='entry')}}
-        <br/>
-        {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
-        <br/>
-        {{form.csrf_token}}
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-      <p>Forgot your username? 
-        <a href="{{url_for('auth.forgot_username')}}">
-          Recover Username
-        </a>
-      </p>
-      <p>Forgot your password?
-        <a href="{{url_for('auth.forgot_password')}}">
-          Reset Password
-        </a>
-      </p>
-      <p>Not a member?
-        <a href="{{url_for('auth.subscribe')}}">
-          Register Here
-        </a>
-      </p>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Log In</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <form method="POST">
+    {{form.username.label(class='reckoner')}} {{form.username(class='entry')}}
+    <br/>
+    {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+    <br/>
+    {{form.csrf_token}}
+    {{form.submit(class='reckoner', id='submit')}}
+  </form>
+  <p>Forgot your username? 
+    <a href="{{url_for('auth.forgot_username')}}">
+      Recover Username
+    </a>
+  </p>
+  <p>Forgot your password?
+    <a href="{{url_for('auth.forgot_password')}}">
+      Reset Password
+    </a>
+  </p>
+  <p>Not a member?
+    <a href="{{url_for('auth.subscribe')}}">
+      Register Here
+    </a>
+  </p>
 {% endblock %}

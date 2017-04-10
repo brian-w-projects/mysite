@@ -7,37 +7,36 @@
 {% endblock %} 
 
 {% block maincontent %}
-  <div class='w940'>
-    <h2>
-      <a href="{{url_for('personal.profile', id=rec.author.id)}}">
-        {{rec.author.username}}
-      </a>
-    </h2>
-    {{flash_macro.render_flash(get_flashed_messages())}}
-    {{button_macro.follow_button(rec.author, current_user)}}
-    {{button_macro.initialize_follow_button()}}
-    <br/>
-  </div><!--w940-->
+  <h2>
+    <a href="{{url_for('personal.profile', id=rec.author.id)}}">
+      {{rec.author.username}}
+    </a>
+  </h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  {{button_macro.follow_button(rec.author, current_user)}}
+  {{button_macro.initialize_follow_button()}}
+  <br/>
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-recs'>
     {{rec_macro.render_rec(rec, moment, current_user, attributes=False)}}
   </div><!--list-recs-->
   <div class='list-comments'>
     {{comment_macro.initialize_comments(d_c, moment, current_user)}}
   </div><!--list-comments-->
-  <div class='w940'>
-    <div class='w940-center'>
-      {% if current_user.is_authenticated %}
-        <h2>Comment</h2>
-        <form method='POST'>
-          <p class='chars-format'>Characters Left: <span class='comment-chars-left'>250</span></p>
-          {{form.text(class='comment-text-entry')}}
-          <br/>
-          {{form.csrf_token}}
-          {{form.submit(class='reckoner', id='submit')}}
-        </form>
-      {% endif %}
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <div class='w760'>
+    {% if current_user.is_authenticated %}
+      <h2>Comment</h2>
+      <form method='POST'>
+        <p class='chars-format'>Characters Left: <span class='comment-chars-left'>250</span></p>
+        {{form.text(class='comment-text-entry')}}
+        <br/>
+        {{form.csrf_token}}
+        {{form.submit(class='reckoner', id='submit')}}
+      </form>
+    {% endif %}
+  </div><!--w760-->
   <script>
     var id = {{rec.author.id}};
     var goto_comment = "{{url_for('main.load_comments', id=rec.id)}}";

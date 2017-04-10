@@ -7,11 +7,10 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-       <h2>Verify Comments</h2>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Verify Comments</h2>
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-comments'>
     {{moderator_comment_macro.initialize_moderate(d_c, moment, current_user)}}
     {{button_macro.initialize_mod_button()}}

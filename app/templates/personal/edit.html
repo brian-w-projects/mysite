@@ -9,30 +9,26 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>{{current_user.username}}</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-      <form method='POST'>
-        {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
-        <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'></span></p>
-        <br/>
-        {{form.public.label(class='reckoner')}} {{form.public(class='click', default=form.public.data)}}
-        <br/>
-        <p class='chars-format'>Characters Left: <span class='rec-chars-left'></span></p>
-        {{form.text(class='rec-text-entry')}}
-        <br/>
-        <div class='edit-fieldset'>
-          {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
-          <br/>
-          {{form.delete_confirm.label(class='reckoner')}} {{form.delete_confirm(class='click')}}
-        </div><!--fieldset-->
-        <div class='realign'></div>
-        {{form.csrf_token}}
-        <br/>
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>{{current_user.username}}</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <form method='POST'>
+    {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
+    <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'></span></p>
+    <br/>
+    {{form.public.label(class='reckoner')}} {{form.public(class='click', default=form.public.data)}}
+    <br/>
+    <p class='chars-format'>Characters Left: <span class='rec-chars-left'></span></p>
+    {{form.text(class='rec-text-entry')}}
+    <br/>
+    <div class='edit-fieldset'>
+      {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
+      <br/>
+      {{form.delete_confirm.label(class='reckoner')}} {{form.delete_confirm(class='click')}}
+    </div><!--fieldset-->
+    <div class='realign'></div>
+    {{form.csrf_token}}
+    <br/>
+    {{form.submit(class='reckoner', id='submit')}}
+  </form>
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}

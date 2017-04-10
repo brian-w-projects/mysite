@@ -7,32 +7,31 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <h2>
-      <a href="{{url_for('personal.profile', id=rec.author.id)}}">
-        {{rec.author.username}}
-      </a>
-    </h2>
-    {{flash_macro.render_flash(get_flashed_messages())}}
-  </div><!--w940-->
+  <h2>
+    <a href="{{url_for('personal.profile', id=rec.author.id)}}">
+      {{rec.author.username}}
+    </a>
+  </h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-recs'>
-    {{rec_macro.render_rec(rec, moment, current_user)}}
+    {{rec_macro.render_rec(rec, moment, current_user, attributes=False)}}
   </div><!--list-recs-->
   <div class='list-comments'>
     {{comment_macro.render_comment(com, moment, current_user)}}
   </div><!--list-comments-->
-  <div class='w940'>
-    <div class='w940-center'>
-      <form method='POST'>
-        <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
-        {{form.text(class='comment-text-entry')}}
-        <br/>
-        {{form.delete.label(class='reckoner')}} {{form.delete(class='entry')}}
-        <br/>
-        {{form.csrf_token}}
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-    </div><!--w940-center-->
+  <div class='w760'>
+    <form method='POST'>
+      <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
+      {{form.text(class='comment-text-entry')}}
+      <br/>
+      {{form.delete.label(class='reckoner')}} {{form.delete(class='entry')}}
+      <br/>
+      {{form.csrf_token}}
+      {{form.submit(class='reckoner', id='submit')}}
+    </form>
   </div><!--w940-->
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}

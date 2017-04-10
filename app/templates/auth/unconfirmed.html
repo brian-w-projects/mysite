@@ -7,16 +7,12 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Register</h2>
-      <p>
-        {{current_user.username}}, please confirm you account by clicking the link in the e-mail sent to: 
-        {{current_user.email}}
-      </p>
-      <p>
-        <a href="{{url_for('auth.confirmationsent', username=current_user.username,)}}">Resend Email</a>
-      </p>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Register</h2>
+  <p>
+    {{current_user.username}}, please confirm you account by clicking the link in the e-mail sent to: 
+    {{current_user.email}}
+  </p>
+  <p>
+    <a href="{{url_for('auth.confirmationsent', username=current_user.username,)}}">Resend Email</a>
+  </p>
 {% endblock %}

@@ -8,25 +8,24 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Search</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-      <form method='POST'>
-        {{form.type.label(class='reckoner')}} {{form.type(class='entry type')}}
-        <br/>
-        {{form.search.label(class='reckoner')}} {{form.search(class='entry search', id='tags')}}
-        <br/>
-        {{form.user.label(class='reckoner')}} {{form.user(class='entry')}}
-        <br/>
-        {{form.date.label(class='reckoner')}} {{form.date(id='datepicker', class='entry')}}
-        <br/>
-        {{form.csrf_token}}
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Search</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <form method='POST'>
+    {{form.type.label(class='reckoner')}} {{form.type(class='entry type')}}
+    <br/>
+    {{form.search.label(class='reckoner')}} {{form.search(class='entry search', id='tags')}}
+    <br/>
+    {{form.user.label(class='reckoner')}} {{form.user(class='entry')}}
+    <br/>
+    {{form.date.label(class='reckoner')}} {{form.date(id='datepicker', class='entry')}}
+    <br/>
+    {{form.csrf_token}}
+    {{form.submit(class='reckoner', id='submit')}}
+  </form>
   <br/>
+{% endblock %}
+
+{% block supplemental %}
   <div class='list-recs'>
     {{rec_macro.search_initialize()}}
   </div><!--list-recs-->

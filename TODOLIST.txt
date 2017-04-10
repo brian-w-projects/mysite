@@ -6,13 +6,11 @@
 
 Refractoring:
     - rename variables for consistant snake_naming
-        - change a css to remove dotted line under edit button
-        - fix js on token, reloading api doesn't update
-        - remove rec buttons on comment-edit and comment-delete
         - recheck all comment-delete and comment-edit
         
     - complete refractoring
         - remove realign/postclear for realigning elements
+        - redirect back to where they came from after delete/edit
         
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

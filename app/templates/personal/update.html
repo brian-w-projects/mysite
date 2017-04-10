@@ -7,37 +7,33 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Update Profile</h2>
-      {{flash_macro.render_flash(get_flashed_messages())}}
-      <p>Interested in our API? 
-        <a href="{{url_for('personal.token')}}">
-          Click Here
-        </a>
-      </p>
-      <form method="POST">
-        {{form.about_me.label(class='reckoner')}}
-        <p class='chars-format'>Characters Left: <span class='about-me-chars-left'></span></p>
-        <br/>
-        {{form.about_me(class='about-me-text-entry')}}
-        <br/>
-        <div class='fieldset'>
-          {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
-          <br/>
-          {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
-        </div><!--fieldset-->
-        <div class='realign'></div>
-        {{form.updates.label(class='reckoner')}} {{form.updates(checked=current_user.updates,
-          class='click')}}
-        <br/>
-        {{form.limit.label(class='reckoner')}} {{form.limit(class='entry')}}
-        <br/>
-        {{form.csrf_token}}
-        <br/>
-        {{form.submit(class='reckoner', id='submit')}}
-      </form>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Update Profile</h2>
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <p>Interested in our API? 
+    <a href="{{url_for('personal.token')}}">
+      Click Here
+    </a>
+  </p>
+  <form method="POST">
+    {{form.about_me.label(class='reckoner')}}
+    <p class='chars-format'>Characters Left: <span class='about-me-chars-left'></span></p>
+    <br/>
+    {{form.about_me(class='about-me-text-entry')}}
+    <br/>
+    <div class='fieldset'>
+      {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+      <br/>
+      {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+    </div><!--fieldset-->
+    <div class='realign'></div>
+    {{form.updates.label(class='reckoner')}} {{form.updates(checked=current_user.updates,
+      class='click')}}
+    <br/>
+    {{form.limit.label(class='reckoner')}} {{form.limit(class='entry')}}
+    <br/>
+    {{form.csrf_token}}
+    <br/>
+    {{form.submit(class='reckoner', id='submit')}}
+  </form>
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
 {% endblock %}
