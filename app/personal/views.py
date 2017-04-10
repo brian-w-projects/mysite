@@ -27,12 +27,15 @@ def comment_delete(id):
             db.session.add(display_comments)
             db.session.commit()
             flash(u'\u2713 Comment has been deleted')
-            return redirect(url_for('main.highlight', id=display_recs.id))
+            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
+            if 'highlight' in redirect_to:
+                return redirect(url_for(redirect_to, id=display_comments.posted_on))
+            return redirect(url_for(redirect_to))
         else:
             flash(u'\u2717 You must confirm deletion')
-            return redirect(url_for('personal.comment_delete', id=id))
-        return redirect(url_for('personal.comment_delete', id=id))
-    return render_template('personal/comment-delete.html', form=form, rec=display_recs, com=display_comments)
+            return redirect(url_for('personal.comment_delete', id=id, after=request.args.get('after', default=None)))
+    return render_template('personal/comment-delete.html', form=form, rec=display_recs, com=display_comments,
+        after=request.args.get('after', default=None))
 
 @personal.route('/comment-edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -53,18 +56,21 @@ def comment_edit(id):
                 db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment deleted')
-                return redirect(url_for('main.highlight', id=display_recs.id))
             else:
                 display_comments.comment = form.text.data
                 db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment updated')
-                return redirect(url_for('main.highlight', id=display_recs.id))
+            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
+            if 'highlight' in redirect_to:
+                return redirect(url_for(redirect_to, id=display_comments.posted_on))
+            return redirect(url_for(redirect_to))
         else:
             flash(u'\u2717 Comment must contain text')
-            return redirect(url_for('personal.comment_edit', id=id))
+            return redirect(url_for('personal.comment_edit', id=id, after=request.args.get('after', default=None)))
     form.text.data = display_comments.comment
-    return render_template('personal/comment-edit.html', form=form, rec=display_recs, com=display_comments)
+    return render_template('personal/comment-edit.html', form=form, rec=display_recs, com=display_comments,
+        after=request.args.get('after', default=None))
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -83,7 +89,6 @@ def edit(post_id):
                     db.session.add(com)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been deleted')
-                return redirect(url_for('personal.profile'))
             else:
                 display_recs.title = form.title.data
                 display_recs.verification = form.public.data
@@ -93,6 +98,7 @@ def edit(post_id):
                 db.session.add(display_recs)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')
+            return redirect(url_for(request.args.get('after', default='personal.profile').split('_')[0]))
         else:
             if 'title' in form.errors:
                 flash(u'\u2717 Recs must contain a title')
@@ -100,11 +106,11 @@ def edit(post_id):
                 flash(u'\u2717 Recs must contain text')
             if 'delete' in form.errors:
                 flash(u'\u2717 Check both boxes to delete this rec')
-        return redirect(url_for('personal.edit', post_id=post_id))
+            return redirect(url_for('personal.edit', post_id=post_id, after=request.args.get('after', default=None)))
     form.title.data = display_recs.title
     form.public.data = display_recs.verification > 0
     form.text.data = display_recs.text
-    return render_template('personal/edit.html', form=form)
+    return render_template('personal/edit.html', form=form, after=request.args.get('after', default='personal.profile').split('_')[0])
 
 @personal.route('/-followers/<int:id>')
 def followers_ajax(id):

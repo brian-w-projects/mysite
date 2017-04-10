@@ -74,16 +74,22 @@
 
 /*FIELD SET ELEMENTS */
 .fieldset{
+    height: 100%;
+    overflow: hidden;
+}
+
+.fieldset-left{
     border: 1px solid #000000;
     border-radius: 10px;
     float: left;
-    text-align: right;
-    width: 400px;
+    padding-left: 10px;
 }
 
-.realign{
-    clear:both;
+.fieldset-right{
+    float: right;
+    width: 340px;
 }
+
 /*FIELD SET ELEMENTS */
 
 /*BUTTON SIZING*/

@@ -119,7 +119,7 @@ def search_ajax():
     return search_query()
     
 @main.route('/-additional-results')
-def more_ajax():
+def search_more_ajax():
     return search_query(page = int(request.args.get('page')))
 
 def search_query(page = 1):

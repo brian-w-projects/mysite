@@ -13,14 +13,14 @@
         {% if current_user.is_authenticated %}
           {% if current_user.posts.filter_by(id=com.posted_on).first() %}
             <li>
-              <a href="{{url_for('personal.comment_delete', id=com.id)}}">
+              <a href="{{url_for('personal.comment_delete', id=com.id, after=request.url_rule.endpoint)}}">
                 Delete
               </a>
             </li>
           {% endif %}
           {% if current_user.id == com.comment_by %}
             <li>
-              <a href="{{url_for('personal.comment_edit', id=com.id)}}">
+              <a href="{{url_for('personal.comment_edit', id=com.id, after=request.url_rule.endpoint)}}">
                 Edit
               </a>
             </li>

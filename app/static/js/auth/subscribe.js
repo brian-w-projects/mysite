@@ -6,7 +6,7 @@
     var $username = $('.username');
     var $email = $('.email');
     var $password = $('#password');
-    var $password_confirm = $('#password-confirm');
+    var $password_confirm = $('#password_confirm');
     
     var $username_exists = $('.name-valid');
     var $email_exists = $('.email-valid');

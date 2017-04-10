@@ -1,8 +1,12 @@
-(function($, window, docuement){
+(function($, window, document){
+    
+    var $flash_close = $('.flash-close');
     
     $(function(){
-        $('.flash-close').on('click', function(){
-            $(this).parent().hide();
+        
+        $flash_close.on('click', function(){
+            console.log('here');
+            $(this).parent().parent().hide();
         });
     });
 

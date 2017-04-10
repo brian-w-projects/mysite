@@ -4,8 +4,6 @@
 {% block head %}
   {{super()}}
   <title>Recommend Me - Edit Rec</title>
-  <link href="{{url_for('static', filename='css/personal/edit.css')}}" 
-    type='text/css' rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
@@ -20,12 +18,13 @@
     <p class='chars-format'>Characters Left: <span class='rec-chars-left'></span></p>
     {{form.text(class='rec-text-entry')}}
     <br/>
-    <div class='edit-fieldset'>
-      {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
-      <br/>
-      {{form.delete_confirm.label(class='reckoner')}} {{form.delete_confirm(class='click')}}
+    <div class='fieldset'>
+      <div class='fieldset-left'>
+        {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
+        <br/>
+        {{form.delete_confirm.label(class='reckoner')}} {{form.delete_confirm(class='click')}}
+      </div><!--fieldset-left-->
     </div><!--fieldset-->
-    <div class='realign'></div>
     {{form.csrf_token}}
     <br/>
     {{form.submit(class='reckoner', id='submit')}}

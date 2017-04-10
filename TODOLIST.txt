@@ -5,12 +5,10 @@
 
 
 Refractoring:
-    - rename variables for consistant snake_naming
-        - recheck all comment-delete and comment-edit
-        
     - complete refractoring
-        - remove realign/postclear for realigning elements
-        - redirect back to where they came from after delete/edit
+        - goto user profile with username and not id
+        - when clicked in text box and highlight submit form moves
+            (but not when text box is not clicked)
         
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

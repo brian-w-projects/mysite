@@ -1,16 +1,18 @@
 {% macro render_flash(messages) %}
   {% if messages %}
-    <script src="{{url_for('static', filename='js/macro/flash.js')}}"></script>
-    <div class='flash-border'>
-      <div class='flash-messages'>
-        {% for message in messages %}
-          <p class='flash-message'>{{ message }}</p>
-        {% endfor %}
-      </div><!--flash-messages-->
-      <div class='flash-close'>
-        <p><a href='#'><i class="fa fa-window-close" aria-hidden="true"></i></a></p>
-      </div><!--flash-close-->
-    </div><!--flash-border-->
+    <div class='flash-entire'>
+      <div class='flash-border'>
+        <div class='flash-messages'>
+          {% for message in messages %}
+            <p class='flash-message'>{{ message }}</p>
+          {% endfor %}
+        </div><!--flash-messages-->
+        <div class='flash-close'>
+          <p><a class='icon-link' href='#'><i class="fa fa-window-close" aria-hidden="true"></i></a></p>
+        </div><!--flash-close-->
+      </div><!--flash-border-->
     <br/>
+    </div><!--flash-entire-->
+    <script src="{{url_for('static', filename='js/macro/flash.js')}}"></script>
   {% endif %}
 {% endmacro %}

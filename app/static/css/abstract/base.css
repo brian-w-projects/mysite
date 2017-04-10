@@ -169,6 +169,12 @@ nav a{
 }
 /*PICTURE FORMATTING*/
 
+/*ICON LINKS*/
+.icon-link, .icon-link:hover{
+    border: 0px;
+}
+/*ICON LINKS*/
+
 /*WIDTH DIVISIONS*/
 .w220{
     float: left;

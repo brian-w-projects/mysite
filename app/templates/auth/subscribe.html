@@ -17,27 +17,22 @@
   </p>
   <form method="POST">
     {{form.username.label(class='reckoner')}} {{form.username(class='entry username')}}
-    <div class='exists-container'>
-      <span class='name-valid'></span>
-    </div><!--exists-container-->
+    <span class='name-valid'></span>
     <br/>
     {{form.email.label(class='reckoner')}} {{form.email(class='entry email')}}
-    <div class='exists-container'>
-      <span class='email-valid'></span>
-    </div><!--exists-container-->
+    <span class='email-valid'></span>
     <br/>
     <div class='fieldset'>
-      {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
-      <br/>
-      {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+      <div class='fieldset-left'>
+        {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+        <br/>
+        {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+      </div><!--fieldset-left-->
+      <div class='fieldset-right'>
+        <span class='password-valid'></span>
+        <span class='password-confirm-valid'></span>
+      </div><!--fieldset-right-->
     </div><!--fieldset-->
-    <div class='exists-container'>
-      <span class='password-valid'></span>
-    </div><!--exists-container-->
-    <div class='exists-container'>
-      <span class='password-confirm-valid'></span>
-    </div>
-    <div class='realign'></div>
     {{form.token.label(class='reckoner')}} {{form.token(class='entry')}}
     <br/>
     {{form.updates.label(class='reckoner')}} {{form.updates(checked=True, class='click')}}
