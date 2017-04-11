@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% extends 'abstract/one-column.html' %}
-{% import 'macros/mod-macro.html' as mod_macro %}
+{% import 'macros/admin/moderator-info-macro.html' as moderator_info_macro %}
 
 {% block head %}
   {{super()}}
@@ -36,5 +36,5 @@
     </div><!--data-box-->
   </div><!--outer-data-box-->
   <h2>Total mods: {{data['mods_count']}}</h2>
-  {{mod_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
+  {{moderator_info_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
 {% endblock %}

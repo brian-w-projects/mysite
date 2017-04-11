@@ -3,16 +3,14 @@
 
 {% block head %}
   {{super()}}
-  <title>Recommend Me - Rec {{rec.author.id}}</title>
+  <title>Recommend Me - Rec {{rec.id}}</title>
 {% endblock %} 
 
 {% block maincontent %}
-  <h2>
-    <a href="{{url_for('personal.profile', id=rec.author.id)}}">
-      {{rec.author.username}}
-    </a>
-  </h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>
+    <a href="{{url_for('personal.profile', id=rec.author.id)}}">{{rec.author.username}}</a>
+  </h2>
   {{button_macro.follow_button(rec.author, current_user)}}
   {{button_macro.initialize_follow_button()}}
   <br/>
@@ -25,20 +23,19 @@
   <div class='list-comments'>
     {{comment_macro.initialize_comments(d_c, moment, current_user)}}
   </div><!--list-comments-->
-  <div class='w760'>
-    {% if current_user.is_authenticated %}
+  {% if current_user.is_authenticated %}
+    <div class='w760'>
       <h2>Comment</h2>
       <form method='POST'>
-        <p class='chars-format'>Characters Left: <span class='comment-chars-left'>250</span></p>
+        <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
         {{form.text(class='comment-text-entry')}}
         <br/>
         {{form.csrf_token}}
         {{form.submit(class='reckoner', id='submit')}}
       </form>
-    {% endif %}
-  </div><!--w760-->
+    </div><!--w760-->
+  {% endif %}
   <script>
-    var id = {{rec.author.id}};
     var goto_comment = "{{url_for('main.load_comments', id=rec.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
   </script>

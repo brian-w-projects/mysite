@@ -53,10 +53,10 @@
 
 {% macro initialize_recs(display, moment, current_user, attributes=True) %}
   {{ajax(display, moment, current_user, attributes)}}
-  {% if display.pages != display.page %}
+  {% if display.pages != display.page and display.pages != 0 %}
     <p id='ajax-recs' class='load-more'>Load More</p>
   {% endif %}
-  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, attributes=True) %}
@@ -67,5 +67,5 @@
 
 {% macro search_initialize() %}
   <p id='ajax-recs' class='load-more'>Load More</p>
-  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}

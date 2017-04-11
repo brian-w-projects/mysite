@@ -61,9 +61,9 @@ def comment_edit(id):
                 db.session.add(display_comments)
                 db.session.commit()
                 flash(u'\u2713 Comment updated')
+            if 'highlight' in request.args.get('after', default='personal.profile'):
+                return redirect(url_for(request.args.get('after', default='personal.profile'), id=display_comments.posted_on))
             redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
-            if 'highlight' in redirect_to:
-                return redirect(url_for(redirect_to, id=display_comments.posted_on))
             return redirect(url_for(redirect_to))
         else:
             flash(u'\u2717 Comment must contain text')
@@ -98,7 +98,10 @@ def edit(post_id):
                 db.session.add(display_recs)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')
-            return redirect(url_for(request.args.get('after', default='personal.profile').split('_')[0]))
+            if 'highlight' in request.args.get('after', default='personal.profile'):
+                return redirect(url_for(request.args.get('after', default='personal.profile'), id=post_id))
+            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
+            return redirect(url_for(redirect_to))
         else:
             if 'title' in form.errors:
                 flash(u'\u2717 Recs must contain a title')

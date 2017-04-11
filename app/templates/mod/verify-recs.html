@@ -12,8 +12,7 @@
 
 {% block supplemental %}
   <div class='list-recs'>
-    {{moderator_rec_macro.initialize_moderate(display, moment, current_user)}}
-    {{button_macro.initialize_mod_button()}}
+    {{mod_rec_macro.initialize_moderate(display, moment, current_user)}}
   </div><!--list-recs-->
    <script>
     var goto_rec = "{{url_for('mod.verify_ajax')}}";

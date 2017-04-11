@@ -8,25 +8,24 @@
 
 {% block maincontent %}
   <h2>Go and have an adventure. When you are done, Rec it to everyone.</p>
-  <img src="{{url_for('static', filename='images/main/about-rec.jpg')}}" class='align-center large-splash'/>
+  <img src="{{url_for('static', filename='images/main/about-rec.jpg')}}" 
+    class='align-center large-splash'/>
   <h2>
-    <a href="{{url_for('auth.subscribe')}}">
-          Ready to Start? Register Here
-    </a>
+    <a href="{{url_for('auth.subscribe')}}">Ready to Start? Register Here</a>
   </h2>
 {% endblock %}
 
 {% block c1 %}
-  <h3 class='reckoner'>Step 1</h3>
+  <h2 class='reckoner'>Step 1</h2>
   <p>
-    Have an adventure and Rec it for everyone to see. Your adventure can be
-    anything. Travel to a new location! Try a new restaurant! Experience a
-    new technology. Whatever it is, you can Rec it!
+    Have an adventure and Rec it for everyone to see. Travel to a new location! 
+    Try a new restaurant! Experience a new technology! Whatever it is, you can 
+    Rec it!
   </p>
 {% endblock %}
 
 {% block c2 %}
-  <h3 class='reckoner'>Step 2</h3>
+  <h2 class='reckoner'>Step 2</h2>
   <p>
     Find Recs that inspire you to have a new adventure. Find the people whose
     journeys amaze you. Connect with users around the world. Find others
@@ -35,23 +34,18 @@
 {% endblock %}
 
 {% block c3 %}
-  <h3 class='reckoner'>Step 3</h3>
+  <h2 class='reckoner'>Step 3</h2>
   <p>
     Live a better life! Find the adventure inside you. Your Recs can be public
-    or private so be sure to Rec everything! 
+    or private so be sure to Rec everything! With Recommend Me, every day
+    becomes an adventure!
   </p>
 {% endblock %}
 
 {% block postcontent %}
-  <div class='w940'>
-    <div class='w940-center'>
-      <h2>Check out some recent Recs</h2>
-    </div><!--w940-center-->
-  </div><!--w940-->
+  <h2>Check out some recent Recs</h2>
   <div class='list-recs'>
-    {% if display.items|length > 0 %}
-      {{rec_macro.initialize_recs(display, moment, current_user)}}
-    {% endif %}
+    {{rec_macro.initialize_recs(display, moment, current_user)}}
   </div><!--list-recs-->
   <script>
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block maincontent %}
-    <h2>Surprise Me</h2>
+  <h2>Surprise Me</h2>
 {% endblock %}
 
 {% block supplemental %}
@@ -15,7 +15,7 @@
     {{rec_macro.initialize_recs(display, moment, current_user)}}
   </div><!--list-recs-->
   <script>
-    var goto_rec = "{{url_for('main.surprise_ajax')}}"
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    var goto_rec = "{{url_for('main.surprise_ajax')}}"
   </script>
 {% endblock %}

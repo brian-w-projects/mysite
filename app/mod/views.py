@@ -40,7 +40,7 @@ def verify_ajax():
         .filter_by(verification=1)\
         .order_by(Recommendation.timestamp.asc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/moderator-rec-macro.html', 'ajax')        
+    to_return = get_template_attribute('macros/moderator/mod-rec-macro.html', 'ajax')        
     return jsonify({'last': display_recs.page == display_recs.pages,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
@@ -84,7 +84,7 @@ def verify_com_ajax():
         .filter(Comments.verification == 1)\
         .order_by(Comments.timestamp.asc())\
         .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/moderator-comment-macro.html', 'ajax')
+    to_return = get_template_attribute('macros/moderator/mod-comment-macro.html', 'ajax')
     return jsonify({'last': display_comments.page == display_comments.pages,
         'ajax_request': to_return(display_comments, _moment, current_user)}) 
 

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% extends 'abstract/one-column.html' %}
+{% import 'macros/admin/rec-action-macro.html' as rec_action_macro %}
+{% import 'macros/admin/comment-action-macro.html' as comment_action_macro %}
 
 {% block head %}
   {{super()}}
@@ -16,10 +18,10 @@
 
 {% block supplemental %}
   <div class='list-recs'>
-    {{mod_rec_action_macro.initialize_rec_moderations(mod_recs, moment, current_user)}}
+    {{rec_action_macro.initialize_rec_moderations(mod_recs, moment, current_user)}}
   </div><!--list-recs-->
   <div class='list-comments'>
-    {{mod_comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
+    {{comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
   </div><!--list-comments-->
   <script>
     var goto_rec = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";

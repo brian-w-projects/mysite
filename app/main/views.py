@@ -3,26 +3,14 @@ from . import main
 from .forms import SearchForm, CommentForm
 from .. import db
 from ..models import Users, Recommendation, Comments
-from flask_login import login_required, current_user
-from ..decorators import is_administrator
-from ..email import send_email
-from random import randint, sample
 from datetime import datetime, timedelta
+from flask_login import login_required, current_user
 from flask_moment import _moment
-from sqlalchemy.sql.expression import func, select, or_
-
-@main.route('/rec-inline-comment-ajax')
-def rec_inline_comment_ajax():
-    id = int(request.args.get('id'))
-    display_comments = Comments.query\
-        .filter_by(posted_on = id)\
-        .filter(Comments.verification != 0)\
-        .order_by(Comments.timestamp.desc())\
-        .paginate(1, per_page=5, error_out=False)
-    if len(display_comments.items) == 0:
-        return jsonify({'ajax_request': ''}) 
-    to_return = get_template_attribute('macros/comment-macro.html', 'ajax_div_wrapper')
-    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user)}) 
+from sqlalchemy.sql.expression import func, or_
+# to delete
+# from ..decorators import is_administrator
+# from ..email import send_email
+# from random import randint, sample
 
 @main.route('/about')
 def about():
@@ -57,13 +45,13 @@ def highlight(id):
         .filter(Recommendation.verification != -1)\
         .filter_by(id=id)\
         .first_or_404()
-    if display_recs.verification == 0 and (not current_user.is_authenticated or display_recs.author_id != current_user.id):
+    if display_recs.verification == 0 and display_recs.author_id != current_user.id:
         abort(403)
     display_comments = display_recs.comments\
         .filter(Comments.verification > 0)\
         .order_by(Comments.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
-    if current_user.is_authenticated and display_recs.author_id == current_user.id:
+    if display_recs.author_id == current_user.id:
         display_recs.new_comment = False
         db.session.add(display_recs)
         db.session.commit()
@@ -87,10 +75,9 @@ def highlight(id):
 
 @main.route('/')
 def index():
-    display_recs = []
+    if current_user.is_administrator():
+        return redirect(url_for('admin.admin_splash'))
     if current_user.is_authenticated:
-        if current_user.is_administrator():
-            return redirect(url_for('admin.admin_splash'))
         my_list = [max(x.title.split(), key=len) for x in current_user.posts\
             .order_by(Recommendation.timestamp.desc())\
             .limit(10)]
@@ -105,6 +92,8 @@ def index():
             .limit(5)\
             .from_self()\
             .paginate(1, per_page=5, error_out=False)
+    else:
+        display_recs = None
     return render_template('main/index.html', display = display_recs)
 
 @main.route('/-search', methods=['POST'])
@@ -141,7 +130,8 @@ def search_query(page = 1):
             .order_by(Recommendation.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-        return jsonify({'last': display_recs.page == display_recs.pages,
+        return jsonify({
+            'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
             'ajax_request': to_return(display_recs, _moment, current_user)}) 
     else:
         display_comments = Comments.query\
@@ -162,7 +152,8 @@ def search_query(page = 1):
             .order_by(Comments.timestamp.desc())\
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
-        return jsonify({'last': display_comments.page == display_comments.pages,
+        return jsonify({
+            'last': display_comments.page == display_comments.pages or display_comments.pages == 0,
             'ajax_request': to_return(display_comments, _moment, current_user)}) 
     
 @main.route('/search')
@@ -181,7 +172,8 @@ def surprise_ajax():
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({'last': display_recs.page == display_recs.pages,
+    return jsonify({
+        'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @main.route('/surprise')
@@ -195,3 +187,25 @@ def surprise():
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('main/surprise.html', display=display_recs)
+
+# Alternate Profile URL
+@main.route('/u/<string:username>')
+def find_user(username):
+    user = Users.query\
+        .filter_by(username=username)\
+        .first_or_404()
+    return redirect(url_for('personal.profile', id=user.id))
+
+# rec-macro ajax request
+@main.route('/rec-inline-comment-ajax')
+def rec_inline_comment_ajax():
+    id = int(request.args.get('id'))
+    display_comments = Comments.query\
+        .filter_by(posted_on = id)\
+        .filter(Comments.verification != 0)\
+        .order_by(Comments.timestamp.desc())\
+        .paginate(1, per_page=5, error_out=False)
+    if len(display_comments.items) == 0:
+        return jsonify({'ajax_request': ''}) 
+    to_return = get_template_attribute('macros/comment-macro.html', 'ajax_div_wrapper')
+    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user)}) 

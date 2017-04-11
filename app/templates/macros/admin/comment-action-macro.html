@@ -19,7 +19,7 @@
   {% if mod_coms.pages != mod_coms.page %}
     <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/speciality/ajax-comment.js')}}"></script>
+  <script src="{{url_for('static', filename='js/mod/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(mod_coms, moment, current_user) %}

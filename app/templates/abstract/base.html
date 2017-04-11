@@ -2,16 +2,17 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/rec-macro.html' as rec_macro %}
-  {% import 'macros/comment-macro.html' as comment_macro %}
-  {% import 'macros/following-macro.html' as following_macro %}
-  {% import 'macros/followed-macro.html' as followed_macro %}
   {% import 'macros/button-macro.html' as button_macro %}
-  {% import 'macros/moderator-rec-macro.html' as moderator_rec_macro %}
-  {% import 'macros/moderator-comment-macro.html' as moderator_comment_macro %}
+  {% import 'macros/comment-macro.html' as comment_macro %}
   {% import 'macros/flash-macro.html' as flash_macro %}
-  {% import 'macros/mod-rec-action-macro.html' as mod_rec_action_macro %}
-  {% import 'macros/mod-comment-action-macro.html' as mod_comment_action_macro %}
+  {% import 'macros/followed-macro.html' as followed_macro %}
+  {% import 'macros/following-macro.html' as following_macro %}
+  {% import 'macros/rec-macro.html' as rec_macro %}
+  {% if current_user.is_moderator %}
+    {% import 'macros/moderator/mod-comment-macro.html' as mod_comment_macro %}
+    {% import 'macros/moderator/mod-rec-macro.html' as mod_rec_macro %}
+  {% endif %}
+
   <head>
     {% block head %}
       <meta charset='utf-8'>

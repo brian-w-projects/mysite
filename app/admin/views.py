@@ -56,7 +56,7 @@ def mod_com_ajax(id):
     mod_coms = mod.com_mods\
         .order_by(ComModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/mod-comment-action-macro.html', 'ajax')
+    to_return = get_template_attribute('macros/admin/comment-action-macro.html', 'ajax')
     return jsonify({'last': mod_coms.page == mod_coms.pages,
         'ajax_request': to_return(mod_coms, _moment, current_user)}) 
 
@@ -72,7 +72,7 @@ def mod_rec_ajax(id):
     mod_recs = mod.rec_mods\
         .order_by(RecModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/mod-rec-action-macro.html', 'ajax')
+    to_return = get_template_attribute('macros/admin/rec-action-macro.html', 'ajax')
     return jsonify({'last': mod_recs.page == mod_recs.pages,
         'ajax_request': to_return(mod_recs, _moment, current_user)}) 
 

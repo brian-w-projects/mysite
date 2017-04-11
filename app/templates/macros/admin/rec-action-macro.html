@@ -19,7 +19,7 @@
   {% if mod_recs.pages != mod_recs.page %}
     <p id='ajax_recs' class='loadMore black_hover_link'>Load More</p>
   {% endif %}
-  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(mod_recs, moment, current_user) %}

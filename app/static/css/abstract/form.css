@@ -35,14 +35,26 @@
 .about-me-text-entry, .comment-text-entry, .rec-text-entry{
     border: 1px solid #000000;
     border-radius: 10px;
-    height: 200px;
+    padding: 10px;
     resize: none;
     width: 600px;
 }
 
+.about-me-text-entry{
+    height: 125px;
+}
+
+.comment-text-entry{
+    height: 80px;
+}
+
+.rec-text-entry{
+    height: 215px;
+}
+
 .chars-format{
-    display: inline;
-    margin-left: 20px;
+    display: inline-block;
+    margin: 0 0 0 20px;
 }
 /*TEXT AREA FORM ELEMENTS*/
 

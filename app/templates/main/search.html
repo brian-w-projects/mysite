@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2>Search</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>Search</h2>
   <form method='POST'>
     {{form.type.label(class='reckoner')}} {{form.type(class='entry type')}}
     <br/>
@@ -33,10 +33,10 @@
     {{comment_macro.search_initialize()}}
   </div><!--list-comments-->
   <script>
-    var goto_initial = "{{url_for('main.search_ajax')}}";
     var goto_comment = "{{url_for('main.search_more_ajax')}}";
-    var goto_rec = "{{url_for('main.search_more_ajax')}}";
+    var goto_initial = "{{url_for('main.search_ajax')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    var goto_rec = "{{url_for('main.search_more_ajax')}}";
   </script>
   <script src="{{url_for('static', filename='js/main/search.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>

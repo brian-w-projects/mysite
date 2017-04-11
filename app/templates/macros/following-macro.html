@@ -17,7 +17,7 @@
   {% if display.pages != display.page %}
     <a><p id='ajax-recs' class='load-more'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/speciality/ajax-rec.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, Recommendation) %}

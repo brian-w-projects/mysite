@@ -6,7 +6,7 @@
         
         $flash_close.on('click', function(){
             console.log('here');
-            $(this).parent().parent().hide();
+            $(this).parent().hide();
         });
     });
 

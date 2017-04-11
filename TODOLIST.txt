@@ -5,10 +5,14 @@
 
 
 Refractoring:
-    - complete refractoring
-        - goto user profile with username and not id
-        - when clicked in text box and highlight submit form moves
-            (but not when text box is not clicked)
+    - ABSTRACT
+    - ADMIN
+    - AUTH
+    - ERRORS
+    - MACROS
+    - MAIN - FINISHED FIRST PASS
+    - MOD
+    - PERSONAL
         
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

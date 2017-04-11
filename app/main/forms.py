@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, TextAreaField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, DateField, TextAreaField, SelectField
 from wtforms import validators
 
 class SearchForm(FlaskForm):
