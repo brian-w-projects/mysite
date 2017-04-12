@@ -7,14 +7,14 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2>Recover Username</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>Recover Username</h2>
   <form method='POST'>
     {{form.email.label(class='reckoner')}} {{form.email(class='entry')}}
     <br/>
     {{form.recaptcha}}
     <br/>
     {{form.csrf_token}}
-    {{form.submit(class='reckoner entry', id='submit')}}
+    {{form.submit(class='reckoner', id='submit')}}
   </form>
 {% endblock %}

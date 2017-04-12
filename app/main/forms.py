@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, TextAreaField, SelectField
-from wtforms import validators
+from wtforms import StringField, SubmitField, DateField, TextAreaField, SelectField, validators
 
 class SearchForm(FlaskForm):
     type = SelectField('Search For: ', choices=[('Recs', 'Recs'), ('Comments', 'Comments')])

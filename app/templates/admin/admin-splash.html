@@ -1,40 +1,45 @@
 <!DOCTYPE html>
-{% extends 'abstract/one-column.html' %}
+{% extends 'abstract/three-column.html' %}
 {% import 'macros/admin/moderator-info-macro.html' as moderator_info_macro %}
 
 {% block head %}
   {{super()}}
   <title>Recommend Me - Admin</title>
-  <link href="{{url_for('static', filename='css/admin/admin-splash.css')}}" type='text/css', rel='stylesheet'/>
+  <link href="{{url_for('static', filename='css/macros/moderator-info.css')}}" type='text/css', rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
+  {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>Admin</h2>
-  <div class='outer-data-box'>
-    <div class='data-box w220'>
-      <p>Total account: {{data['count']}}</p>
-      <p>Recent accounts: {{data['recent_account']}}</p>
-      <p>Recent logins: {{data['recent_logins']}}</p>
-    </div><!--data-box-->
-    <div class='data-box w220'>
-      <p>Total recs: {{data['total_recs']}}</p>
-      <p>Recent recs: {{data['recent_recs']}}</p>
-      <p>
-        <a href="{{url_for('mod.verify')}}">
-          Recs to Verify: {{data['recs_to_mod']}}
-        </a>
-      </p>
-    </div><!--data-box-->
-    <div class='data-box w220'>
-      <p>Total comments: {{data['total_comments']}}</p>
-      <p>Recent comments: {{data['recent_comments']}}</p>
-      <p>
-        <a href="{{url_for('mod.verify_comments')}}">
-          Comments to Verify: {{data['comments_to_mod']}}
-        </a>
-      </p>
-    </div><!--data-box-->
-  </div><!--outer-data-box-->
+{% endblock %}
+
+{% block c1 %}
+    <p>Total account: {{data['count']}}</p>
+    <p>Recent accounts: {{data['recent_account']}}</p>
+    <p>Recent logins: {{data['recent_logins']}}</p>
+{% endblock %}
+
+{% block c2 %}
+  <p>Total recs: {{data['total_recs']}}</p>
+  <p>Recent recs: {{data['recent_recs']}}</p>
+  <p>
+    <a href="{{url_for('mod.verify')}}">
+      Recs to Verify: {{data['recs_to_mod']}}
+    </a>
+  </p>
+{% endblock %}
+
+{% block c3 %}
+  <p>Total comments: {{data['total_comments']}}</p>
+  <p>Recent comments: {{data['recent_comments']}}</p>
+  <p>
+    <a href="{{url_for('mod.verify_comments')}}">
+      Comments to Verify: {{data['comments_to_mod']}}
+    </a>
+  </p>
+{% endblock %}
+
+{% block postcontent %}
   <h2>Total mods: {{data['mods_count']}}</h2>
   {{moderator_info_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
 {% endblock %}

@@ -1,12 +1,24 @@
-from flask import render_template, request, redirect, url_for, session, flash, jsonify
+from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from . import auth
 from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
-from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users
 from .. import db
-from datetime import datetime
+from ..models import Users
 from ..email import send_email
-import json
+from datetime import datetime
+from flask_login import current_user, login_required, login_user, logout_user
+
+    
+@auth.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        pass
+    elif current_user.confirm(token):
+        pass
+    else:
+        return redirect(url_for('auth.confirmationsent'))
+    flash(u'\u2713 Your account has been confirmed!')
+    return(redirect(url_for('personal.profile')))
 
 @auth.route('/confirmationsent/<username>')
 @login_required
@@ -16,14 +28,16 @@ def confirmationsent(username):
     token=current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
         user=username, token=token)
-    return render_template('auth/confirmationsent.html')
+    return render_template('auth/confirmation-sent.html')
 
 @auth.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     form = PasswordReset(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query.filter_by(username=form.username.data).first()
+            check_user = Users.query\
+                .filter_by(username=form.username.data)\
+                .first()
             if check_user is not None:
                 reset_password = Users.get_secret_key()
                 check_user.password = reset_password
@@ -42,7 +56,7 @@ def forgot_password():
                 flash(u'\u2717 Please enter email')
             if 'recaptcha' in form.errors:
                 flash(u'\u2717 Please validate reCAPTCHA')
-        return redirect(url_for('auth.forgot'))
+        return redirect(url_for('auth.forgot_password'))
     return render_template('auth/forgot-password.html', form=form)
 
 @auth.route('/forgot-username', methods=['GET', 'POST'])
@@ -50,7 +64,9 @@ def forgot_username():
     form = UsernameRecover(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query.filter_by(email=form.email.data).first()
+            check_user = Users.query\
+                .filter_by(email=form.email.data)\
+                .first()
             if check_user is not None:
                 send_email(check_user.email, 'Your Username', 'auth/email/username', user=check_user.username)
                 flash(u'\u2713 Your username has been e-mailed to you')
@@ -70,24 +86,27 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query.filter_by(username=form.username.data).first()
-            if check_user.invalid_logins >= 5:
-                flash(u'\u2717 Account has been locked. Please reset password')
-                return redirect(url_for('auth.forgot', _scheme='https', _external=True))
-            if check_user is not None and check_user.verify_password(form.password.data):
-                login_user(check_user)
-                check_user.invalid_logins = 0
-                check_user.last_login = datetime.utcnow()
-                db.session.add(check_user)
-                db.session.commit()
-                return redirect(request.args.get('next') or url_for('main.index'))
-            elif check_user is not None:
-                check_user.invalid_logins += 1
-                db.session.add(check_user)
-                db.session.commit()
+            check_user = Users.query\
+                .filter_by(username=form.username.data)\
+                .first()
+            if check_user is not None:
                 if check_user.invalid_logins >= 5:
                     flash(u'\u2717 Account has been locked. Please reset password')
                     return redirect(url_for('auth.forgot'))
+                if check_user.verify_password(form.password.data):
+                    login_user(check_user)
+                    check_user.invalid_logins = 0
+                    check_user.last_login = datetime.utcnow()
+                    db.session.add(check_user)
+                    db.session.commit()
+                    return redirect(request.args.get('next') or url_for('main.index'))
+                else:
+                    check_user.invalid_logins += 1
+                    db.session.add(check_user)
+                    db.session.commit()
+                    if check_user.invalid_logins >= 5:
+                        flash(u'\u2717 Account has been locked. Please reset password')
+                        return redirect(url_for('auth.forgot'))
         flash(u'\u2717 Invalid Login')
         return redirect(url_for('auth.login'))
     return render_template('auth/login.html', form=form)
@@ -101,7 +120,9 @@ def logout():
 @auth.route('/-subscribe')
 def subscribe_ajax():
     username = request.args.get('username').strip().lower()
-    if Users.query.filter_by(username=username).first():
+    if Users.query\
+        .filter_by(username=username)\
+        .first():
         return jsonify({'exists':True})
     else:
         return jsonify({'exists':False})
@@ -109,7 +130,9 @@ def subscribe_ajax():
 @auth.route('/-subscribe-email')
 def subscribe_email_ajax():
     email = request.args.get('email').strip().lower()
-    if Users.query.filter_by(email=email).first():
+    if Users.query\
+        .filter_by(email=email)\
+        .first():
         return jsonify({'exists':True})
     else:
         return jsonify({'exists':False})
@@ -121,8 +144,12 @@ def subscribe():
         username_verify = form.username.data.strip().lower()
         email_verify = form.email.data.strip().lower()
         if form.validate():
-            check_user = Users.query.filter_by(username=username_verify).first()
-            check_email = Users.query.filter_by(email=email_verify).first()
+            check_user = Users.query\
+                .filter_by(username=username_verify)\
+                .first()
+            check_email = Users.query\
+                .filter_by(email=email_verify)\
+                .first()
             if check_user is None and check_email is None:
                 user = Users(username=username_verify, email=email_verify, password=form.password.data, updates=form.updates.data)
                 db.session.add(user)
@@ -150,18 +177,6 @@ def subscribe():
                 flash(u'\u2717 Please validate reCAPTCHA')
         return redirect(url_for('auth.subscribe'))
     return render_template('auth/subscribe.html', form=form)
-    
-@auth.route('/confirm/<token>')
-@login_required
-def confirm(token):
-    if current_user.confirmed:
-        pass
-    elif current_user.confirm(token):
-        pass
-    else:
-        return redirect(url_for('auth.confirmationsent'))
-    flash(u'\u2713 Your account has been confirmed!')
-    return(redirect(url_for('personal.profile')))
 
 @auth.route('/unconfirmed')
 @login_required

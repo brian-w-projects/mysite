@@ -1,16 +1,12 @@
-from flask import render_template, session, redirect, url_for, request, abort, flash, jsonify, get_template_attribute
+from flask import abort, flash, get_template_attribute, jsonify, redirect, render_template, request, session, url_for
 from . import main
-from .forms import SearchForm, CommentForm
+from .forms import CommentForm, SearchForm
 from .. import db
-from ..models import Users, Recommendation, Comments
+from ..models import Comments, Recommendation, Users
 from datetime import datetime, timedelta
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy.sql.expression import func, or_
-# to delete
-# from ..decorators import is_administrator
-# from ..email import send_email
-# from random import randint, sample
 
 @main.route('/about')
 def about():

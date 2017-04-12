@@ -1,13 +1,11 @@
-from flask import render_template, request, redirect, url_for, session, abort, flash, jsonify, get_template_attribute
+from flask import get_template_attribute, jsonify, render_template, request
 from . import admin
-# from .forms import 
-from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations
-from ..decorators import is_administrator
 from .. import db
+from ..decorators import is_administrator
 from ..email import send_email
+from ..models import Comments, ComModerations, RecModerations, Recommendation, Users
 from datetime import datetime, timedelta
-import json
+from flask_login import current_user, login_required
 from flask_moment import _moment
 
 @admin.route('/splash')
@@ -57,7 +55,8 @@ def mod_com_ajax(id):
         .order_by(ComModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/comment-action-macro.html', 'ajax')
-    return jsonify({'last': mod_coms.page == mod_coms.pages,
+    return jsonify({
+        'last': mod_coms.page == mod_coms.pages or mod_coms.pages == 0,
         'ajax_request': to_return(mod_coms, _moment, current_user)}) 
 
 @admin.route('/-mod-history-rec-ajax/<int:id>')
@@ -73,7 +72,8 @@ def mod_rec_ajax(id):
         .order_by(RecModerations.timestamp.desc())\
         .paginate(page=page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/rec-action-macro.html', 'ajax')
-    return jsonify({'last': mod_recs.page == mod_recs.pages,
+    return jsonify({
+        'last': mod_recs.page == mod_recs.pages or mod_recs.pages == 0,
         'ajax_request': to_return(mod_recs, _moment, current_user)}) 
 
 @admin.route('/mod-history/<int:id>')

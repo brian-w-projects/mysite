@@ -16,10 +16,10 @@
 
 {% macro initialize_comment_moderations(mod_coms, moment, current_user) %}
   {{ajax(mod_coms, moment, current_user)}}
-  {% if mod_coms.pages != mod_coms.page %}
+  {% if mod_coms.pages != mod_coms.page and mod_coms.pages != 0 %}
     <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/mod/comment.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(mod_coms, moment, current_user) %}

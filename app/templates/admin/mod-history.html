@@ -9,9 +9,7 @@
 {% endblock %}
 
 {% block maincontent %}
-  <div class='button-div'>
     <button class='reckoner button-width-set' id='submit'>Comments</button>
-  </div><!--button-div-->
   <br/>
   <br/>
 {% endblock %}
@@ -24,9 +22,9 @@
     {{comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
   </div><!--list-comments-->
   <script>
-    var goto_rec = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";
     var goto_comment = "{{url_for('admin.mod_com_ajax', id=mod.id)}}";
-    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}";
+    var goto_rec = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";
   </script>
   <script src="{{url_for('static', filename='js/speciality/rec-comment-swap.js')}}"></script>
 {% endblock %}

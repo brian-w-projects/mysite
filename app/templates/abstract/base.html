@@ -12,7 +12,6 @@
     {% import 'macros/moderator/mod-comment-macro.html' as mod_comment_macro %}
     {% import 'macros/moderator/mod-rec-macro.html' as mod_rec_macro %}
   {% endif %}
-
   <head>
     {% block head %}
       <meta charset='utf-8'>
@@ -31,14 +30,15 @@
           <h1>Recommend Me</h1>
         </hgroup>
         <nav>
-          <div class='sign-in'>
+          <ul class='sign-in'>
             {% if current_user.is_authenticated %}
               <p>{{current_user.username}}</p>
-              <p><a href="{{url_for('auth.logout')}}">Sign Out</a></p>
+              <a href="{{url_for('auth.logout')}}">Sign Out</a>
             {% else %}
-              <p><a href="{{url_for('auth.login')}}">Sign In</a></p>
+              <a href="{{url_for('auth.login')}}">Sign In</a>
+              <a href="{{url_for('auth.subscribe')}}">Register</a>
             {% endif %}
-          </div><!--sign-in-->
+          </ul>
           <ul class='nav-bar'>
             <li><a href="{{url_for('main.index')}}">Home</a></li>
             <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
@@ -60,7 +60,7 @@
               </div><!--submenu-->
             </div><!--submenu-container-->
             <div class='submenu-container'>
-              <li class='submenu-header'><a href=''>Settings</a></li>
+              <li class='submenu-header'><a href="{{url_for('personal.update')}}">Settings</a></li>
               <div class='submenu'>
                 <a href="{{url_for('main.about')}}">About</a>
                 <a href="{{url_for('personal.update')}}">My Settings</a>

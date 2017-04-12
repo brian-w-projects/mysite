@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2>Register</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>Register</h2>
   <p>Already a member?
     <a href="{{url_for('auth.login')}}">
       Login
@@ -42,10 +42,10 @@
     {{form.csrf_token}}
     {{form.submit(class='reckoner', id='submit')}}
   </form>
-<script>
-var goto_username_check = "{{url_for('auth.subscribe_ajax')}}";
-var goto_email_check = "{{url_for('auth.subscribe_email_ajax')}}";
-</script>
-<script src="{{url_for('static', filename='js/auth/subscribe.js')}}"></script>
-<script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
+  <script>
+    var goto_email_check = "{{url_for('auth.subscribe_email_ajax')}}";
+    var goto_username_check = "{{url_for('auth.subscribe_ajax')}}";
+  </script>
+  <script src="{{url_for('static', filename='js/auth/subscribe.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
 {% endblock %}

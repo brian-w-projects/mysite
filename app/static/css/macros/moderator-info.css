@@ -1,17 +1,3 @@
-/*ADMIN DATA*/
-.outer-data-box{
-    overflow: hidden;
-}
-
-.data-box{
-    background-color: #ffffff;
-}
-
-.data-box>p{
-    margin: 10px;
-}
-/*ADMIN DATA*/
-
 /*MOD DISPLAY*/
 .mod-display{
     background-color: #ffffff;
