@@ -10,25 +10,22 @@
         <li>
           {{moment(com.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
         </li>
-        {% if current_user.is_authenticated %}
-          {% if current_user.posts.filter_by(id=com.posted_on).first() %}
-            <li>
-              <a href="{{url_for('personal.comment_delete', id=com.id, after=request.url_rule.endpoint)}}">
-                Delete
+        <li>
+          {% if current_user.is_authenticated %}
+            {% if current_user.posts.filter_by(id=com.posted_on).first() or 
+              current_user.commented_on.filter_by(id=com.id).first() %}
+              <a class='icon-link' href="{{url_for('personal.comment_delete', id=com.id, after=request.url_rule.endpoint)}}">
+                <i class='font-link fa fa-trash fa-2x'></i>
               </a>
-            </li>
-          {% endif %}
-          {% if current_user.id == com.comment_by %}
-            <li>
-              <a href="{{url_for('personal.comment_edit', id=com.id, after=request.url_rule.endpoint)}}">
-                Edit
+            {% endif %}
+            {% if current_user.id == com.comment_by %}
+              <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, after=request.url_rule.endpoint)}}">
+                <i class='font-link fa fa-pencil-square-o fa-2x'></i>
               </a>
-            </li>
+            {% endif %}
           {% endif %}
-        {% endif %}
-        <li class='reckoner'>
-          <a href="{{url_for('main.highlight', id=com.posted_on)}}">
-            Rec
+          <a class='icon-link' href="{{url_for('main.highlight', id=com.posted_on)}}">
+            <i class='font-link fa fa-wpforms fa-2x'></i>
           </a>
         </li>
       </ul>

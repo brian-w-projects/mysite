@@ -13,7 +13,7 @@
     <div class='profile-box'>
       <div class='profile-left'>
         <p>
-          <a href="{{url_for('mod.verify')}}"> Unverified Recs: {{rec_count}}</a>
+          <a href="{{url_for('mod.verify_recs')}}"> Unverified Recs: {{rec_count}}</a>
         </p>
         <p>
           <a href="{{url_for('mod.verify_comments')}}">Unverified Comments: {{com_count}}</a>
@@ -25,15 +25,17 @@
   {{flash_macro.render_flash(get_flashed_messages())}}
   <div class='profile-box'>
     <h2>{{user.username}}</h2>
-    {% if current_user.is_authenticated %}
-        {% if current_user.id == user.id %}
-          <button class='reckoner button-width-set edit-button' id='{{id}}'>Edit</button>
+    <div class='modify-element'>
+      {% if current_user.is_authenticated and current_user != user %}
+        {% if current_user.following.filter_by(following=user.id).first() %}
+          <i id='{{user.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
         {% else %}
-          {{button_macro.follow_button(user, current_user)}}
+          <i id='{{user.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
         {% endif %}
-      {{button_macro.initialize_follow_button()}}
-    {% endif %}
-    <div class='realign'></div>
+      {% elif current_user.id == user.id %}
+        <button class='reckoner button-width-set edit-button' id='{{id}}'>Edit</button>
+      {% endif %}
+    </div><!--modify-element-->
     <div class='profile-left'>
       <p>{{user.about_me}}</p>
     </div><!--profile-left-->

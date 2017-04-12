@@ -1,12 +1,10 @@
-from flask import render_template, request, redirect, url_for, session, abort, flash, get_template_attribute, jsonify
+from flask import abort, flash, get_template_attribute, jsonify, redirect, render_template, request, url_for
 from . import personal
-from .forms import ChangeForm, PostForm, EditForm, CommentEditForm, DeleteForm
-from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Comments, Followers
+from .forms import ChangeForm, CommentEditForm, DeleteForm, EditForm, PostForm
 from .. import db
-from ..email import send_email
+from ..models import Users, Comments, Followers, Recommendation
 from datetime import datetime
-import json
+from flask_login import current_user, login_required
 from flask_moment import _moment
 
 @personal.route('/comment-delete/<int:id>', methods=['GET', 'POST'])
@@ -14,12 +12,11 @@ from flask_moment import _moment
 def comment_delete(id):
     form = DeleteForm(request.form)
     display_comments = Comments.query\
+        .filter(Comments.verification > 0)\
         .filter_by(id=id)\
         .first_or_404()
-    display_recs = Recommendation.query\
-        .filter_by(id=display_comments.posted_on)\
-        .first_or_404()
-    if display_recs.author_id != current_user.id:
+    display_recs = display_comments.posted
+    if display_recs.author_id != current_user.id and display_comments.comment_by != current_user.id:
         abort(403)
     if request.method == 'POST':
         if form.validate():
@@ -42,25 +39,18 @@ def comment_delete(id):
 def comment_edit(id):
     form = CommentEditForm(request.form)
     display_comments = Comments.query\
+        .filter(Comments.verification > 0)\
         .filter_by(id=id)\
         .first_or_404()
-    display_recs = Recommendation.query\
-        .filter_by(id=display_comments.posted_on)\
-        .first_or_404()
+    display_recs = display_comments.posted
     if display_comments.comment_by != current_user.id:
         abort(403)
     if request.method == 'POST':
         if form.validate():
-            if form.delete.data:
-                display_comments.verification = 0
-                db.session.add(display_comments)
-                db.session.commit()
-                flash(u'\u2713 Comment deleted')
-            else:
-                display_comments.comment = form.text.data
-                db.session.add(display_comments)
-                db.session.commit()
-                flash(u'\u2713 Comment updated')
+            display_comments.comment = form.text.data
+            db.session.add(display_comments)
+            db.session.commit()
+            flash(u'\u2713 Comment updated')
             if 'highlight' in request.args.get('after', default='personal.profile'):
                 return redirect(url_for(request.args.get('after', default='personal.profile'), id=display_comments.posted_on))
             redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
@@ -76,7 +66,10 @@ def comment_edit(id):
 @login_required
 def edit(post_id):
     form = EditForm(request.form)
-    display_recs = Recommendation.query.filter_by(id=post_id).first_or_404()
+    display_recs = Recommendation.query\
+        .filter(Recommendation.verification > -1)\
+        .filter_by(id=post_id)\
+        .first_or_404()
     if display_recs.author_id != current_user.id:
         abort(403)
     if request.method == 'POST':
@@ -113,7 +106,27 @@ def edit(post_id):
     form.title.data = display_recs.title
     form.public.data = display_recs.verification > 0
     form.text.data = display_recs.text
-    return render_template('personal/edit.html', form=form, after=request.args.get('after', default='personal.profile').split('_')[0])
+    return render_template('personal/edit.html', form=form, id=post_id,
+        after=request.args.get('after', default='personal.profile').split('_')[0])
+
+@personal.route('/-follow')
+@login_required
+def follow_ajax():
+    id = int(request.args.get('id'))
+    if current_user.id == id:
+        return jsonify({'added':False}) 
+    user = current_user.following\
+        .filter_by(following=id)\
+        .first()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'added':False}) 
+    else:
+        addition = Followers(follower=current_user.id, following=id)
+        db.session.add(addition)
+        db.session.commit()
+        return jsonify({'added':True})
 
 @personal.route('/-followers/<int:id>')
 def followers_ajax(id):
@@ -126,7 +139,8 @@ def followers_ajax(id):
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/followed-macro.html', 'ajax')
-    return jsonify({'last': display_names.page == display_names.pages,
+    return jsonify({
+        'last': display_names.page == display_names.pages or display_names.pages == 0,
         'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
 
 @personal.route('/followers/<int:id>')
@@ -144,23 +158,6 @@ def followers(id=-1):
     return render_template('personal/followers.html', display=display_names, 
         user=user, Recommendation=Recommendation)
 
-@personal.route('/-follow')
-@login_required
-def follow_ajax():
-    id = int(request.args.get('id'))
-    if current_user.id == id:
-        return jsonify({'added':False}) 
-    user = current_user.following.filter_by(following=id).first()
-    if user:
-        db.session.delete(user)
-        db.session.commit()
-        return jsonify({'added':False}) 
-    else:
-        addition = Followers(follower=current_user.id, following=id)
-        db.session.add(addition)
-        db.session.commit()
-        return jsonify({'added':True})
-
 @personal.route('/-following/<int:id>')
 def following_ajax(id):
     page = int(request.args.get('page'))
@@ -171,9 +168,9 @@ def following_ajax(id):
         .order_by(Followers.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/following-macro.html', 'ajax')
-    return jsonify({'last': display_names.page == display_names.pages,
+    return jsonify({
+        'last': display_names.page == display_names.pages or display_names.pages == 0,
         'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
-
 
 @personal.route('/following/<int:id>')
 @personal.route('/following')
@@ -201,7 +198,8 @@ def inspiration_ajax():
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({'last': display_recs.page == display_recs.pages,
+    return jsonify({
+        'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
         'ajax_request': to_return(display_recs, _moment, current_user)}) 
 
 @personal.route('/inspiration')
@@ -220,14 +218,15 @@ def inspiration():
 def post_ajax():
     page = int(request.args.get('page'))
     display_recs = Recommendation.query\
+        .filter(Recommendation.verification > 0)\
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({'last': display_recs.page == display_recs.pages,
+    return jsonify({
+        'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
         'ajax_request': to_return(display_recs, _moment, current_user)})
     
-
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
 def post():
@@ -247,6 +246,7 @@ def post():
                 flash(u'\u2717 Recs must contain text')
         return redirect(url_for('personal.post'))
     display_recs = Recommendation.query\
+        .filter(Recommendation.verification > 0)\
         .filter_by(author_id=current_user.id)\
         .order_by(Recommendation.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)

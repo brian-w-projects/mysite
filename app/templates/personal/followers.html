@@ -7,14 +7,13 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2>{{user.username}} Followers</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>{{user.username}} Followers</h2>
 {% endblock %}
 
 {% block supplemental %}
   <div class='list-recs'>
     {{followed_macro.initialize_followed_by(display, moment, current_user, Recommendation)}}
-    {{button_macro.initialize_follow_button()}}
   </div><!--list-recs-->
   <script>
     var goto_rec = "{{url_for('personal.followers_ajax', id=user.id)}}";

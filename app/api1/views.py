@@ -1,14 +1,9 @@
-from flask import render_template, request, redirect, url_for, session, abort, flash, g, jsonify
+from flask import g, jsonify, request
 from . import api1
-# from .forms import 
-from flask_login import login_user, logout_user, login_required, current_user
-from ..models import Users, Recommendation, Comments, Followers, RecModerations, ComModerations, API
-from ..decorators import auth_token_required, is_administrator, admin_token_required, auth_login_required, moderator_token_required, auth_request
 from .. import db
-from ..email import send_email
+from ..decorators import admin_token_required, auth_login_required, auth_request, auth_token_required, moderator_token_required
+from ..models import Comments, ComModerations, Followers, RecModerations, Recommendation, Users
 from datetime import datetime, timedelta
-import json
-from flask_httpauth import HTTPTokenAuth
 
 def message(code, message):
     response = jsonify({'Code': code, 'message': message})
@@ -542,7 +537,7 @@ def get_search_recs(page = 1):
             display_recs = display_recs.filter(Recommendation.timestamp <= date)
     display_recs = display_recs\
         .order_by(Recommendation.timestamp.desc())\
-        .paginate(page, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=g.current_user.display, error_out=False)
     to_ret = {x.id : x.to_json() for x in display_recs.items}
     return jsonify(to_ret)
 
@@ -569,7 +564,7 @@ def get_search_comments(page = 1):
                 .filter(Comments.timestamp <= date)
     display_comments = display_comments\
         .order_by(Comments.timestamp.desc())\
-        .paginate(page, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=g.current_user.display, error_out=False)
     to_ret = {x.id: x.to_json() for x in display_comments.items}
     return jsonify(to_ret)
 

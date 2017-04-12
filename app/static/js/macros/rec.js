@@ -1,6 +1,7 @@
 /* global goto_rec */
 /* global flask_moment_render_all*/
 /* global goto_insert_com */
+/* global goto_follow */
 /* global load_rec_attributes */
 
 (function($, window, document){
@@ -9,6 +10,9 @@
     
     var $ajax_recs = $('#ajax-recs');
     var $load_more_recs = $('.load-more');
+    
+    var $content = $('#content');
+    var $follower_count = $('.f-count');
     
     $(function(){
         $ajax_recs.on('click', function(){
@@ -19,6 +23,22 @@
                     $load_more_recs.remove();
                 }
                 flask_moment_render_all();
+            });
+        });
+
+        $content.on('click', '.follow-button', function(){
+            var $to_mod = $(this);
+            var $id = $(this).attr('id');
+            follow_ajax({'id': $id}).done(function(data){
+                follow_change(data['added'], $id);
+                if($follower_count.length){
+                    if(data['added'] == true){
+                        $follower_count.html(parseInt($follower_count.text(), 10)+1);
+                    }
+                    else{
+                        $follower_count.html(parseInt($follower_count.text(), 10)-1);
+                    }
+                }
             });
         });
 
@@ -54,8 +74,16 @@
         load_rec_attributes();
     });
 
-    
-    
+    function follow_change(add, id){
+        $('[id='+id+']').each(function(){
+           if(add){
+                $(this).replaceWith("<i id='"+id+"' class='follow-button font-link fa fa-heart fa-2x'></i>");
+           }else{
+                $(this).replaceWith("<i id='"+id+"' class='follow-button font-link fa fa-heart-o fa-2x'></i>");
+           }
+        });
+    }
+
     function rec_ajax(page_info){
         return $.ajax({
             type: 'GET',
@@ -71,6 +99,16 @@
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             url: goto_insert_com,
+            datatype:'json',
+            data: id_info
+        });
+    }
+    
+    function follow_ajax(id_info){
+        return  $.ajax({
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            url: goto_follow,
             datatype:'json',
             data: id_info
         });

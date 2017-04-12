@@ -7,12 +7,12 @@
 {% endblock %}
 
 {% block maincontent %}
+  {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>
     <a href="{{url_for('personal.profile', id=rec.author.id)}}">
       {{rec.author.username}}
     </a>
   </h2>
-  {{flash_macro.render_flash(get_flashed_messages())}}
 {% endblock %}
 
 {% block supplemental %}
@@ -26,8 +26,6 @@
     <form method='POST'>
       <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
       {{form.text(class='comment-text-entry')}}
-      <br/>
-      {{form.delete.label(class='reckoner')}} {{form.delete(class='entry')}}
       <br/>
       {{form.csrf_token}}
       {{form.submit(class='reckoner', id='submit')}}

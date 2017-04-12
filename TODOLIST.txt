@@ -11,9 +11,10 @@ Refractoring:
     - ERRORS - FINISHED FIRST PASS
     - MACROS
     - MAIN - FINISHED FIRST PASS
-    - MOD
-    - PERSONAL
-        
+    - MOD - FINISHED FIRST PASS
+    - PERSONAL - stopped at profile
+    - ALL GENERIC APP STUFF
+
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores

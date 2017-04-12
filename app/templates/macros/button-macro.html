@@ -1,17 +1,3 @@
-{% macro follow_button(name, current_user) %}
-  {% if current_user.is_authenticated and current_user != name %}
-    {% if current_user.following.filter_by(following=name.id).first() %}
-      <button id='{{name.id}}' class='reckoner follow-button button-width-set'>Unfollow</button>
-    {% else %}
-      <button id='{{name.id}}' class='reckoner follow-button button-width-set'>Follow</button>
-    {% endif %}
-  {% endif %}
-{% endmacro %}
-
-{% macro initialize_follow_button() %}
-  <script src="{{url_for('static', filename='js/macros/button-follow.js')}}"></script>
-{% endmacro %}
-
 {% macro mod_button(id) %}
   <div class='button-div'>
     <button class='reckoner mod-button verify' id='{{id}}'>Verify</button>

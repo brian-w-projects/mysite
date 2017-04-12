@@ -7,18 +7,17 @@
 {% endblock %}
 
 {% block maincontent %}
-  <h2>{{user.username}} Following</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>{{user.username}} Following</h2>
 {% endblock %}
 
 {% block supplemental %}
   <div class='list-recs'>
     {{following_macro.initialize_following(display, moment, current_user, Recommendation)}}
-    {{button_macro.initialize_follow_button()}}
   </div><!--list-recs-->
   <script>
-    var goto_rec = "{{url_for('personal.following_ajax', id=user.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    var goto_rec = "{{url_for('personal.following_ajax', id=user.id)}}";
   </script>
 {% endblock %}
