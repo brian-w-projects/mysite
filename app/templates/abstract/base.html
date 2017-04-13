@@ -60,10 +60,10 @@
               </div><!--submenu-->
             </div><!--submenu-container-->
             <div class='submenu-container'>
-              <li class='submenu-header'><a href="{{url_for('personal.update')}}">Settings</a></li>
+              <li class='submenu-header'><a href="{{url_for('personal.update', next=request.url)}}">Settings</a></li>
               <div class='submenu'>
                 <a href="{{url_for('main.about')}}">About</a>
-                <a href="{{url_for('personal.update')}}">My Settings</a>
+                <a href="{{url_for('personal.update', next=request.url)}}">My Settings</a>
                 <a href="{{url_for('auth.logout')}}">Sign Out</a>
               </div><!--submenu-->
             </div><!--submenu-container-->

@@ -12,7 +12,7 @@ Refractoring:
     - MACROS
     - MAIN - FINISHED FIRST PASS
     - MOD - FINISHED FIRST PASS
-    - PERSONAL - stopped at profile
+    - PERSONAL - FINISHED FIRST PASS
     - ALL GENERIC APP STUFF
 
 Formatting:

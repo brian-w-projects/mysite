@@ -1,4 +1,4 @@
-{% macro render_comment(com, moment, current_user) %}
+{% macro render_comment(com, moment, current_user, link) %}
   <div class='single-post'>
     <div class='post-header'>
       <ul class='post-header-list'>
@@ -14,12 +14,12 @@
           {% if current_user.is_authenticated %}
             {% if current_user.posts.filter_by(id=com.posted_on).first() or 
               current_user.commented_on.filter_by(id=com.id).first() %}
-              <a class='icon-link' href="{{url_for('personal.comment_delete', id=com.id, after=request.url_rule.endpoint)}}">
+              <a class='icon-link' href="{{url_for('personal.comment_delete', id=com.id, next=link)}}">
                 <i class='font-link fa fa-trash fa-2x'></i>
               </a>
             {% endif %}
             {% if current_user.id == com.comment_by %}
-              <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, after=request.url_rule.endpoint)}}">
+              <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, next=link)}}">
                 <i class='font-link fa fa-pencil-square-o fa-2x'></i>
               </a>
             {% endif %}
@@ -45,16 +45,16 @@
   <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
-{% macro ajax(d_c, moment, current_user) %}
+{% macro ajax(d_c, moment, current_user, link=request.url) %}
   {% for com in d_c.items %}
-    {{render_comment(com, moment, current_user)}}
+    {{render_comment(com, moment, current_user, link)}}
   {% endfor %}
 {% endmacro %}
 
-{% macro ajax_div_wrapper(d_c, moment, current_user) %}
+{% macro ajax_div_wrapper(d_c, moment, current_user, link=request.url) %}
   <div class='list-comments'>
     </br>
-    {{ajax(d_c, moment, current_user)}}
+    {{ajax(d_c, moment, current_user, link)}}
   </div><!--list-comments-->
 {% endmacro %}
 

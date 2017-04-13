@@ -11,8 +11,15 @@
   <h2>
     <a href="{{url_for('personal.profile', id=rec.author.id)}}">{{rec.author.username}}</a>
   </h2>
-  {{button_macro.follow_button(rec.author, current_user)}}
-  {{button_macro.initialize_follow_button()}}
+  <div class='font-link-position'>
+    {% if current_user.is_authenticated and current_user != rec.author %}
+      {% if current_user.following.filter_by(following=rec.author.id).first() %}
+        <i id='{{rec.author.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
+      {% else %}
+        <i id='{{rec.author.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
+      {% endif %}
+    {% endif %}
+  </div><!--font-link-position-->
   <br/>
 {% endblock %}
 
@@ -40,4 +47,5 @@
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
   </script>
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endblock %}

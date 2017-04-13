@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block maincontent %}
-  {% if current_user.is_authenticated and current_user.is_moderator() and current_user.id == id %}
+  {% if current_user.is_moderator() and current_user.id == user.id %}
     <h2>Welcome, Moderator</h2>
     <div class='profile-box'>
       <div class='profile-left'>
@@ -21,11 +21,11 @@
       </div><!--profile-left-->
     </div><!--profile-box-->
   {% endif %}
-  <h2>Profile</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>Profile</h2>
   <div class='profile-box'>
     <h2>{{user.username}}</h2>
-    <div class='modify-element'>
+    <div class='font-link-position'>
       {% if current_user.is_authenticated and current_user != user %}
         {% if current_user.following.filter_by(following=user.id).first() %}
           <i id='{{user.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
@@ -33,19 +33,21 @@
           <i id='{{user.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
         {% endif %}
       {% elif current_user.id == user.id %}
-        <button class='reckoner button-width-set edit-button' id='{{id}}'>Edit</button>
+        <a class='icon-link' href="{{url_for('personal.update')}}">
+          <i class='font-link fa fa-pencil-square-o fa-2x'></i>
+        </a>
       {% endif %}
-    </div><!--modify-element-->
+    </div><!--font-link-position-->
     <div class='profile-left'>
-      <p>{{user.about_me}}</p>
+      <p class='post-text'>{{user.about_me}}</p>
     </div><!--profile-left-->
     <div class='profile-right'>
       <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
       <p>Posts: {{user.posts.count()}}</p>
       <p>Comments: {{user.commented_on.count()}}</p>
       <p>
-        <a href="{{url_for('personal.followers', id=id)}}">
-          Followers: <span class='f_count'>{{user.followed_by.count()}}</span>
+        <a href="{{url_for('personal.followers', id=user.id)}}">
+          Followers: <span class='follower-count'>{{user.followed_by.count()}}</span>
         </a>
       </p>
       <p>
@@ -70,12 +72,10 @@
     {{comment_macro.initialize_comments(d_c, moment, current_user)}}
   </div><!--list-comments-->
   <script>
-    var goto_rec = "{{url_for('personal.profile_ajax', id=id)}}";
-    var goto_comment = "{{url_for('personal.profile_com_ajax', id=id)}}";
+    var goto_comment = "{{url_for('personal.profile_com_ajax', id=user.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
-    var goto_edit = "{{url_for('personal.update')}}";
     var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    var goto_rec = "{{url_for('personal.profile_ajax', id=user.id)}}";
   </script>
-  <script src="{{url_for('static', filename='js/personal/profile.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/rec-comment-swap.js')}}"></script>
 {% endblock %}

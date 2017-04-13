@@ -12,7 +12,7 @@
     var $load_more_recs = $('.load-more');
     
     var $content = $('#content');
-    var $follower_count = $('.f-count');
+    var $follower_count = $('.follower-count');
     
     $(function(){
         $ajax_recs.on('click', function(){

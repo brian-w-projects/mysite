@@ -1,4 +1,4 @@
-{% macro render_rec(rec, moment, current_user, attributes=True) %}
+{% macro render_rec(rec, moment, current_user, attributes=True, link=request.url) %}
   <div class='single-post'>
     <a href="{{url_for('main.highlight', id=rec.id)}}">
       <h3 class='rec-title'>{{rec.title}}</h3>
@@ -39,7 +39,7 @@
         {% if attributes or rec.author_id==current_user.id %}
           <li>
             {% if rec.author_id==current_user.id %}
-              <a class='icon-link' href="{{url_for('personal.edit', post_id=rec.id, after=request.url_rule.endpoint)}}">
+              <a class='icon-link' href="{{url_for('personal.edit', post_id=rec.id, next=link)}}">
                 <i class='font-link fa fa-pencil-square-o fa-2x'></i>
               </a>
             {% endif %}
@@ -66,9 +66,9 @@
   <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
-{% macro ajax(display, moment, current_user, attributes=True) %}
+{% macro ajax(display, moment, current_user, attributes=True, link=request.url) %}
   {% for rec in display.items %}
-    {{render_rec(rec, moment, current_user, attributes)}}
+    {{render_rec(rec, moment, current_user, attributes, link)}}
   {% endfor %}
 {% endmacro %}
 

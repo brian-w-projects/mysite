@@ -62,8 +62,14 @@
     box-shadow: 0px 0px 0px rgba(0,0,0,0.2);
 }
 
+.font-link-position{
+    text-align: center;
+}
+
 .post-text{
+    margin-top: 0px;
     padding: 10px;
+    white-space: pre-line;
 }
 /*REC AND COMMENT FORMATTING*/
 

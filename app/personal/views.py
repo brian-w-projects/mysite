@@ -1,4 +1,4 @@
-from flask import abort, flash, get_template_attribute, jsonify, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, get_template_attribute, jsonify, redirect, render_template, request, url_for
 from . import personal
 from .forms import ChangeForm, CommentEditForm, DeleteForm, EditForm, PostForm
 from .. import db
@@ -6,6 +6,19 @@ from ..models import Users, Comments, Followers, Recommendation
 from datetime import datetime
 from flask_login import current_user, login_required
 from flask_moment import _moment
+
+@personal.route('/-api')
+@login_required
+def api_ajax():
+    current_user.generate_auth_token()
+    return current_user.api
+
+@personal.route('/api')
+@login_required
+def api():
+    if not current_user.api:
+        current_user.generate_auth_token()
+    return render_template('personal/api.html')
 
 @personal.route('/comment-delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -24,15 +37,12 @@ def comment_delete(id):
             db.session.add(display_comments)
             db.session.commit()
             flash(u'\u2713 Comment has been deleted')
-            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
-            if 'highlight' in redirect_to:
-                return redirect(url_for(redirect_to, id=display_comments.posted_on))
-            return redirect(url_for(redirect_to))
+            return redirect(request.args.get('next') or url_for('main.index'))
         else:
             flash(u'\u2717 You must confirm deletion')
-            return redirect(url_for('personal.comment_delete', id=id, after=request.args.get('after', default=None)))
+            return redirect(url_for('personal.comment_delete', id=id, next=request.args.get('next')))
     return render_template('personal/comment-delete.html', form=form, rec=display_recs, com=display_comments,
-        after=request.args.get('after', default=None))
+        next=request.args.get('next'))
 
 @personal.route('/comment-edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -51,16 +61,13 @@ def comment_edit(id):
             db.session.add(display_comments)
             db.session.commit()
             flash(u'\u2713 Comment updated')
-            if 'highlight' in request.args.get('after', default='personal.profile'):
-                return redirect(url_for(request.args.get('after', default='personal.profile'), id=display_comments.posted_on))
-            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
-            return redirect(url_for(redirect_to))
+            return redirect(request.args.get('next') or url_for('main.index'))
         else:
             flash(u'\u2717 Comment must contain text')
-            return redirect(url_for('personal.comment_edit', id=id, after=request.args.get('after', default=None)))
+            return redirect(url_for('personal.comment_edit', id=id, next=request.args.get('next')))
     form.text.data = display_comments.comment
     return render_template('personal/comment-edit.html', form=form, rec=display_recs, com=display_comments,
-        after=request.args.get('after', default=None))
+        next=request.args.get('next'))
 
 @personal.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -91,10 +98,7 @@ def edit(post_id):
                 db.session.add(display_recs)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been edited')
-            if 'highlight' in request.args.get('after', default='personal.profile'):
-                return redirect(url_for(request.args.get('after', default='personal.profile'), id=post_id))
-            redirect_to = request.args.get('after', default='personal.profile').split('_')[0]
-            return redirect(url_for(redirect_to))
+            return redirect(request.args.get('next') or url_for('main.index'))
         else:
             if 'title' in form.errors:
                 flash(u'\u2717 Recs must contain a title')
@@ -102,12 +106,12 @@ def edit(post_id):
                 flash(u'\u2717 Recs must contain text')
             if 'delete' in form.errors:
                 flash(u'\u2717 Check both boxes to delete this rec')
-            return redirect(url_for('personal.edit', post_id=post_id, after=request.args.get('after', default=None)))
+            return redirect(url_for('personal.edit', post_id=post_id, next=request.args.get('next')))
     form.title.data = display_recs.title
     form.public.data = display_recs.verification > 0
     form.text.data = display_recs.text
     return render_template('personal/edit.html', form=form, id=post_id,
-        after=request.args.get('after', default='personal.profile').split('_')[0])
+        next=request.args.get('next'))
 
 @personal.route('/-follow')
 @login_required
@@ -141,7 +145,7 @@ def followers_ajax(id):
     to_return = get_template_attribute('macros/followed-macro.html', 'ajax')
     return jsonify({
         'last': display_names.page == display_names.pages or display_names.pages == 0,
-        'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
+        'ajax_request': to_return(display_names, _moment, current_user, Recommendation, link=url_for('personal.followers', id=id))}) 
 
 @personal.route('/followers/<int:id>')
 @personal.route('/followers')
@@ -170,7 +174,7 @@ def following_ajax(id):
     to_return = get_template_attribute('macros/following-macro.html', 'ajax')
     return jsonify({
         'last': display_names.page == display_names.pages or display_names.pages == 0,
-        'ajax_request': to_return(display_names, _moment, current_user, Recommendation)}) 
+        'ajax_request': to_return(display_names, _moment, current_user, Recommendation, link=url_for('personal.following', id=id))}) 
 
 @personal.route('/following/<int:id>')
 @personal.route('/following')
@@ -200,7 +204,7 @@ def inspiration_ajax():
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({
         'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
-        'ajax_request': to_return(display_recs, _moment, current_user)}) 
+        'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('personal.inspiration'))}) 
 
 @personal.route('/inspiration')
 @login_required
@@ -225,7 +229,7 @@ def post_ajax():
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({
         'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
-        'ajax_request': to_return(display_recs, _moment, current_user)})
+        'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('personal.post'))})
     
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
@@ -261,8 +265,9 @@ def profile_com_ajax(id):
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
-    return jsonify({'last': display_comments.page == display_comments.pages,
-        'ajax_request': to_return(display_comments, _moment, current_user)}) 
+    return jsonify({
+        'last': display_comments.page == display_comments.pages or display_comments.pages == 0,
+        'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('personal.profile', id=id))}) 
 
 @personal.route('/-profile/<int:id>')
 def profile_ajax(id):
@@ -277,30 +282,32 @@ def profile_ajax(id):
         .order_by(Recommendation.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out = False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({'last': display_recs.page == display_recs.pages,
-        'ajax_request': to_return(display_recs, _moment, current_user)}) 
+    return jsonify({
+        'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
+        'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('personal.profile', id=id))}) 
 
 @personal.route('/profile')
 @personal.route('/profile/<int:id>')
 def profile(id=-1):
+    if id == -1:
+        if current_user.is_authenticated:
+            id = current_user.id
+        else:
+            return redirect(url_for('auth.login', next='personal/profile'))
+    user = Users.query\
+        .filter_by(id=id)\
+        .first_or_404()
     com_count = 0
     rec_count = 0
-    if id == -1 and current_user.is_authenticated:
-        id = current_user.id
-    elif id == -1 and not current_user.is_authenticated:
-        return redirect(url_for('auth.login', next='personal/profile'))
-    if current_user.is_authenticated:
-        if current_user.is_moderator() and current_user.id == id:
-            com_count = Comments.query\
-                .filter_by(verification=1)\
-                .count()
-            rec_count = Recommendation.query\
-                .filter_by(verification=1)\
-                .count()
-    user = Users.query.\
-        filter_by(id=id)\
-        .first_or_404()
-    if current_user.is_authenticated and current_user.id == id:
+    private = 1
+    if current_user.is_moderator() and current_user.id == id:
+        com_count = Comments.query\
+            .filter_by(verification=1)\
+            .count()
+        rec_count = Recommendation.query\
+            .filter_by(verification=1)\
+            .count()
+    if current_user.id == id:
         private = 0
         display_recs = user.posts\
             .order_by(Recommendation.timestamp.desc())\
@@ -308,13 +315,11 @@ def profile(id=-1):
         for rec in display_recs:
             title = rec.title
             if len(rec.title) > 10:
-                title = rec.title[:10]
-            flash("Rec '" + title + "...' has been made private due to it's content.")
+                title = rec.title[:10] + '...'
+            flash("Rec '" + title + " has been made private due to it's content.")
             rec.made_private = False
             db.session.add(rec)
             db.session.commit()
-    else: 
-        private = 1
     display_recs = user.posts\
         .filter(Recommendation.verification >= private)\
         .order_by(Recommendation.timestamp.desc())\
@@ -324,20 +329,7 @@ def profile(id=-1):
         .order_by(Comments.timestamp.desc())\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('personal/profile.html', user=user, display=display_recs, 
-        d_c=display_comments, id=id, com_count = com_count, rec_count=rec_count)
-
-@personal.route('/-token')
-@login_required
-def token_ajax():
-    current_user.generate_auth_token()
-    return current_user.api
-
-@personal.route('/token')
-@login_required
-def token():
-    if not current_user.api:
-        current_user.generate_auth_token()
-    return render_template('personal/token.html')
+        d_c=display_comments, com_count = com_count, rec_count=rec_count)
 
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required
@@ -353,6 +345,7 @@ def update():
             db.session.add(current_user)
             db.session.commit()
             flash(u'\u2713 Your profile has been successfully updated')
+            return redirect(request.args.get('next') or url_for('main.index'))
         else:
             if 'about_me' in form.errors:
                 flash(u'\u2717 About Me may only be 500 characters')
@@ -360,7 +353,7 @@ def update():
                 flash(u'\u2717 Passwords must be at least 8 characters')
             if form.password.data != form.password_confirm.data:
                 flash(u'\u2717 Passwords Must Match')
-        return redirect(url_for('personal.update'))
+        return redirect(url_for('personal.update', next=request.args.get('next')))
     form.about_me.data = current_user.about_me
     form.limit.data= str(current_user.display)
-    return render_template('personal/update.html', form=form)
+    return render_template('personal/update.html', form=form, next=request.args.get('next'))

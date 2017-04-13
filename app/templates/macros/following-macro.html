@@ -18,13 +18,13 @@
   <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
-{% macro ajax(display, moment, current_user, Recommendation) %}
+{% macro ajax(display, moment, current_user, Recommendation, link=request.url) %}
   {% for name in display.items %}
     {{render_name_header(name, current_user)}}
     {% set highlight = name.who.posts.filter(Recommendation.verification > 0)
       .order_by(Recommendation.timestamp.desc()).first() %}
     {% if highlight != None %}
-      {{rec_macro.render_rec(highlight, moment, current_user)}}
+      {{rec_macro.render_rec(highlight, moment, current_user, link)}}
     {% else %}
       <br/>
     {% endif %}
