@@ -3,6 +3,13 @@
     <div class='post-header'>
       <ul class='post-header-list'>
         <li>
+          {% if current_user.is_authenticated and current_user != com.comm %}
+            {% if current_user.following.filter_by(following=com.comm.id).first() %}
+              <i id='{{com.comm.id}}' class="follow-button-comment font-link fa fa-heart fa-2x"></i>
+            {% else %}
+              <i id='{{com.comm.id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
+            {% endif %}
+          {% endif %}
           <a href="{{url_for('personal.profile', id=com.comment_by)}}">
             {{com.comm.username}}
           </a>

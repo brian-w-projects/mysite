@@ -23,9 +23,11 @@
   </div><!--list-comments-->
   <script>
     var goto_comment = "{{url_for('admin.mod_com_ajax', id=mod.id)}}";
-    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}";
-    var goto_rec = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";
     var goto_follow = "{{url_for('personal.follow_ajax')}}";
+    var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}";
+    var goto_change_mod = "{{url_for('admin.change_mod_decision')}}";
+    var goto_rec = "{{url_for('admin.mod_rec_ajax', id=mod.id)}}";
   </script>
   <script src="{{url_for('static', filename='js/speciality/rec-comment-swap.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/rec-action.js')}}"></script>
 {% endblock %}

@@ -44,7 +44,7 @@
               </a>
             {% endif %}
             {% if attributes %}
-              <i id='{{rec.id}}' class='font-link toggle-comments fa fa-comments-o fa-2x'></i>
+              <i id='{{rec.id}}' class='{{link}} font-link toggle-comments fa fa-comments-o fa-2x'></i>
               <i class='font-link toggle-show fa fa-arrows-v fa-2x'></i>
             {% endif %}
           </li>
@@ -64,6 +64,7 @@
     <p id='ajax-recs' class='load-more'>Load More</p>
   {% endif %}
   <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
+  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, attributes=True, link=request.url) %}

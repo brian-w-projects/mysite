@@ -2,17 +2,13 @@
   {% for mod in mods %}
     <div class='mod-display'>
       <div class='headline'>
-        <p>
-          <a href="{{url_for('personal.profile', id=mod.id)}}">
-            {{mod.username}}
-         </a>
-        </p>
-        <p>
-          <a href="{{url_for('admin.mod_history', id=mod.id)}}">
-            Mod History
-          </a>
-        </p>
-        <p>Last Login: {{moment(mod.last_login).fromNow()}}</p>
+        <a class='headline-element' href="{{url_for('personal.profile', id=mod.id)}}">
+          {{mod.username}}
+        </a>
+        <a class='headline-elements' href="{{url_for('admin.mod_history', id=mod.id)}}">
+          Mod History
+        </a>
+        <p class='headline-element'>Last Login: {{moment(mod.last_login).fromNow()}}</p>
       </div><!--headline-->
       <div class='w220'>
         <p>Total Rec Mods: {{mod.rec_mods.count()}}</p>

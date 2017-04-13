@@ -27,7 +27,6 @@
         });
 
         $content.on('click', '.follow-button', function(){
-            var $to_mod = $(this);
             var $id = $(this).attr('id');
             follow_ajax({'id': $id}).done(function(data){
                 follow_change(data['added'], $id);
@@ -47,7 +46,7 @@
                 var $insert_point = $(this).closest('.single-post');
                 var $to_modify_comments = $insert_point.next('.list-comments');
                 if(!$to_modify_comments.length){
-                    rec_comment_ajax({'id': $(this).attr('id')}).done(function(data){
+                    rec_comment_ajax({'id': $(this).attr('id'), 'link':$(this).attr('class').split(' ')[0]}).done(function(data){
                         $insert_point.after(data['ajax_request']);
                         flask_moment_render_all();
                     });

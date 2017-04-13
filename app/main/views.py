@@ -196,6 +196,7 @@ def find_user(username):
 @main.route('/rec-inline-comment-ajax')
 def rec_inline_comment_ajax():
     id = int(request.args.get('id'))
+    link = request.args.get('link')
     display_comments = Comments.query\
         .filter_by(posted_on = id)\
         .filter(Comments.verification != 0)\
@@ -204,5 +205,4 @@ def rec_inline_comment_ajax():
     if len(display_comments.items) == 0:
         return jsonify({'ajax_request': ''}) 
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax_div_wrapper')
-    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('main.highlight', id=id))}) 
-    # after editing or deleting, returns to highlight of rec and not where user came from
+    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user, link=link)}) 

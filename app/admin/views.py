@@ -36,7 +36,8 @@ def admin_splash():
         .filter_by(verification=1)\
         .count()
     data['mods'] = Users.query\
-        .filter_by(role_id = 2)
+        .filter_by(role_id = 2)\
+        .order_by(Users.username)
     data['mods_count'] = data['mods'].from_self()\
         .count()
     return render_template('admin/admin-splash.html', data=data, RecModerations=RecModerations,
@@ -58,6 +59,31 @@ def mod_com_ajax(id):
     return jsonify({
         'last': mod_coms.page == mod_coms.pages or mod_coms.pages == 0,
         'ajax_request': to_return(mod_coms, _moment, current_user)}) 
+
+@admin.route('/-change-mod-decision')
+@login_required
+@is_administrator
+def change_mod_decision():
+    id = int(request.args.get('id'))
+    rec = Recommendation.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    mod = RecModerations.query\
+        .filter_by(mod_on=id)\
+        .first_or_404()
+    db.session.delete(mod)
+    if mod.action:
+        rec.verification = 0
+        rec.made_private = True
+        new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=not mod.action)
+        db.session.add(new_mod)
+        db.session.add(rec)
+    else:
+        rec.verification = 2
+        rec.made_private = False
+        db.session.add(rec)
+    db.session.commit()
+    return jsonify({'verify': not mod.action})
 
 @admin.route('/-mod-history-rec-ajax/<int:id>')
 @login_required

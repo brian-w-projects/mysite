@@ -2,6 +2,7 @@
 
 {% macro render_mod(rec_mod, moment, current_user) %}
   <div class='action-header'>
+    <i id='{{rec_mod.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
       {% if rec_mod.action %}
         Accepted

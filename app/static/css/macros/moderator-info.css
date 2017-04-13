@@ -12,7 +12,7 @@
     border-top: 1px solid black;
 }
 
-.headline>p{
+.headline-element{
     display: inline-block;
     margin:5px;
 }
