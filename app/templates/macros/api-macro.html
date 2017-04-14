@@ -1,25 +1,22 @@
+<!--REQUIREMENTS
+  api.css
+  -->
 {% macro render_api(headers, methods, authorization, description_lines, example) %}
-<div class='api-element-container'>
-  <div class='api-element-header'>
-    {% for single_header in headers %}
-      {{single_header}}
-      <br/>
-    {% endfor %}
-  </div><!--api-element-header-->
-  <div class='api-element-text'>
-    <p>
-      Authorization: {{authorization}}
-    </p>
-    <p>
-      Methods: {{methods}}
-    </p>
-    {% for description in description_lines %}
-      <p>{{description}}</p>
-    {% endfor %}
-    <p class='example'>
-      {{example}}
-    </p>
-  </div><!--api-element-text-->
-</div><!--api-element-container-->
+  <div class='api-element-container'>
+    <div class='api-element-header'>
+      {% for single_header in headers %}
+        {{single_header}}
+        <br/>
+      {% endfor %}
+    </div><!--api-element-header-->
+    <div class='api-element-text'>
+      <p>Authorization: {{authorization}}</p>
+      <p>Methods: {{methods}}</p>
+      {% for description in description_lines %}
+        <p>{{description}}</p>
+      {% endfor %}
+      <p class='example'>{{example}}</p>
+    </div><!--api-element-text-->
+  </div><!--api-element-container-->
 <br/>
 {% endmacro %}

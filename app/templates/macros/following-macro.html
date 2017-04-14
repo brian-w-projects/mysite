@@ -1,10 +1,8 @@
+<!--REQUIREMENTS
+  rec.js
+  comments.js
+  -->
 {% import 'macros/rec-macro.html' as rec_macro %}
-
-{% macro render_name_header(name, current_user) %}
-  <div class='name-header'>
-    <p class='reckoner name-header-display'>{{name.who.username}}</p>
-  </div><!--name-header-->
-{% endmacro %}
 
 {% macro initialize_following(display, moment, current_user, Recommendation) %}
   {% if display.items|length != 0 %}
@@ -12,15 +10,16 @@
   {% else %}
     <p>You aren't following anyone! Go to a user's profile to start following them.</p>
   {% endif %}
-  {% if display.pages != display.page or display.pages == 0 %}
-    <a><p id='ajax-recs' class='load-more'>Load More</p></a>
+  {% if display.pages != display.page and display.pages != 0 %}
+    <a><p class='load-more'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, Recommendation, link=request.url) %}
   {% for name in display.items %}
-    {{render_name_header(name, current_user)}}
+    <div class='name-header'>
+      <p class='reckoner name-header-display'>{{name.who.username}}</p>
+    </div><!--name-header-->
     {% set highlight = name.who.posts.filter(Recommendation.verification > 0)
       .order_by(Recommendation.timestamp.desc()).first() %}
     {% if highlight != None %}

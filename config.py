@@ -18,28 +18,20 @@ class Config:
     def init_app(app):
         pass
 
-
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'db/data-dev.sqlite')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'db/data-test.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'db/data-pro.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
     'production': ProductionConfig,
-    'default': ProductionConfig
+    'default': DevelopmentConfig
 }

@@ -1,3 +1,8 @@
+<!--REQUIREMENTS
+  rec.js
+  comments.js
+  -->
+  
 {% macro render_rec(rec, moment, current_user, attributes=True, link=request.url) %}
   <div class='single-post'>
     <a href="{{url_for('main.highlight', id=rec.id)}}">
@@ -61,19 +66,12 @@
 {% macro initialize_recs(display, moment, current_user, attributes=True) %}
   {{ajax(display, moment, current_user, attributes)}}
   {% if display.pages != display.page and display.pages != 0 %}
-    <p id='ajax-recs' class='load-more'>Load More</p>
+    <p class='load-more'>Load More</p>
   {% endif %}
-  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
-  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, attributes=True, link=request.url) %}
   {% for rec in display.items %}
     {{render_rec(rec, moment, current_user, attributes, link)}}
   {% endfor %}
-{% endmacro %}
-
-{% macro search_initialize() %}
-  <p id='ajax-recs' class='load-more'>Load More</p>
-  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}

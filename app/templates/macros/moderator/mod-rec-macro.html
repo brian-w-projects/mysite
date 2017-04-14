@@ -1,5 +1,8 @@
+<!--REQUIREMENTS
+  rec.js
+  comments.js
+  -->
 {% import 'macros/rec-macro.html' as rec_macro %}
-{% import 'macros/button-macro.html' as button_macro %}
 
 {% macro initialize_moderate(display, moment, current_user) %}
   {% if display.items|length != 0 %}
@@ -7,16 +10,17 @@
   {% else %}
     <p>There are no recs in need of moderation. Good job!</p>
   {% endif %}
-  {% if display.pages != display.page %}
-    <a><p id='ajax-recs' class='load-more'>Load More</p></a>
-    <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
+  {% if display.pages != display.page and display.pages != 0 %}
+    <a><p class='load-more'>Load More</p></a>
   {% endif %}
-  {{button_macro.initialize_mod_button()}}
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user) %}
   {% for mod_check in display.items %}
-    {{button_macro.mod_button(mod_check.id)}}
-    {{rec_macro.render_rec(mod_check, moment, current_user)}}
+    <div class='mod-container'>
+      <i id='{{mod_check.id}}' class='verify mod-button font-link fa fa-check-circle fa-2x'></i>
+      <i id='{{mod_check.id}}' class='private mod-button font-link fa fa-times-circle fa-2x'></i>
+      {{rec_macro.render_rec(mod_check, moment, current_user)}}
+    </div><!--mod-container-->
   {% endfor %}
 {% endmacro %}

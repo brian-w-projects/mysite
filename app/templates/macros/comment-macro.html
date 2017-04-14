@@ -1,3 +1,6 @@
+<!--REQUIREMENTS
+  comments.js
+  -->
 {% macro render_comment(com, moment, current_user, link) %}
   <div class='single-post'>
     <div class='post-header'>
@@ -47,9 +50,8 @@
 {% macro initialize_comments(d_c, moment, current_user) %}
   {{ajax(d_c, moment, current_user)}}
   {% if d_c.pages != d_c.page and d_c.pages != 0 %}
-    <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
+    <a><p class='load-more-com'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(d_c, moment, current_user, link=request.url) %}
@@ -63,9 +65,4 @@
     </br>
     {{ajax(d_c, moment, current_user, link)}}
   </div><!--list-comments-->
-{% endmacro %}
-
-{% macro search_initialize() %}
-  <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
-  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}

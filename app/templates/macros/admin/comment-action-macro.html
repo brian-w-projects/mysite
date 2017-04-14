@@ -1,7 +1,11 @@
+<!--REQUIREMENTS
+  comments.js
+  -->
 {% import 'macros/comment-macro.html' as comment_macro %}
 
 {% macro render_mod(rec_com, moment, current_user) %}
   <div class='action-header'>
+    <i id='{{rec_com.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
       {% if rec_com.action %}
         Accepted
@@ -17,9 +21,8 @@
 {% macro initialize_comment_moderations(mod_coms, moment, current_user) %}
   {{ajax(mod_coms, moment, current_user)}}
   {% if mod_coms.pages != mod_coms.page and mod_coms.pages != 0 %}
-    <a><p id='ajax-comments' class='load-more-com'>Load More</p></a>
+    <a><p class='load-more-com'>Load More</p></a>
   {% endif %}
-  <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(mod_coms, moment, current_user) %}

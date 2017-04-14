@@ -1,3 +1,7 @@
+<!--REQUIREMENTS
+  rec.js
+  comments.js
+  -->
 {% import 'macros/rec-macro.html' as rec_macro %}
 
 {% macro render_mod(rec_mod, moment, current_user) %}
@@ -18,9 +22,8 @@
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
   {{ajax(mod_recs, moment, current_user)}}
   {% if mod_recs.pages != mod_recs.page and mod_recs.pages != 0 %}
-    <p id='ajax-recs' class='load-more'>Load More</p>
+    <p class='load-more'>Load More</p>
   {% endif %}
-  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endmacro %}
 
 {% macro ajax(mod_recs, moment, current_user) %}

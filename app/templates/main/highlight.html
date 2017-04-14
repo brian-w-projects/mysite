@@ -44,8 +44,6 @@
   {% endif %}
   <script>
     var goto_comment = "{{url_for('main.load_comments', id=rec.id)}}";
-    var goto_follow = "{{url_for('personal.follow_ajax')}}";
   </script>
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
-  <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
 {% endblock %}

@@ -2,7 +2,6 @@
 <html lang='en'>
   {{moment.include_jquery()}}
   {{moment.include_moment()}}
-  {% import 'macros/button-macro.html' as button_macro %}
   {% import 'macros/comment-macro.html' as comment_macro %}
   {% import 'macros/flash-macro.html' as flash_macro %}
   {% import 'macros/followed-macro.html' as followed_macro %}
@@ -80,5 +79,12 @@
         <p>Recommend Me - 2017&#169</p>
       {% endblock %}
     </footer>
+    <script>
+      var goto_follow = "{{url_for('personal.follow_ajax')}}";
+      var goto_insert_com = "{{url_for('main.rec_inline_comment_ajax')}}"
+    </script>
+    <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
+    <script src="{{url_for('static', filename='js/macros/flash.js')}}"></script>
+    <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
   </body>
-</html>
+</html

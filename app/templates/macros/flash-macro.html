@@ -1,3 +1,7 @@
+<!--REQUIREMENTS
+  flash.js
+  flash.css
+  -->
 {% macro render_flash(messages) %}
   {% if messages %}
     <div class='flash-border'>
@@ -7,9 +11,8 @@
         {% endfor %}
       </div><!--flash-messages-->
       <div class='flash-close'>
-        <p><a class='icon-link' href='#'><i class="fa fa-window-close" aria-hidden="true"></i></a></p>
+        <p><a class='icon-link' href='#'><i class='fa fa-window-close'></i></a></p>
       </div><!--flash-close-->
     </div><!--flash-border-->
-    <script src="{{url_for('static', filename='js/macros/flash.js')}}"></script>
   {% endif %}
 {% endmacro %}

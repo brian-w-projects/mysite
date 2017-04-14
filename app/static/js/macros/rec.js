@@ -1,21 +1,19 @@
+/* global goto_follow */
+/* global goto_insert_com */
 /* global goto_rec */
 /* global flask_moment_render_all*/
-/* global goto_insert_com */
-/* global goto_follow */
 /* global load_rec_attributes */
 
 (function($, window, document){
 
     var page = 1;
     
-    var $ajax_recs = $('#ajax-recs');
-    var $load_more_recs = $('.load-more');
-    
     var $content = $('#content');
     var $follower_count = $('.follower-count');
+    var $load_more_recs = $('.load-more');
     
     $(function(){
-        $ajax_recs.on('click', function(){
+        $load_more_recs.on('click', function(){
             page += 1;
             rec_ajax({'page':page}).done(function(data){
                 $load_more_recs.before(data['ajax_request']);
@@ -42,7 +40,7 @@
         });
 
         window.load_rec_attributes = function(){
-            $(document.body).on('click', '.toggle-comments', function(event){
+            $content.on('click', '.toggle-comments', function(event){
                 var $insert_point = $(this).closest('.single-post');
                 var $to_modify_comments = $insert_point.next('.list-comments');
                 if(!$to_modify_comments.length){
@@ -57,7 +55,7 @@
                 }
             });
             
-            $(document.body).on('click', '.toggle-show', function(){
+            $content.on('click', '.toggle-show', function(){
                 var $to_modify = $(this).closest('.post-header').next();
                 var $to_modify_comments = $(this).closest('.single-post').next('.list-comments');
                 if($to_modify.css('display') == 'none'){

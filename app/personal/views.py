@@ -316,7 +316,7 @@ def profile(id=-1):
             title = rec.title
             if len(rec.title) > 10:
                 title = rec.title[:10] + '...'
-            flash("Rec '" + title + " has been made private due to it's content.")
+            flash("Rec '" + title + "' has been made private due to it's content.")
             rec.made_private = False
             db.session.add(rec)
             db.session.commit()

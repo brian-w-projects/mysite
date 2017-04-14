@@ -2,17 +2,15 @@
 
 (function($, window, document){
     
-    var $recs_and_comments = $('.list-recs, .list-comments');
+    var $content = $('#content');
     
     $(function(){
-        $recs_and_comments.on('click', '.mod-button', function(){
+        $content.on('click', '.mod-button', function(){
             var $to_mod = $(this);
             var $id = $(this).attr('id');
             var $action = $(this).hasClass('verify');
             moderate_ajax({'id': $id, 'verify':$action}).done(function(data){
-                $to_mod.parent().hide();
-                $to_mod.parent().next().hide();
-                $to_mod.parent().next().next().hide();
+                $to_mod.parent().slideUp();
             });
         });
     });

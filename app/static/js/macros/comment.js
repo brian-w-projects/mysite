@@ -7,11 +7,10 @@
     var page_com = 1;
     
     var $content = $('#content');
-    var $ajax_comments = $('#ajax-comments');
     var $load_more_comments = $('.load-more-com');
 
     $(function(){
-        $ajax_comments.on('click', function(){
+        $load_more_comments.on('click', function(){
             page_com += 1;
             comment_ajax({'page':page_com}).done(function(data){
                 $load_more_comments.before(data['ajax_request']);

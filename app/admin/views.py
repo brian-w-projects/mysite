@@ -60,6 +60,31 @@ def mod_com_ajax(id):
         'last': mod_coms.page == mod_coms.pages or mod_coms.pages == 0,
         'ajax_request': to_return(mod_coms, _moment, current_user)}) 
 
+@admin.route('/-change-mod-comment-decision')
+@login_required
+@is_administrator
+def change_mod_comment_decision():
+    id = int(request.args.get('id'))
+    comment = Comments.query\
+        .filter_by(id=id)\
+        .first_or_404()
+    mod = ComModerations.query\
+        .filter_by(mod_on=id)\
+        .first_or_404()
+    db.session.delete(mod)
+    if mod.action:
+        comment.verification = 0
+        new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action= not mod.action)
+        db.session.add(new_mod)
+        db.session.add(comment)
+    else:
+        comment.verification = 2
+        new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action= not mod.action)
+        db.session.add(new_mod)
+        db.session.add(comment)
+    db.session.commit()
+    return jsonify({'verify': not mod.action})
+
 @admin.route('/-change-mod-decision')
 @login_required
 @is_administrator
@@ -81,6 +106,8 @@ def change_mod_decision():
     else:
         rec.verification = 2
         rec.made_private = False
+        new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=not mod.action)
+        db.session.add(new_mod)
         db.session.add(rec)
     db.session.commit()
     return jsonify({'verify': not mod.action})
