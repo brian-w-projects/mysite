@@ -44,7 +44,8 @@ def forgot_password():
                 check_user.invalid_logins = 0
                 db.session.add(check_user)
                 db.session.commit()
-                send_email(check_user.email, 'Reset Your Password', 'auth/email/reset', user=check_user.username, password=reset_password)
+                send_email(check_user.email, 'Reset Your Password', 'auth/email/reset', 
+                    user=check_user.username, password=reset_password)
                 flash(u'\u2713 Your password has been e-mailed to you')
                 return redirect(url_for('auth.login'))
             else:
@@ -68,7 +69,8 @@ def forgot_username():
                 .filter_by(email=form.email.data)\
                 .first()
             if check_user is not None:
-                send_email(check_user.email, 'Your Username', 'auth/email/username', user=check_user.username)
+                send_email(check_user.email, 'Your Username', 'auth/email/username', 
+                    user=check_user.username)
                 flash(u'\u2713 Your username has been e-mailed to you')
                 return redirect(url_for('auth.login'))
             else:
@@ -151,7 +153,8 @@ def subscribe():
                 .filter_by(email=email_verify)\
                 .first()
             if check_user is None and check_email is None:
-                user = Users(username=username_verify, email=email_verify, password=form.password.data, updates=form.updates.data)
+                user = Users(username=username_verify, email=email_verify, 
+                    password=form.password.data, updates=form.updates.data)
                 db.session.add(user)
                 db.session.commit()
                 login_user(user)

@@ -11,13 +11,21 @@
   {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>Search</h2>
   <form method='POST'>
-    {{form.type.label(class='reckoner')}} {{form.type(class='entry type')}}
+    {{form.type.label(class='reckoner')}}
+    <i class='form-icon fa fa-search fa-2x'></i>
+    {{form.type(class='entry type')}}
     <br/>
-    {{form.search.label(class='reckoner')}} {{form.search(class='entry search', id='tags')}}
+    {{form.search.label(class='reckoner')}}
+    <i class='form-icon fa fa-lightbulb-o fa-2x'></i>
+    {{form.search(class='entry search', id='tags')}}
     <br/>
-    {{form.user.label(class='reckoner')}} {{form.user(class='entry')}}
+    {{form.user.label(class='reckoner')}}
+    <i class='form-icon fa fa-user fa-2x'></i>
+    {{form.user(class='entry')}}
     <br/>
-    {{form.date.label(class='reckoner')}} {{form.date(id='datepicker', class='entry')}}
+    {{form.date.label(class='reckoner')}}
+    <i class='form-icon fa fa-calendar fa-2x'></i>
+    {{form.date(id='datepicker', class='entry')}}
     <br/>
     {{form.csrf_token}}
     {{form.submit(class='reckoner', id='submit')}}
@@ -39,4 +47,5 @@
   </script>
   <script src="{{url_for('static', filename='js/main/search.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-icon.js')}}"></script>
 {% endblock %}

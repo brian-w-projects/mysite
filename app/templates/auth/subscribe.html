@@ -4,7 +4,6 @@
 {% block head %}
   {{super()}}
   <title>Recommend Me - Subscribe</title>
-  <link href="{{url_for('static', filename='css/auth/subscribe.css')}}" type='text/css', rel='stylesheet'/>
 {% endblock %}
 
 {% block maincontent %}
@@ -16,24 +15,34 @@
     </a>
   </p>
   <form method="POST">
-    {{form.username.label(class='reckoner')}} {{form.username(class='entry username')}}
+    {{form.username.label(class='reckoner')}} 
+    <i class='form-icon fa fa-user fa-2x'></i>
+    {{form.username(class='entry username')}}
     <span class='name-valid'></span>
     <br/>
-    {{form.email.label(class='reckoner')}} {{form.email(class='entry email')}}
+    {{form.email.label(class='reckoner')}}
+    <i class='form-icon fa fa-envelope fa-2x'></i>
+    {{form.email(class='entry email')}}
     <span class='email-valid'></span>
     <br/>
     <div class='fieldset'>
       <div class='fieldset-left'>
-        {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+        {{form.password.label(class='reckoner')}}
+        <i class='form-icon fa fa-key fa-2x'></i>
+        {{form.password(class='entry')}}
         <br/>
-        {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+        {{form.password_confirm.label(class='reckoner')}}
+        <i class='form-icon fa fa-lock fa-2x'></i>
+        {{form.password_confirm(class='entry')}}
       </div><!--fieldset-left-->
       <div class='fieldset-right'>
         <span class='password-valid'></span>
         <span class='password-confirm-valid'></span>
       </div><!--fieldset-right-->
     </div><!--fieldset-->
-    {{form.token.label(class='reckoner')}} {{form.token(class='entry')}}
+    {{form.token.label(class='reckoner')}}
+    <i class='form-icon fa fa-universal-access fa-2x'></i>
+    {{form.token(class='entry')}}
     <br/>
     {{form.updates.label(class='reckoner')}} {{form.updates(checked=True, class='click')}}
     <br/>
@@ -48,4 +57,5 @@
   </script>
   <script src="{{url_for('static', filename='js/auth/subscribe.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-icon.js')}}"></script>
 {% endblock %}

@@ -10,9 +10,13 @@
   {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>Log In</h2>
   <form method="POST">
-    {{form.username.label(class='reckoner')}} {{form.username(class='entry')}}
+    {{form.username.label(class='reckoner')}}
+    <i class='form-icon fa fa-user fa-2x'></i>
+    {{form.username(class='entry')}}
     <br/>
-    {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+    {{form.password.label(class='reckoner')}}
+    <i class='form-icon fa fa-key fa-2x'></i>
+    {{form.password(class='entry')}}
     <br/>
     {{form.csrf_token}}
     {{form.submit(class='reckoner', id='submit')}}
@@ -32,4 +36,5 @@
       Register Here
     </a>
   </p>
+  <script src="{{url_for('static', filename='js/speciality/form-icon.js')}}"></script>
 {% endblock %}

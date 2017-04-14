@@ -20,10 +20,12 @@
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
-  {{ajax(mod_recs, moment, current_user)}}
-  {% if mod_recs.pages != mod_recs.page and mod_recs.pages != 0 %}
-    <p class='load-more'>Load More</p>
-  {% endif %}
+  <div class='list-recs'>
+    {{ajax(mod_recs, moment, current_user)}}
+    {% if mod_recs.pages != mod_recs.page and mod_recs.pages != 0 %}
+      <p class='load-more'>Load More</p>
+    {% endif %}
+  </div><!--list-recs-->
 {% endmacro %}
 
 {% macro ajax(mod_recs, moment, current_user) %}

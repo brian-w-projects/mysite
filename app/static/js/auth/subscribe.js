@@ -7,6 +7,7 @@
     var $email = $('.email');
     var $password = $('#password');
     var $password_confirm = $('#password_confirm');
+    var $token = $('#token');
     
     var $username_exists = $('.name-valid');
     var $email_exists = $('.email-valid');
@@ -86,27 +87,31 @@
                 animate_bad($password);
             }
         });
-        
+
         $password_confirm.on('focus', function(){
            animate_good($password_confirm); 
            $password_confirm_exists.text('');
         });
         
         $password_confirm.on('blur', function(){
-           if($password.val() != $password_confirm.val()){
+            if($password.val() != $password_confirm.val()){
                animate_bad($password_confirm);
                $password_confirm_exists.text('Passwords must match');
-           }
+            }
         });
     });
     
     function animate_bad($which){
         $which.animate({
             backgroundColor: '#ff0000'}, 'fast');
+        $which.prev().animate({
+            backgroundColor: '#ff0000'}, 'fast');
     }
     
     function animate_good($which){
         $which.animate({
+            backgroundColor: '#efefef'}, 'fast');
+        $which.prev().animate({
             backgroundColor: '#efefef'}, 'fast');
     }
     

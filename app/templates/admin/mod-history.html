@@ -9,18 +9,14 @@
 {% endblock %}
 
 {% block maincontent %}
-    <button class='reckoner button-width-set' id='submit'>Comments</button>
+  <button class='reckoner button-width-set' id='submit'>Comments</button>
   <br/>
   <br/>
 {% endblock %}
 
 {% block supplemental %}
-  <div class='list-recs'>
-    {{rec_action_macro.initialize_rec_moderations(mod_recs, moment, current_user)}}
-  </div><!--list-recs-->
-  <div class='list-comments'>
-    {{comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
-  </div><!--list-comments-->
+  {{rec_action_macro.initialize_rec_moderations(mod_recs, moment, current_user)}}
+  {{comment_action_macro.initialize_comment_moderations(mod_coms, moment, current_user)}}
   <script>
     var goto_change_comment_mod = "{{url_for('admin.change_mod_comment_decision')}}"
     var goto_change_mod = "{{url_for('admin.change_mod_decision')}}";

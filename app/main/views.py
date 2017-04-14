@@ -30,7 +30,8 @@ def load_comments(id):
         .order_by(Comments.timestamp.desc())\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
-    return jsonify({'last': display_comments.page == display_comments.pages,
+    return jsonify({
+        'last': display_comments.pages in (0, display_comments.page),
         'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('main.highlight', id=id))}) 
 
 
@@ -41,7 +42,7 @@ def highlight(id):
         .filter(Recommendation.verification != -1)\
         .filter_by(id=id)\
         .first_or_404()
-    if display_recs.verification <= 0 and display_recs.author_id != current_user.id:
+    if display_recs.verification == 0 and display_recs.author_id != current_user.id:
         abort(403)
     display_comments = display_recs.comments\
         .filter(Comments.verification > 0)\
@@ -127,7 +128,7 @@ def search_query(page = 1):
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
-            'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
+            'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search'))}) 
     else:
         display_comments = Comments.query\
@@ -169,7 +170,7 @@ def surprise_ajax():
         .paginate(1, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
     return jsonify({
-        'last': display_recs.page == display_recs.pages or display_recs.pages == 0,
+        'last': display_recs.pages in (0, display_recs.page),
         'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise'))}) 
 
 @main.route('/surprise')

@@ -3,30 +3,32 @@
   -->
 {% import 'macros/comment-macro.html' as comment_macro %}
 
-{% macro render_mod(rec_com, moment, current_user) %}
+{% macro render_mod(mod_com, moment, current_user) %}
   <div class='action-header'>
-    <i id='{{rec_com.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
+    <i id='{{mod_com.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
-      {% if rec_com.action %}
+      {% if mod_com.action %}
         Accepted
       {% else %}
         Deleted
       {% endif %}
     </p>
-    <p>{{moment(rec_com.timestamp).fromNow()}}</p>
+    <p>{{moment(mod_com.timestamp).fromNow()}}</p>
   </div><!--action-header-->
-  {{comment_macro.render_comment(rec_com.com, moment, current_user)}}
+  {{comment_macro.render_comment(mod_com.com, moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_comment_moderations(mod_coms, moment, current_user) %}
-  {{ajax(mod_coms, moment, current_user)}}
-  {% if mod_coms.pages != mod_coms.page and mod_coms.pages != 0 %}
-    <a><p class='load-more-com'>Load More</p></a>
-  {% endif %}
+  <div class='list-comments'>
+    {{ajax(mod_coms, moment, current_user)}}
+    {% if mod_coms.pages != mod_coms.page and mod_coms.pages != 0 %}
+      <a><p class='load-more-com'>Load More</p></a>
+    {% endif %}
+  </div><!--list-comments-->
 {% endmacro %}
 
 {% macro ajax(mod_coms, moment, current_user) %}
-  {% for rec_com in mod_coms.items %}
-    {{render_mod(rec_com, moment, current_user)}}
+  {% for mod_com in mod_coms.items %}
+    {{render_mod(mod_com, moment, current_user)}}
   {% endfor %}
 {% endmacro %}

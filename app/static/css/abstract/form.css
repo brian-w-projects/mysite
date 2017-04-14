@@ -4,9 +4,10 @@
     border: 0;
     border-bottom: 1px solid black;
     font-size: 120%;
-    margin: 20px;
+    margin: 5px 20px 20px -4px;
     outline: 0;
     padding: 10px;
+    vertical-align: top;
 }
 
 .entry:hover, .entry:focus{
@@ -24,6 +25,19 @@
     width: 550px;
 }
 /*TEXT ENTRY FORM ELEMENTS*/
+
+/*DROP DOWN FORM ELEMENTS*/
+.type{
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid black;
+    font-size: 120%;
+    margin: 4px 20px 20px -4px;
+    outline: 0;
+    padding: 10px;
+    vertical-align: top;
+}
+/*DROP DOWN FORM ELEMENTS*/
 
 /*CLICK ENTRY FORM ELEMENTS */
 .click{
@@ -82,6 +96,12 @@
     border-top: 2px solid #b2b2b2;
     color: #333333;
 }
+
+.button-width-set{
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+}
 /*BUTTON ELEMENTS*/
 
 /*FIELD SET ELEMENTS */
@@ -104,10 +124,18 @@
 
 /*FIELD SET ELEMENTS */
 
-/*BUTTON SIZING*/
-.button-width-set{
-    display: block;
-    margin: 0 auto;
-    width: 100px;
+/*SUBSCRIPTION FORM FEEDBACK */
+.name-valid, .email-valid, .password-valid, .password-confirm-valid{
+    font-family: sans-serif;
 }
-/*BUTTON SIZING*/
+/*SUBSCRIPTION FORM FEEDBACK */
+
+/*FORM ICON*/
+.form-icon{
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom-left-radius: 10px;
+    margin-top: 5px;
+    padding: 5px;
+}
+/*FORM ICON*/
