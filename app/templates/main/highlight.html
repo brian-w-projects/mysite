@@ -27,9 +27,7 @@
   <div class='list-recs'>
     {{rec_macro.render_rec(rec, moment, current_user, attributes=False)}}
   </div><!--list-recs-->
-  <div class='list-comments'>
-    {{comment_macro.initialize_comments(d_c, moment, current_user)}}
-  </div><!--list-comments-->
+  {{comment_macro.initialize_comments(d_c, moment, current_user)}}
   {% if current_user.is_authenticated %}
     <div class='w760'>
       <h2>Comment</h2>

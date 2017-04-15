@@ -3,20 +3,6 @@
 3. Mobile Pages?
 
 
-
-Refractoring:
-    - ABSTRACT - FINISHED FIRST PASS
-    - ADMIN - FINISHED SECOND PASS
-    - AUTH - FINISHED SECOND PASS
-    - ERRORS - FINISHED SECOND PASS
-    - MACROS - FINISHED FIRST PASS
-    - MAIN - FINISHED SECOND PASS
-    - MOD - FINISHED FIRST PASS
-    - PERSONAL - FINISHED FIRST PASS
-    - ALL GENERIC APP STUFF - FINISHED FIRST PASS
-
-- pust list-recs and list-comments in macros, address issue this causes in search.html
-
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores

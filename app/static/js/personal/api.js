@@ -1,4 +1,3 @@
-/* global api */
 /* global goto_token */
 
 (function($, window, document){
@@ -8,9 +7,7 @@
     var $reload = $('.reload');
    
    $(function(){
-    
-        $api_entry.val(api);
-    
+
         $api_entry.on('click', function(){
             $(this).blur();
         });

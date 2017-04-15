@@ -3,16 +3,16 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
     ADMIN = os.environ.get("ADMIN")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+    MAIL_PORT = 465
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_USE_SSL = True
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
     @staticmethod
     def init_app(app):

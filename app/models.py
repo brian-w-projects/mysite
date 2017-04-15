@@ -1,13 +1,13 @@
+from flask import current_app, g, url_for
 from . import db
 from . import login_manager
 from datetime import datetime, timedelta
-from flask import current_app, url_for, g
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
-from werkzeug.security import generate_password_hash, check_password_hash
-import random
+from werkzeug.security import check_password_hash, generate_password_hash
+from random import SystemRandom
 
-random = random.SystemRandom()
+random = SystemRandom()
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -320,7 +320,7 @@ class Users(UserMixin, db.Model):
     
     @staticmethod
     def verify_auth_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
+        s = TimedSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         except:

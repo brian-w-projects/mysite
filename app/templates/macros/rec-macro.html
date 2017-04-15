@@ -64,10 +64,12 @@
 {% endmacro %}
 
 {% macro initialize_recs(display, moment, current_user, attributes=True) %}
-  {{ajax(display, moment, current_user, attributes)}}
-  {% if display.pages != display.page and display.pages != 0 %}
-    <p class='load-more'>Load More</p>
-  {% endif %}
+  <div class='list-recs'>
+    {{ajax(display, moment, current_user, attributes)}}
+    {% if display.pages != display.page and display.pages != 0 %}
+      <p class='load-more'>Load More</p>
+    {% endif %}
+  </div><!--list-recs-->
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, attributes=True, link=request.url) %}

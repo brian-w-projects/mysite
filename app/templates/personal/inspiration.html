@@ -12,9 +12,7 @@
 {% endblock %}
 
 {% block supplemental %}
-  <div class='list-recs'>
-    {{rec_macro.initialize_recs(display, moment, current_user)}}
-  </div><!--list-recs-->
+  {{rec_macro.initialize_recs(display, moment, current_user)}}
   <script>
     var goto_rec = "{{url_for('personal.inspiration_ajax')}}";
   </script>

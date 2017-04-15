@@ -10,7 +10,7 @@
   <h2>Make a Rec</h2>
   {{flash_macro.render_flash(get_flashed_messages())}}
   <form method="POST">
-    {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
+    {{form.title.label(class='reckoner')}} {{form.title(class='rec-title-entry')}}
     <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'>100</span></p>
     <br/>
     {{form.public.label(class='reckoner')}} {{form.public(class='click', checked=True)}}
@@ -26,9 +26,7 @@
 
 {% block supplemental %}
   <br/>
-  <div class='list-recs'>
-    {{rec_macro.initialize_recs(display, moment, current_user)}}
-  </div><!--list-recs-->
+  {{rec_macro.initialize_recs(display, moment, current_user)}}
   <script>
     var goto_rec = "{{url_for('personal.post_ajax')}}";
   </script>

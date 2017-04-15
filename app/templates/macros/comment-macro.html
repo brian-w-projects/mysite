@@ -48,10 +48,12 @@
 {% endmacro %}
 
 {% macro initialize_comments(d_c, moment, current_user) %}
-  {{ajax(d_c, moment, current_user)}}
-  {% if d_c.pages != d_c.page and d_c.pages != 0 %}
-    <a><p class='load-more-com'>Load More</p></a>
-  {% endif %}
+  <div class='list-comments'>
+    {{ajax(d_c, moment, current_user)}}
+    {% if d_c.pages != d_c.page and d_c.pages != 0 %}
+      <a><p class='load-more-com'>Load More</p></a>
+    {% endif %}
+  </div><!--list-comments-->
 {% endmacro %}
 
 {% macro ajax(d_c, moment, current_user, link=request.url) %}

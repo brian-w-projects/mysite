@@ -10,7 +10,7 @@
 
 {% block maincontent %}
   <h2>API Token</h2>
-  <input class='api-entry'/>
+  <input class='api-entry' value='{{current_user.api}}'/>
   <button class='reckoner copy button'>Copy</button>
   <button class='reckoner reload button'><i class="fa fa-repeat"></i></button>
   <br/>
@@ -270,7 +270,6 @@
     )}}
   {% endif %}
   <script>
-    var api = "{{current_user.api}}";
     var goto_token = "{{url_for('personal.api_ajax')}}"
   </script>
   <script src="{{url_for('static', filename='js/personal/api.js')}}"></script>

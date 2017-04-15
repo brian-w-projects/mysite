@@ -44,7 +44,5 @@
 
 {% block postcontent %}
   <h2>Check out some recent Recs</h2>
-  <div class='list-recs'>
-    {{rec_macro.initialize_recs(display, moment, current_user)}}
-  </div><!--list-recs-->
+  {{rec_macro.initialize_recs(display, moment, current_user)}}
 {% endblock %}

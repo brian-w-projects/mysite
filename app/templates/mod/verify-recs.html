@@ -11,10 +11,8 @@
 {% endblock %}
 
 {% block supplemental %}
-  <div class='list-recs'>
-    {{mod_rec_macro.initialize_moderate(display, moment, current_user)}}
-  </div><!--list-recs-->
-   <script>
+  {{mod_rec_macro.initialize_moderate(display, moment, current_user)}}
+  <script>
     var goto_mod = "{{url_for('mod.moderate_recs')}}";
     var goto_rec = "{{url_for('mod.verify_recs_ajax')}}";
   </script>

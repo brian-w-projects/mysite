@@ -5,14 +5,16 @@
 {% import 'macros/rec-macro.html' as rec_macro %}
 
 {% macro initialize_following(display, moment, current_user, Recommendation) %}
-  {% if display.items|length != 0 %}
-    {{ajax(display, moment, current_user, Recommendation)}}
-  {% else %}
-    <p>You aren't following anyone! Go to a user's profile to start following them.</p>
-  {% endif %}
-  {% if display.pages != display.page and display.pages != 0 %}
-    <a><p class='load-more'>Load More</p></a>
-  {% endif %}
+  <div class='list-recs'>
+    {% if display.items|length != 0 %}
+      {{ajax(display, moment, current_user, Recommendation)}}
+    {% else %}
+      <p>You aren't following anyone! Go to a user's profile to start following them.</p>
+    {% endif %}
+    {% if display.pages != display.page and display.pages != 0 %}
+      <a><p class='load-more'>Load More</p></a>
+    {% endif %}
+  <div class='list-recs'><!--list-recs-->
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, Recommendation, link=request.url) %}

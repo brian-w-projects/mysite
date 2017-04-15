@@ -1,11 +1,10 @@
 #!usr/bin/env python
-import os
+from flask import redirect, request, url_for
 from app import create_app, db
-from app.models import Users, Role, Recommendation, Comments, Followers, RecModerations, ComModerations
-from flask_script import Manager, Shell, Server
+from app.models import Comments, ComModerations, Followers, RecModerations, Recommendation, Role, Users
+from flask_script import Manager, Server, Shell
 from flask_migrate import Migrate, MigrateCommand
-from flask import request, redirect, url_for
-
+import os
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)

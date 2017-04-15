@@ -10,7 +10,7 @@
   {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>{{current_user.username}}</h2>
   <form method='POST'>
-    {{form.title.label(class='reckoner')}} {{form.title(class='entry rec-title-entry')}}
+    {{form.title.label(class='reckoner')}} {{form.title(class='rec-title-entry')}}
     <p class='chars-format'>Characters Left: <span class='rec-title-chars-left'></span></p>
     <br/>
     {{form.public.label(class='reckoner')}} {{form.public(class='click', default=form.public.data)}}

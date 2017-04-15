@@ -65,12 +65,8 @@
 {% block supplemental %}
   <br/>
   <br/>
-  <div class='list-recs'>
-    {{rec_macro.initialize_recs(display, moment, current_user)}}
-  </div><!--list-recs-->
-  <div class='list-comments'>
-    {{comment_macro.initialize_comments(d_c, moment, current_user)}}
-  </div><!--list-comments-->
+  {{rec_macro.initialize_recs(display, moment, current_user)}}
+  {{comment_macro.initialize_comments(d_c, moment, current_user)}}
   <script>
     var goto_comment = "{{url_for('personal.profile_com_ajax', id=user.id)}}";
     var goto_rec = "{{url_for('personal.profile_ajax', id=user.id)}}";
