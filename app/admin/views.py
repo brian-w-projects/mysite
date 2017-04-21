@@ -7,7 +7,8 @@ from ..models import Comments, ComModerations, RecModerations, Recommendation, U
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
-from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import case
+from sqlalchemy.sql.expression import asc, desc, func, distinct
 
 @admin.route('/-change-mod-comment-decision')
 @login_required
@@ -111,32 +112,62 @@ def mod_history(id):
 def admin_splash():
     week_ago = datetime.today() - timedelta(days=7)
     data = {}
-    data['count'] = Users.query.count()
-    data['recent_account'] = Users.query\
-        .filter(Users.member_since > week_ago )\
+    
+    users = Users.query
+    recommendation = Recommendation.query
+    comments = Comments.query
+    
+    data['count'] = users.count()
+    data['recent_account'] = users\
+        .filter(Users.member_since>week_ago)\
         .count()
-    data['recent_logins'] = Users.query\
-        .filter(Users.last_login > week_ago)\
+    data['recent_logins'] = users\
+        .filter(Users.last_login>week_ago)\
         .count()
-    data['total_recs'] = Recommendation.query.count()
-    data['recent_recs'] = Recommendation.query\
-        .filter(Recommendation.timestamp > week_ago)\
+    data['total_recs'] = recommendation.count()
+    data['recent_recs'] = recommendation\
+        .filter(Recommendation.timestamp>week_ago)\
         .count()
-    data['total_comments'] = Comments.query.count()
-    data['recent_comments'] = Comments.query\
-        .filter(Comments.timestamp > week_ago)\
+    data['recs_to_mod'] = recommendation\
+        .filter_by(verification = 1)\
         .count()
-    data['recs_to_mod'] = Recommendation.query\
-        .filter(Recommendation.verification == 1)\
+    data['total_comments'] = comments.count()
+    data['recent_comments'] = comments\
+        .filter(Comments.timestamp>week_ago)\
         .count()
-    data['comments_to_mod'] = Comments.query\
+    data['comments_to_mod'] = comments\
         .filter_by(verification=1)\
         .count()
-    data['mods'] = Users.query\
-        .filter_by(role_id = 2)\
+    data['mods'] = users\
+        .filter_by(role_id=2)\
         .order_by(Users.username)
-    data['mods_count'] = data['mods'].from_self()\
+    data['mods_count'] = data['mods']\
         .count()
+    
+    
+    xpr = case([(RecModerations.timestamp>week_ago, RecModerations.id),])
+    xpr_com = case([(ComModerations.timestamp>week_ago, ComModerations.id),])
+    
+    moderator_info = db.session.query(Users, func.count(distinct(RecModerations.id)), func.count(distinct(xpr)), func.count(distinct(ComModerations.id)), func.count(distinct(xpr_com)))\
+        .join(RecModerations)\
+        .join(ComModerations)\
+        .filter(Users.role_id==2)\
+        .group_by(Users.username)\
+        .all()
+    
+    
+    
+    
+    print(moderator_info)
+
+    
     return render_template('admin/splash.html', data=data, 
         RecModerations=RecModerations, ComModerations=ComModerations, 
         week_ago=week_ago)
+        
+        # moderator_info = db.session.query(Users, func.count(distinct(RecModerations.id)), func.count(distinct(ComModerations.id)))\
+        # .join(RecModerations)\
+        # .join(ComModerations)\
+        # .filter(Users.role_id==2)\
+        # .group_by(Users.username)\
+        # .all()
