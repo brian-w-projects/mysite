@@ -13,6 +13,7 @@
     var $load_more_recs = $('.load-more');
     
     $(function(){
+        
         $load_more_recs.on('click', function(){
             page += 1;
             rec_ajax({'page':page}).done(function(data){
@@ -41,14 +42,8 @@
 
         window.load_rec_attributes = function(){
             $content.on('click', '.toggle-comments', function(event){
-                var $insert_point = $(this).closest('.single-post');
-                var $to_modify_comments = $insert_point.next('.list-comments');
-                if(!$to_modify_comments.length){
-                    rec_comment_ajax({'id': $(this).attr('id'), 'link':$(this).attr('class').split(' ')[0]}).done(function(data){
-                        $insert_point.after(data['ajax_request']);
-                        flask_moment_render_all();
-                    });
-                }else if($to_modify_comments.css('display') == 'none'){
+                var $to_modify_comments = $(this).closest('.single-post').next().next('.inline-comments');
+                if($to_modify_comments.css('display') == 'none'){
                     $to_modify_comments.show();
                 }else{
                     $to_modify_comments.hide();
@@ -57,7 +52,7 @@
             
             $content.on('click', '.toggle-show', function(){
                 var $to_modify = $(this).closest('.post-header').next();
-                var $to_modify_comments = $(this).closest('.single-post').next('.list-comments');
+                var $to_modify_comments = $(this).closest('.single-post').next().next('.inline-comments');
                 if($to_modify.css('display') == 'none'){
                     $to_modify.slideDown();
                     $to_modify_comments.slideDown();

@@ -4,8 +4,10 @@ from . import login_manager
 from datetime import datetime, timedelta
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
-from werkzeug.security import check_password_hash, generate_password_hash
 from random import SystemRandom
+from sqlalchemy.sql.expression import desc
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 random = SystemRandom()
 
@@ -431,6 +433,15 @@ class Recommendation(db.Model):
         backref=db.backref('posted', lazy='joined'),
         lazy='dynamic',
         cascade='all, delete-orphan')
+    
+    def prepare_comments(self):
+        prep_query = self.comments\
+            .filter(Comments.verification > 0)\
+            .order_by(desc(Comments.timestamp))
+        d_c = prep_query\
+            .paginate(1, per_page=5, error_out=False)
+        count = prep_query.count()
+        return (d_c, count)
     
     def to_json(self):
         json_rec = {

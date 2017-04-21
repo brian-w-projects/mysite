@@ -4,10 +4,10 @@
   -->
 {% import 'macros/rec-macro.html' as rec_macro %}
 
-{% macro initialize_followed_by(display, moment, current_user, Recommendation) %}
+{% macro initialize_followed_by(display, moment, current_user) %}
   <div class='list-recs'>
     {% if display.items|length != 0 %}
-      {{ajax(display, moment, current_user, Recommendation)}}
+      {{ajax(display, moment, current_user)}}
     {% else %}
       <p>Nobody is following you! Post some Recs to get followers.</p>
     {% endif %}
@@ -17,15 +17,13 @@
   </div><!--list-recs-->
 {% endmacro %}
 
-{% macro ajax(display, moment, current_user, Recommendation, link=request.url) %}
-  {% for name in display.items %}
+{% macro ajax(display, moment, current_user, link=request.url) %}
+  {% for id, rec, x in display.items %}
     <div class='name-header'>
-      <p class='reckoner name-header-display'>{{name.user.username}}</p>
+      <p class='reckoner name-header-display'>{{rec.author.username}}</p>
     </div><!--name-header-->
-    {% set highlight = name.user.posts.filter(Recommendation.verification > 0)
-        .order_by(Recommendation.timestamp.desc()).first() %}
-    {% if highlight != None %}
-      {{rec_macro.render_rec(highlight, moment, current_user, link)}}
+    {% if rec != None %}
+      {{rec_macro.single_rec(rec, moment, current_user, link)}}
     {% else %}
       <br/>
     {% endif %}

@@ -1,6 +1,6 @@
 (function($, window, document){
 
-    var $list_comments = $('.list-comments');   
+    var $list_comments = $('.list-comments');
     var $list_recs = $('.list-recs');
    
     var $load_more_comments = $('.load-more-com');

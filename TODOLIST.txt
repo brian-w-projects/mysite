@@ -3,6 +3,10 @@
 3. Mobile Pages?
 
 
+1. Clean up all queries, bring up to standards
+2. Combine comment-edit and comment-delete
+
+
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores

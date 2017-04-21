@@ -5,6 +5,7 @@ from ..decorators import is_moderator
 from ..models import Comments, ComModerations, RecModerations, Recommendation
 from flask_login import login_required, current_user
 from flask_moment import _moment
+from sqlalchemy.sql.expression import asc
 
 @mod.route('/-moderate-comments')
 @login_required
@@ -33,8 +34,8 @@ def moderate_com():
 def verify_com_ajax():
     page = int(request.args.get('page'))
     display_comments = Comments.query\
-        .filter_by(verification = 1)\
-        .order_by(Comments.timestamp.asc())\
+        .filter_by(verification=1)\
+        .order_by(asc(Comments.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/moderator/mod-comment-macro.html', 'ajax')
     return jsonify({
@@ -46,8 +47,8 @@ def verify_com_ajax():
 @is_moderator
 def verify_comments():
     display_comments = Comments.query\
-        .filter_by(verification = 1)\
-        .order_by(Comments.timestamp.asc())\
+        .filter_by(verification=1)\
+        .order_by(asc(Comments.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('mod/verify-comments.html', d_c=display_comments)
 
@@ -80,7 +81,7 @@ def verify_recs_ajax():
     page = int(request.args.get('page'))
     display_recs = Recommendation.query\
         .filter_by(verification=1)\
-        .order_by(Recommendation.timestamp.asc())\
+        .order_by(asc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/moderator/mod-rec-macro.html', 'ajax')        
     return jsonify({
@@ -93,6 +94,6 @@ def verify_recs_ajax():
 def verify_recs():
     display_recs = Recommendation.query\
         .filter_by(verification=1)\
-        .order_by(Recommendation.timestamp.asc())\
+        .order_by(asc(Recommendation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('mod/verify-recs.html', display=display_recs)

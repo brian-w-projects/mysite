@@ -7,6 +7,7 @@ from ..models import Comments, ComModerations, RecModerations, Recommendation, U
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
+from sqlalchemy.sql.expression import asc, desc
 
 @admin.route('/-change-mod-comment-decision')
 @login_required
@@ -38,8 +39,7 @@ def change_mod_decision():
     rec = Recommendation.query\
         .filter_by(id=id)\
         .first_or_404()
-    mod = RecModerations.query\
-        .filter_by(mod_on=id)\
+    mod = rec.moderation\
         .first_or_404()
     new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=not mod.action)
     if mod.action:
@@ -97,10 +97,10 @@ def mod_history(id):
         .filter_by(id=id)\
         .first_or_404()
     mod_recs = mod.rec_mods\
-        .order_by(RecModerations.timestamp.desc())\
+        .order_by(desc(RecModerations.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     mod_coms = mod.com_mods\
-        .order_by(ComModerations.timestamp.desc())\
+        .order_by(desc(ComModerations.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('admin/mod-history.html', mod=mod,
         mod_recs=mod_recs, mod_coms=mod_coms)

@@ -1,7 +1,7 @@
 <!--REQUIREMENTS
   comments.js
   -->
-{% macro render_comment(com, moment, current_user, link) %}
+{% macro render_comment(com, moment, current_user, link=request.url) %}
   <div class='single-post'>
     <div class='post-header'>
       <ul class='post-header-list'>
@@ -47,9 +47,9 @@
   <br/>
 {% endmacro %}
 
-{% macro initialize_comments(d_c, moment, current_user) %}
+{% macro initialize_comments(d_c, moment, current_user, link=request.url) %}
   <div class='list-comments'>
-    {{ajax(d_c, moment, current_user)}}
+    {{ajax(d_c, moment, current_user, link)}}
     {% if d_c.pages != d_c.page and d_c.pages != 0 %}
       <a><p class='load-more-com'>Load More</p></a>
     {% endif %}
@@ -62,9 +62,8 @@
   {% endfor %}
 {% endmacro %}
 
-{% macro ajax_div_wrapper(d_c, moment, current_user, link=request.url) %}
-  <div class='list-comments'>
-    </br>
+{% macro insert_comments(d_c, moment, current_user, link=request.url) %}
+  <div class='inline-comments'>
     {{ajax(d_c, moment, current_user, link)}}
-  </div><!--list-comments-->
+  </div><!--inline-comments-->
 {% endmacro %}

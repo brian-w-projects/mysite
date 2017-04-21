@@ -1,9 +1,10 @@
+{% import 'macros/comment-macro.html' as comment_macro %}  
 <!--REQUIREMENTS
   rec.js
   comments.js
   -->
-  
-{% macro render_rec(rec, moment, current_user, attributes=True, link=request.url) %}
+
+{% macro render_rec(rec, count, moment, current_user, attributes=True, link=request.url) %}
   <div class='single-post'>
     <a href="{{url_for('main.highlight', id=rec.id)}}">
       <h3 class='rec-title'>{{rec.title}}</h3>
@@ -33,8 +34,7 @@
           {{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
         </li>
         <li class='reckoner'>
-          Comments: {{rec.comments.filter_by(verification=1).count()
-          + rec.comments.filter_by(verification=2).count()}}
+          Comments: {{count}}
         </li>
         {% if current_user.id == rec.author_id and rec.new_comment == True %}
           <li class='reckoner'>
@@ -74,6 +74,15 @@
 
 {% macro ajax(display, moment, current_user, attributes=True, link=request.url) %}
   {% for rec in display.items %}
-    {{render_rec(rec, moment, current_user, attributes, link)}}
+    {{single_rec(rec, moment, current_user, attributes, link, in_comments=True)}}
   {% endfor %}
 {% endmacro %}
+
+{% macro single_rec(rec, moment, current_user, attributes=True, link=request.url, in_comments=True) %}
+  {% set comments, count = rec.prepare_comments() %}
+  {{render_rec(rec, count, moment, current_user, attributes, link)}}
+  {% if in_comments %}
+    {{comment_macro.insert_comments(comments, moment, current_user, link)}}
+  {% endif %}
+{% endmacro %}
+    

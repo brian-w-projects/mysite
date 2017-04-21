@@ -6,13 +6,13 @@ from ..models import Comments, Recommendation, Users
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
-from sqlalchemy.sql.expression import func, or_
+from sqlalchemy.sql.expression import func, or_, desc
 
 @main.route('/about')
 def about():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification > 0)\
-        .order_by(Recommendation.timestamp.desc())\
+        .filter_by(verification = 2)\
+        .order_by(desc(Recommendation.timestamp))\
         .limit(50)\
         .from_self()\
         .order_by(func.random())\
@@ -27,7 +27,7 @@ def load_comments(id):
     display_comments = Comments.query\
         .filter_by(posted_on = id)\
         .filter(Comments.verification != 0)\
-        .order_by(Comments.timestamp.desc())\
+        .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
     return jsonify({
@@ -39,14 +39,13 @@ def load_comments(id):
 def highlight(id):
     form = CommentForm(request.form)
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification != -1)\
-        .filter_by(id=id)\
+        .filter(Recommendation.verification != -1, Recommendation.id == id)\
         .first_or_404()
     if display_recs.verification == 0 and display_recs.author_id != current_user.id:
         abort(403)
     display_comments = display_recs.comments\
         .filter(Comments.verification > 0)\
-        .order_by(Comments.timestamp.desc())\
+        .order_by(desc(Comments.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     if display_recs.author_id == current_user.id:
         display_recs.new_comment = False
@@ -79,10 +78,9 @@ def index():
             .order_by(Recommendation.timestamp.desc())\
             .limit(10)]
         display_recs = Recommendation.query\
-            .filter(Recommendation.verification > 0)\
-            .filter(Recommendation.author_id != current_user.id)\
+            .filter(Recommendation.verification > 0, Recommendation.author_id != current_user.id)\
             .filter(or_(*[Recommendation.title.contains(list_ele) for list_ele in my_list]))\
-            .order_by(Recommendation.timestamp.desc())\
+            .order_by(desc(Recommendation.timestamp))\
             .limit(100)\
             .from_self()\
             .order_by(func.random())\
@@ -124,7 +122,7 @@ def search_query(page = 1):
         if session['date'] != '':
             display_recs = display_recs.filter(Recommendation.timestamp <= session['date'])
         display_recs = display_recs\
-            .order_by(Recommendation.timestamp.desc())\
+            .order_by(desc(Recommendation.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
@@ -146,7 +144,7 @@ def search_query(page = 1):
             display_comments = display_comments\
                 .filter(Comments.timestamp <= session['date'])
         display_comments = display_comments\
-            .order_by(Comments.timestamp.desc())\
+            .order_by(desc(Comments.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
         return jsonify({
@@ -161,9 +159,9 @@ def search():
 @main.route('/-surprise')
 def surprise_ajax():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification > 0)\
-        .filter(Recommendation.author_id != current_user.id)\
-        .order_by(Recommendation.timestamp.desc())\
+        .filter(Recommendation.verification>0,
+            Recommendation.author_id != current_user.id)\
+        .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
         .from_self()\
         .order_by(func.random())\
@@ -176,9 +174,9 @@ def surprise_ajax():
 @main.route('/surprise')
 def surprise():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification > 0)\
-        .filter(Recommendation.author_id != current_user.id)\
-        .order_by(Recommendation.timestamp.desc())\
+        .filter(Recommendation.verification > 0,
+            Recommendation.author_id != current_user.id)\
+        .order_by(desc(Recommendation))\
         .limit(5*current_user.display)\
         .from_self()\
         .order_by(func.random())\
@@ -192,18 +190,3 @@ def find_user(username):
         .filter_by(username=username)\
         .first_or_404()
     return redirect(url_for('personal.profile', id=user.id))
-
-# rec-macro ajax request
-@main.route('/rec-inline-comment-ajax')
-def rec_inline_comment_ajax():
-    id = int(request.args.get('id'))
-    link = request.args.get('link')
-    display_comments = Comments.query\
-        .filter_by(posted_on = id)\
-        .filter(Comments.verification != 0)\
-        .order_by(Comments.timestamp.desc())\
-        .paginate(1, per_page=5, error_out=False)
-    if len(display_comments.items) == 0:
-        return jsonify({'ajax_request': ''}) 
-    to_return = get_template_attribute('macros/comment-macro.html', 'ajax_div_wrapper')
-    return jsonify({'ajax_request': to_return(display_comments, _moment, current_user, link=link)}) 

@@ -16,7 +16,7 @@
     </p>
     <p>{{moment(rec_mod.timestamp).fromNow()}}</p>
   </div><!--action_header-->
-  {{rec_macro.render_rec(rec_mod.rec, moment, current_user)}}
+  {{rec_macro.single_rec(rec_mod.rec, moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}

@@ -17,7 +17,7 @@
 
 {% block supplemental %}
   <div class='list-recs'>
-    {{rec_macro.render_rec(rec, moment, current_user, attributes=False)}}
+    {{rec_macro.single_rec(rec, moment, current_user, attributes=False, in_comments=False)}}
   </div><!--list-recs-->
   <div class='list-comments'>
     {{comment_macro.render_comment(com, moment, current_user)}}

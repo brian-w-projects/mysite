@@ -6,6 +6,7 @@ from ..models import Users
 from ..email import send_email
 from datetime import datetime
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy.exc import IntegrityError
 
     
 @auth.route('/confirm/<token>')
@@ -146,23 +147,17 @@ def subscribe():
         username_verify = form.username.data.strip().lower()
         email_verify = form.email.data.strip().lower()
         if form.validate():
-            check_user = Users.query\
-                .filter_by(username=username_verify)\
-                .first()
-            check_email = Users.query\
-                .filter_by(email=email_verify)\
-                .first()
-            if check_user is None and check_email is None:
-                user = Users(username=username_verify, email=email_verify, 
-                    password=form.password.data, updates=form.updates.data)
-                db.session.add(user)
+            user = Users(username=username_verify, email=email_verify, 
+                password=form.password.data, updates=form.updates.data)
+            db.session.add(user)
+            try:
                 db.session.commit()
                 login_user(user)
                 return redirect(url_for('auth.confirmationsent', username=username_verify))
-            else:
-                if check_user is not None:
+            except IntegrityError as e:
+                if 'users.username' in str(e):
                     flash(u'\u2717 Username already in use')
-                if check_email is not None:
+                if 'users.email' in str(e):
                     flash(u'\u2717 Email already in use')
         else:
             if 'username' in form.errors:

@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block supplemental %}
-  {{followed_macro.initialize_followed_by(display, moment, current_user, Recommendation)}}
+  {{followed_macro.initialize_followed_by(display, moment, current_user)}}
   <script>
     var goto_rec = "{{url_for('personal.followers_ajax', id=user.id)}}";
   </script>

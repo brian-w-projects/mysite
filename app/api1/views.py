@@ -4,6 +4,7 @@ from .. import db
 from ..decorators import admin_token_required, auth_login_required, auth_request, auth_token_required, moderator_token_required
 from ..models import Comments, ComModerations, Followers, RecModerations, Recommendation, Users
 from datetime import datetime, timedelta
+from sqlalchemy.sql.expression import asc, desc
 
 def message(code, message):
     response = jsonify({'Code': code, 'message': message})
@@ -152,8 +153,8 @@ def post_rec_comments(id):
 @auth_request(role=3)
 def get_comments(id):
     to_ret = Comments.query\
-        .filter(Comments.verification > 0)\
-        .filter_by(id=id)\
+        .filter(Comments.verification>0,
+            Comments.id==id)\
         .first()
     if not to_ret:
         return message(404, 'This comment does not exist')
@@ -164,8 +165,8 @@ def get_comments(id):
 @auth_request(role=3)
 def edit_comments(id):
     com = Comments.query\
-        .filter(Comments.verification > 0)\
-        .filter_by(id=id)\
+        .filter(Comments.verification>0,
+            Comments.id==id)\
         .first()
     if not com:
         return message(404, 'This comment does not exist')
@@ -186,8 +187,8 @@ def edit_comments(id):
 @auth_request(role=3)
 def delete_comments(id):
     com = Comments.query\
-        .filter(Comments.verification > 0)\
-        .filter_by(id=id)\
+        .filter(Comments.verification>0,
+            Comments.id==id)\
         .first()
     if not com:
         return message(404, 'This comment does not exist')
@@ -345,8 +346,8 @@ def delete_follow(id):
 @auth_request(role=1)
 def get_mod_rec_history(id):
     mod = Users.query\
-        .filter(Users.role_id != 3)\
-        .filter_by(id=id)\
+        .filter(Users.role_id!=3,
+            Users.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
@@ -360,8 +361,8 @@ def get_mod_rec_history(id):
 @auth_request(role=1)
 def get_mod_com_history(id):
     mod = Users.query\
-        .filter(Users.role_id != 3)\
-        .filter_by(id=id)\
+        .filter(Users.role_id!=3,
+            Users.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
@@ -448,7 +449,7 @@ def put_com_mods(id):
 def get_moderate_recs(page=1):
     recs = Recommendation.query\
         .filter_by(verification = 1)\
-        .order_by(Recommendation.timestamp.asc())\
+        .order_by(asc(Recommendation.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
     to_ret = {x.id : x.to_json() for x in recs.items}
     return jsonify(to_ret)
@@ -463,8 +464,7 @@ def moderate_recs(id):
     if action not in ['True', 'False']:
         return message(400, 'action must be true or false')
     rec = Recommendation.query\
-        .filter_by(verification = 1)\
-        .filter_by(id=id)\
+        .filter_by(verification = 1, id=id)\
         .first()
     if not rec:
         return message(404, 'This rec cannot be modded. It is private or has been verified')
@@ -500,8 +500,7 @@ def moderate_comments(id):
     if action not in ['True', 'False']:
         return message(400, 'action must be true or false')
     comment = Comments.query\
-        .filter_by(verification = 1)\
-        .filter_by(id=id)\
+        .filter_by(verification = 1, id=id)\
         .first()
     if not comment:
         return message(404, 'This comment cannot be modded. It has been deleted or has been verified')
@@ -563,7 +562,7 @@ def get_search_comments(page = 1):
             display_comments = display_comments\
                 .filter(Comments.timestamp <= date)
     display_comments = display_comments\
-        .order_by(Comments.timestamp.desc())\
+        .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
     to_ret = {x.id: x.to_json() for x in display_comments.items}
     return jsonify(to_ret)

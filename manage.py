@@ -58,6 +58,4 @@ if __name__ == '__main__':
         # ComModerations.generate_commods()
         # print('Finished commods')
         # db.session.commit()
-        
-
     manager.run()

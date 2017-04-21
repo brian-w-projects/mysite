@@ -4,9 +4,13 @@
     width: 800px;
 }
 
-.list-comments{
+.inline-comments, .list-comments{
     margin: 0 auto;
     width: 700px;
+}
+
+.inline-comments{
+    display: none;
 }
 /*COMMENTS*/
 
