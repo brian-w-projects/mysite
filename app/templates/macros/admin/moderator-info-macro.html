@@ -1,8 +1,9 @@
 <!--REQUIREMENTS
   moderator-info.css
   -->
-{% macro mod_display(mods, moment, RecModerations, ComModerations, week_ago) %}
-  {% for mod in mods %}
+{% macro mod_display(mods, moment) %}
+  {% for mod_info in mods %}
+    {% set mod, rec_mods, recent_rec_mods, com_mods, recent_com_mods = mod_info %}
     <div class='mod-display'>
       <div class='headline'>
         <a class='headline-element' href="{{url_for('personal.profile', id=mod.id)}}">
@@ -14,15 +15,15 @@
         <p class='headline-element'>Last Login: {{moment(mod.last_login).fromNow()}}</p>
       </div><!--headline-->
       <div class='w220'>
-        <p>Total Rec Mods: {{mod.rec_mods.count()}}</p>
+        <p>Total Rec Mods: {{rec_mods}}</p>
         <p>
-          Last Week Rec Mods: {{mod.rec_mods.filter(RecModerations.timestamp > week_ago).count()}}
+          Last Week Rec Mods: {{recent_rec_mods}}
         </p>
       </div><!--w220-->
       <div class='w220'>
-        <p>Total Com Mods: {{mod.com_mods.count()}}</p>
+        <p>Total Com Mods: {{com_mods}}</p>
         <p>
-          Last Week Com Mods: {{mod.com_mods.filter(ComModerations.timestamp > week_ago).count()}}
+          Last Week Com Mods: {{recent_com_mods}}
         </p>
       </div><!--w220-->
     </div><!--mod-display-->

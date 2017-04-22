@@ -25,8 +25,7 @@ def about():
 def load_comments(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
-        .filter_by(posted_on = id)\
-        .filter(Comments.verification != 0)\
+        .filter(Comments.verification!=0, Comments.posted_on==id)\
         .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
@@ -39,12 +38,12 @@ def load_comments(id):
 def highlight(id):
     form = CommentForm(request.form)
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification != -1, Recommendation.id == id)\
+        .filter(Recommendation.verification!=-1, Recommendation.id==id)\
         .first_or_404()
     if display_recs.verification == 0 and display_recs.author_id != current_user.id:
         abort(403)
     display_comments = display_recs.comments\
-        .filter(Comments.verification > 0)\
+        .filter(Comments.verification>0)\
         .order_by(desc(Comments.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     if display_recs.author_id == current_user.id:
@@ -78,7 +77,7 @@ def index():
             .order_by(Recommendation.timestamp.desc())\
             .limit(10)]
         display_recs = Recommendation.query\
-            .filter(Recommendation.verification > 0, Recommendation.author_id != current_user.id)\
+            .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
             .filter(or_(*[Recommendation.title.contains(list_ele) for list_ele in my_list]))\
             .order_by(desc(Recommendation.timestamp))\
             .limit(100)\
@@ -109,18 +108,17 @@ def search_more_ajax():
 def search_query(page = 1):
     if session['type'] == 'Recs':
         display_recs = Recommendation.query\
-            .filter(Recommendation.verification > 0)
+            .join(Users)\
+            .filter(Recommendation.verification>0)
         if session['search'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
-            me = Users.query\
-                .filter_by(username=session['user'])\
-                .first()
             display_recs = display_recs\
-                .filter_by(author_id = me.id)
+                .filter(Users.username.contains(session['user']))
         if session['date'] != '':
-            display_recs = display_recs.filter(Recommendation.timestamp <= session['date'])
+            display_recs = display_recs\
+                .filter(Recommendation.timestamp<=session['date'])
         display_recs = display_recs\
             .order_by(desc(Recommendation.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
@@ -130,19 +128,17 @@ def search_query(page = 1):
             'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search'))}) 
     else:
         display_comments = Comments.query\
-            .filter(Comments.verification > 0)
+            .join(Users)\
+            .filter(Comments.verification>0)
         if session['search'] != '':
             display_comments = display_comments\
                 .filter(Comments.comment.contains(session['search']))
         if session['user'] != '':
-            me = Users.query\
-                .filter_by(username=session['user'])\
-                .first()
             display_comments = display_comments\
-                .filter_by(comment_by=me.id)
+                .filter(Users.username.contains(session['user']))
         if session['date'] != '':
             display_comments = display_comments\
-                .filter(Comments.timestamp <= session['date'])
+                .filter(Comments.timestamp<=session['date'])
         display_comments = display_comments\
             .order_by(desc(Comments.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
@@ -159,8 +155,7 @@ def search():
 @main.route('/-surprise')
 def surprise_ajax():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification>0,
-            Recommendation.author_id != current_user.id)\
+        .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
         .from_self()\
@@ -174,9 +169,8 @@ def surprise_ajax():
 @main.route('/surprise')
 def surprise():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification > 0,
-            Recommendation.author_id != current_user.id)\
-        .order_by(desc(Recommendation))\
+        .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
+        .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
         .from_self()\
         .order_by(func.random())\

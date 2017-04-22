@@ -4,7 +4,8 @@ from .. import db
 from ..decorators import admin_token_required, auth_login_required, auth_request, auth_token_required, moderator_token_required
 from ..models import Comments, ComModerations, Followers, RecModerations, Recommendation, Users
 from datetime import datetime, timedelta
-from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import case
+from sqlalchemy.sql.expression import asc, desc, distinct, func
 
 def message(code, message):
     response = jsonify({'Code': code, 'message': message})
@@ -153,8 +154,7 @@ def post_rec_comments(id):
 @auth_request(role=3)
 def get_comments(id):
     to_ret = Comments.query\
-        .filter(Comments.verification>0,
-            Comments.id==id)\
+        .filter(Comments.verification>0, Comments.id==id)\
         .first()
     if not to_ret:
         return message(404, 'This comment does not exist')
@@ -165,8 +165,7 @@ def get_comments(id):
 @auth_request(role=3)
 def edit_comments(id):
     com = Comments.query\
-        .filter(Comments.verification>0,
-            Comments.id==id)\
+        .filter(Comments.verification>0, Comments.id==id)\
         .first()
     if not com:
         return message(404, 'This comment does not exist')
@@ -187,8 +186,7 @@ def edit_comments(id):
 @auth_request(role=3)
 def delete_comments(id):
     com = Comments.query\
-        .filter(Comments.verification>0,
-            Comments.id==id)\
+        .filter(Comments.verification>0, Comments.id==id)\
         .first()
     if not com:
         return message(404, 'This comment does not exist')
@@ -224,12 +222,10 @@ def get_user_recs(id, page=1):
     else:
         private = 1
     recs = Recommendation.query\
-        .filter_by(author_id = id)\
-        .filter(Recommendation.verification >= private)\
-        .order_by(Recommendation.timestamp.desc())\
+        .filter(Recommendation.author_id==id, Recommendation.verification>=private)\
+        .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
-    to_rec = {x.id: x.to_json() for x in recs.items}
-    return jsonify(to_rec)
+    return jsonify({x.id: x.to_json() for x in recs.items})
 
 @api1.route('/users/<int:id>/comments', methods=['GET'])
 @api1.route('/users/<int:id>/comments/page/<int:page>', methods=['GET'])
@@ -242,12 +238,10 @@ def get_user_comments(id, page=1):
     if not user:
         return message(404, 'This user does not exist')
     comments = Comments.query\
-        .filter_by(comment_by = id)\
-        .filter(Comments.verification > 0)\
-        .order_by(Comments.timestamp.desc())\
+        .filter(Comments.comment_by==id, Comments.verification > 0)\
+        .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
-    to_ret = {x.id : x.to_json() for x in comments.items}
-    return jsonify(to_ret)
+    return jsonify({x.id : x.to_json() for x in comments.items})
 
 @api1.route('/users', methods=['PUT'])
 @auth_token_required
@@ -346,8 +340,7 @@ def delete_follow(id):
 @auth_request(role=1)
 def get_mod_rec_history(id):
     mod = Users.query\
-        .filter(Users.role_id!=3,
-            Users.id==id)\
+        .filter(Users.role_id.between(1,2), Users.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
@@ -361,8 +354,7 @@ def get_mod_rec_history(id):
 @auth_request(role=1)
 def get_mod_com_history(id):
     mod = Users.query\
-        .filter(Users.role_id!=3,
-            Users.id==id)\
+        .filter(Users.role_id.between(1,2), Users.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
@@ -520,25 +512,23 @@ def moderate_comments(id):
 @auth_request(role=3)
 def get_search_recs(page = 1):
     display_recs = Recommendation.query\
+        .join(Users)\
         .filter(Recommendation.verification > 0)
     if request.get_json(silent=True):
         if request.json.get('term') is not None:
             display_recs = display_recs\
                 .filter(Recommendation.title.contains(request.json.get('term')))
         if request.json.get('user') is not None:
-            me = Users.query\
-                .filter_by(username=request.json.get('user'))\
-                .first()
             display_recs = display_recs\
-                .filter_by(author_id = me.id)
+                .filter(Users.username.contains(request.json.get('user')))
         if request.json.get('date') is not None:
             date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
-            display_recs = display_recs.filter(Recommendation.timestamp <= date)
+            display_recs = display_recs\
+                .filter(Recommendation.timestamp<=date)
     display_recs = display_recs\
-        .order_by(Recommendation.timestamp.desc())\
+        .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
-    to_ret = {x.id : x.to_json() for x in display_recs.items}
-    return jsonify(to_ret)
+    return jsonify({x.id : x.to_json() for x in display_recs.items})
 
 @api1.route('/search/comments', methods=['GET'])
 @api1.route('/search/comments/page/<int:page>', methods=['GET'])
@@ -546,26 +536,23 @@ def get_search_recs(page = 1):
 @auth_request(role=3)
 def get_search_comments(page = 1):
     display_comments = Comments.query\
-        .filter(Comments.verification > 0)
+        .join(Users)\
+        .filter(Comments.verification>0)
     if request.get_json(silent=True):
         if request.json.get('term') is not None:
             display_comments = display_comments\
                 .filter(Comments.comment.contains(request.json.get('term')))
         if request.json.get('user') is not None:
-            me = Users.query\
-                .filter_by(username=request.json.get('user'))\
-                .first()
             display_comments = display_comments\
-                .filter_by(comment_by=me.id)
+                .filter(Users.username.contains(request.json.get('user')))
         if request.json.get('date') is not None:
             date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
             display_comments = display_comments\
-                .filter(Comments.timestamp <= date)
+                .filter(Comments.timestamp<=date)
     display_comments = display_comments\
         .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
-    to_ret = {x.id: x.to_json() for x in display_comments.items}
-    return jsonify(to_ret)
+    return jsonify({x.id: x.to_json() for x in display_comments.items})
 
 @api1.route('/admin')
 @admin_token_required
@@ -573,29 +560,37 @@ def get_search_comments(page = 1):
 def get_admin():
     week_ago = datetime.today() - timedelta(days=7)
     data = {}
-    data['total_accounts'] = Users.query.count()
-    data['recent_accounts'] = Users.query\
-        .filter(Users.member_since > week_ago )\
-        .count()
-    data['recent_logins'] = Users.query\
-        .filter(Users.last_login > week_ago)\
-        .count()
-    data['total_recs'] = Recommendation.query.count()
-    data['recent_recs'] = Recommendation.query\
-        .filter(Recommendation.timestamp > week_ago)\
-        .count()
-    data['total_comments'] = Comments.query.count()
-    data['recent_comments'] = Comments.query\
-        .filter(Comments.timestamp > week_ago)\
-        .count()
-    data['recs_to_mod'] = Recommendation.query\
-        .filter(Recommendation.verification == 1)\
-        .count()
-    data['comments_to_mod'] = Comments.query\
-        .filter_by(verification=1)\
-        .count()
-    data['mods'] = {mod.id: mod.username for mod in Users.query.filter_by(role_id = 2)}
-    data['mods_count'] = Users.query\
-        .filter_by(role_id = 2)\
-        .count()
+    
+    users = func.count(distinct(Users.id))
+    recent_users = func.count(distinct(case([(Users.member_since>week_ago, Users.id),])))
+    recent_logins = func.count(distinct(case([(Users.last_login>week_ago, Users.id),])))
+    data['users'], data['recent_users'], data['recent_logins'] = db.session\
+        .query(users, recent_users, recent_logins)\
+        .all()[0]
+
+    recs = func.count(distinct(Recommendation.id))
+    recent_recs = func.count(distinct(case([(Recommendation.timestamp>week_ago, Recommendation.id),])))
+    unverified_recs = func.count(distinct(case([(Recommendation.verification==1, Recommendation.id),])))
+    data['recs'], data['recent_recs'], data['unverified_recs'] = db.session\
+        .query(recs, recent_recs, unverified_recs)\
+        .all()[0]
+    
+    comments = func.count(distinct(Comments.id))
+    recent_comments = func.count(distinct(case([(Comments.timestamp>week_ago, Comments.id),])))
+    unverified_comments = func.count(distinct(case([(Comments.verification==1, Comments.id),])))
+    data['comments'], data['recent_comments'], data['unverified_comments'] = db.session\
+        .query(comments, recent_comments, unverified_comments)\
+        .all()[0]
+
+    rec_mods = func.count(distinct(RecModerations.id))
+    recent_rec_mods = func.count(distinct(case([(RecModerations.timestamp>week_ago, RecModerations.id),])))
+    com_mods = func.count(distinct(ComModerations.id))
+    recent_com_mods = func.count(distinct(case([(ComModerations.timestamp>week_ago, ComModerations.id),])))
+    data['mods'] = db.session.query(Users, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
+        .join(RecModerations)\
+        .join(ComModerations)\
+        .filter(Users.role_id==2)\
+        .group_by(Users.username)\
+        .all()
+    data['mods_count'] = len(data['mods'])
     return jsonify(data)

@@ -14,32 +14,32 @@
 {% endblock %}
 
 {% block c1 %}
-    <p>Total account: {{data['count']}}</p>
-    <p>Recent accounts: {{data['recent_account']}}</p>
+    <p>Total account: {{data['users']}}</p>
+    <p>Recent accounts: {{data['recent_users']}}</p>
     <p>Recent logins: {{data['recent_logins']}}</p>
 {% endblock %}
 
 {% block c2 %}
-  <p>Total recs: {{data['total_recs']}}</p>
+  <p>Total recs: {{data['recs']}}</p>
   <p>Recent recs: {{data['recent_recs']}}</p>
   <p>
     <a href="{{url_for('mod.verify_recs')}}">
-      Recs to Verify: {{data['recs_to_mod']}}
+      Recs to Verify: {{data['unverified_recs']}}
     </a>
   </p>
 {% endblock %}
 
 {% block c3 %}
-  <p>Total comments: {{data['total_comments']}}</p>
+  <p>Total comments: {{data['comments']}}</p>
   <p>Recent comments: {{data['recent_comments']}}</p>
   <p>
     <a href="{{url_for('mod.verify_comments')}}">
-      Comments to Verify: {{data['comments_to_mod']}}
+      Comments to Verify: {{data['unverified_comments']}}
     </a>
   </p>
 {% endblock %}
 
 {% block postcontent %}
-  <h2>Total mods: {{data['mods_count']}}</h2>
-  {{moderator_info_macro.mod_display(data['mods'], moment, RecModerations, ComModerations, week_ago)}}
+  <h2>Total mods: {{data['mods']|length}}</h2>
+  {{moderator_info_macro.mod_display(data['mods'], moment)}}
 {% endblock %}

@@ -6,6 +6,7 @@ from ..models import Users, Comments, Followers, Recommendation
 from datetime import datetime
 from flask_login import current_user, login_required
 from flask_moment import _moment
+from sqlalchemy import case
 from sqlalchemy.sql.expression import desc
 
 @personal.route('/-api')
@@ -280,7 +281,7 @@ def post():
 def profile_com_ajax(id):
     page = int(request.args.get('page'))
     display_comments = Comments.query\
-        .filter(Comments.comment_by==id, Comments.verification > 0)\
+        .filter(Comments.comment_by==id, Comments.verification>0)\
         .order_by(desc(Comments.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
@@ -297,7 +298,7 @@ def profile_ajax(id):
     else:
         private = 1
     display_recs = Recommendation.query\
-        .filter(Recommendation.author_id==id, Recommendation.verification >= private)\
+        .filter(Recommendation.author_id==id, Recommendation.verification>=private)\
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out = False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
@@ -319,7 +320,6 @@ def profile(id=-1):
         .first_or_404()
     com_count = 0
     rec_count = 0
-    private = 1
     if current_user.is_moderator() and current_user.id == id:
         com_count = Comments.query\
             .filter_by(verification=1)\
@@ -327,26 +327,26 @@ def profile(id=-1):
         rec_count = Recommendation.query\
             .filter_by(verification=1)\
             .count()
-    if current_user.id == id:
-        private = 0
-        display_recs = user.posts\
-            .order_by(Recommendation.timestamp.desc())\
-            .filter_by(made_private=True)
-        for rec in display_recs:
-            title = rec.title
-            if len(rec.title) > 10:
-                title = rec.title[:10] + '...'
-            flash("Rec '" + title + "' has been made private due to it's content.")
-            rec.made_private = False
-            db.session.add(rec)
-            db.session.commit()
+    ver_case = case([(db.true() if current_user.id==id else db.false(), 0),], else_=1)
     display_recs = user.posts\
-        .filter(Recommendation.verification>=private)\
-        .order_by(desc(Recommendation.timestamp))\
-        .paginate(1, per_page=current_user.display, error_out=False)
+        .filter(Recommendation.verification>=ver_case)\
+        .order_by(desc(Recommendation.timestamp))
     display_comments = user.commented_on\
         .filter(Comments.verification>0)\
-        .order_by(desc(Comments.timestamp))\
+        .order_by(desc(Comments.timestamp))
+    if current_user.id == id:
+        for rec in display_recs:
+            if rec.made_private:
+                title = rec.title
+                if len(rec.title) > 10:
+                    title = rec.title[:10] + '...'
+                flash("Rec '" + title + "' has been made private due to it's content.")
+                rec.made_private = False
+                db.session.add(rec)
+                db.session.commit()
+    display_recs = display_recs\
+        .paginate(1, per_page=current_user.display, error_out=False)
+    display_comments = display_comments\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('personal/profile.html', user=user, display=display_recs, 
         d_c=display_comments, com_count = com_count, rec_count=rec_count)

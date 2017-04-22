@@ -159,6 +159,7 @@ def subscribe():
                     flash(u'\u2717 Username already in use')
                 if 'users.email' in str(e):
                     flash(u'\u2717 Email already in use')
+                db.session.rollback()
         else:
             if 'username' in form.errors:
                 flash(u'\u2717 Username must be between 5 and 12 characters')
