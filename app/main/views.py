@@ -2,7 +2,7 @@ from flask import abort, flash, get_template_attribute, jsonify, redirect, rende
 from . import main
 from .forms import CommentForm, SearchForm
 from .. import db
-from ..models import Comments, Recommendation, Users
+from ..models import Comment, Recommendation, User, Role
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment

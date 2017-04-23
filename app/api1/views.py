@@ -2,7 +2,7 @@ from flask import g, jsonify, request
 from . import api1
 from .. import db
 from ..decorators import admin_token_required, auth_login_required, auth_request, auth_token_required, moderator_token_required
-from ..models import Comments, ComModerations, Followers, RecModerations, Recommendation, Users
+from ..models import Comment, Com_Moderation, Relationship, Rec_Moderation, Recommendation, User
 from datetime import datetime, timedelta
 from sqlalchemy import case
 from sqlalchemy.sql.expression import asc, desc, distinct, func

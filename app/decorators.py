@@ -1,5 +1,5 @@
 from . import db
-from .models import Users, API
+from .models import User, API_Request
 from flask import abort, g, request, jsonify
 from flask_login import current_user
 from functools import wraps
@@ -52,7 +52,7 @@ def auth_request(role):
     def auth_request_inner(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if not API.access_request(g.current_user, request.path, role):
+            if not API_Request.access_request(g.current_user, request.path, role):
                 return message(429, 'Too many requests. You may only make 15 requests every 15 minutes')
             return f(*args, **kwargs)
         return decorated_function

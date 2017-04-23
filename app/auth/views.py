@@ -2,7 +2,7 @@ from flask import flash, jsonify, redirect, render_template, request, session, u
 from . import auth
 from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
 from .. import db
-from ..models import Users
+from ..models import User
 from ..email import send_email
 from datetime import datetime
 from flask_login import current_user, login_required, login_user, logout_user

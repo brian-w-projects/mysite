@@ -2,7 +2,7 @@ from flask import get_template_attribute, jsonify, render_template, request
 from . import mod
 from .. import db
 from ..decorators import is_moderator
-from ..models import Comments, ComModerations, RecModerations, Recommendation
+from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation
 from flask_login import login_required, current_user
 from flask_moment import _moment
 from sqlalchemy.sql.expression import asc

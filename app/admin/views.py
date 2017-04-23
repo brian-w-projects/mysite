@@ -3,7 +3,7 @@ from . import admin
 from .. import db
 from ..decorators import is_administrator
 from ..email import send_email
-from ..models import Comments, ComModerations, RecModerations, Recommendation, Users
+from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, User
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment

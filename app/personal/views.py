@@ -2,7 +2,7 @@ from flask import abort, current_app, flash, get_template_attribute, jsonify, re
 from . import personal
 from .forms import ChangeForm, CommentEditForm, DeleteForm, EditForm, PostForm
 from .. import db
-from ..models import Users, Comments, Followers, Recommendation
+from ..models import User, Comment, Relationship, Recommendation
 from datetime import datetime
 from flask_login import current_user, login_required
 from flask_moment import _moment

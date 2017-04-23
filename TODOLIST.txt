@@ -3,7 +3,7 @@
 3. Mobile Pages?
 
 
-1. Clean up all queries, bring up to standards
+1. Combine comment-edit/comment-delete?
 
 
 Formatting:

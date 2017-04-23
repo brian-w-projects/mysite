@@ -5,18 +5,308 @@ from datetime import datetime, timedelta
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
 from random import SystemRandom
+from sqlalchemy.orm import backref
 from sqlalchemy.sql.expression import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
 random = SystemRandom()
 
-class Role(db.Model):
-    __tablename__ = 'roles'
+class API_Request(db.Model):
+    __tablename__ = 'api_request'
     id = db.Column(db.INTEGER, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
+    endpoint = db.Column(db.String)
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    
+    user = db.relationship('User', backref=backref('api_request', lazy='dynamic'))
+    
+    @staticmethod
+    def access_request(requester, endpoint, role=3):
+        access = 0
+        if role == 3 and not requester.is_administrator():
+            fifteen_mins_ago = datetime.utcnow() - timedelta(minutes=15)
+            access = API_Request.query\
+                .filter(API_Request.user_id==requester.id, API_Request.timestamp>fifteen_mins_ago)\
+                .count()
+        if access < 15:
+            to_add = API_Request(endpoint=endpoint, user_id=requester.id)
+            db.session.add(to_add)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
+class Comment(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.INTEGER, primary_key=True)
+    recommendation_id = db.Column(db.INTEGER, db.ForeignKey('recommendation.id'))
+    text = db.Column(db.TEXT)
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    verification = db.Column(db.INTEGER, default=1) 
+    # verification = 0->private, 1->public and unchecked, 2->OKayed
+    
+    recommendation = db.relationship('Recommendation', backref=backref('comment', lazy='dynamic'))
+    user = db.relationship('User', backref=backref('comment', lazy='dynamic'))
+
+    @staticmethod
+    def generate_comments(count):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count=User.query.count()
+        rec_count=Recommendation.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            r = Recommendation.query.offset(randint(0, rec_count-1)).first()
+            days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
+            c = Comment(user_id=u.id, recommendation_id=r.id,
+                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                verification=1,
+                text=forgery_py.lorem_ipsum.sentences(randint(2,5)))
+            db.session.add(c)
+            db.session.commit()
+            
+    def to_json(self):
+        return {
+            'id': self.id,
+            'author_id': self.user_id,
+            'author_username': self.user.username,
+            'posted_on': self.recommendation_id,
+            'timestamp': self.timestamp,
+            'text': self.text
+        }
+
+
+class Com_Moderation(db.Model):
+    __tablename__ = 'com_moderation'
+    id = db.Column(db.INTEGER, primary_key=True)
+    action = db.Column(db.BOOLEAN)
+    comment_id = db.Column(db.INTEGER, db.ForeignKey('comment.id'))
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+
+    comment = db.relationship('Comment', backref='comment')
+    user = db.relationship('User', backref=backref('com_moderation', lazy='dynamic'))
+    
+    @staticmethod
+    def generate_commods():
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        mods = User.query.filter_by(role_id = 2)
+        com_count = Comment.query\
+            .filter_by(verification=1)\
+            .count()
+        for mod in mods:
+            for i in range(int(com_count / mods.count() * 0.9)):
+                com_mod = Comment.query\
+                    .filter_by(verification=1)\
+                    .offset(randint(0, com_count-1))\
+                    .first()
+                if com_mod:
+                    days_since = (datetime.utcnow() - datetime.strptime(str(com_mod.timestamp)[:10], '%Y-%m-%d')).days
+                    if randint(0,1) == 0:
+                        to_add = Com_Moderation(user_id=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            comment_id=com_mod.id, action = True)
+                        com_mod.verification = 2
+                        db.session.add(to_add)
+                        db.session.add(com_mod)
+                        db.session.commit()
+                    else:
+                        to_add = Com_Moderation(user_id=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            comment_id=com_mod.id, action = False)
+                        com_mod.verification = 0
+                        db.session.add(to_add)
+                        db.session.add(com_mod)
+                        db.session.commit()
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'action': self.action,
+            'author': self.user.username,
+            'author_id': self.user_id,
+            'comment_id': self.comment_id,
+            'posted_on': self.comment.recommendation_id,
+            'text': self.comment.text,
+            'timestamp': self.timestamp,
+        }
+
+
+class Recommendation(db.Model):
+    __tablename__ = 'recommendation'
+    id = db.Column(db.INTEGER, primary_key=True)
+    made_private = db.Column(db.BOOLEAN, default=False)
+    new_comment = db.Column(db.BOOLEAN, default=False)
+    text = db.Column(db.TEXT)
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    title = db.Column(db.String(64))
+    user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    verification = db.Column(db.INTEGER) 
+    # verification = -1-> deleted, 0->private, 1->public and unchecked, 2->OKayed
+
+    user = db.relationship('User', backref=backref('recommendation', lazy='dynamic'))
+    
+    def prepare_comments(self):
+        prep_query = self.comment\
+            .filter(Comment.verification > 0)\
+            .order_by(desc(Comment.timestamp))
+        d_c = prep_query\
+            .paginate(1, per_page=5, error_out=False)
+        count = prep_query.count()
+        return (d_c, count)
+    
+    def to_json(self):
+        return {
+            'id': self.id,
+            'author': self.user.username,
+            'author_id': self.user_id,
+            'comment_count': self.comment.filter(Comment.verification>0).count(),
+            'private': self.verification == 0,
+            'text': self.text,
+            'timestamp': self.timestamp,
+            'title': self.title
+        }
+    
+    # put in comments?
+    def to_json_comments(self):
+        json_rec = {com.id : com.to_json() for com in self.comment if com.verification != 0}
+        return json_rec
+    
+    @staticmethod
+    def generate_recs(count):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count=User.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count - 1)).first()
+            days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
+            if days_since == 0:
+                continue
+            if randint(0,10)<8:
+                verified = 1
+            elif randint(0,1) == 0:
+                verified = 0
+            else:
+                verified = -1
+            r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
+                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                user=u,
+                text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
+                verification=verified)
+            db.session.add(r)
+            db.session.commit()
+
+
+class Rec_Moderation(db.Model):
+    __tablename__ = 'rec_moderation'
+    id = db.Column(db.INTEGER, primary_key=True)
+    action = db.Column(db.BOOLEAN)
+    recommendation_id = db.Column(db.INTEGER, db.ForeignKey('recommendation.id'))
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+
+    user = db.relationship('User', backref=backref('rec_moderation', lazy='dynamic'))
+    recommendation = db.relationship('Recommendation', backref='rec_moderation')
+
+    @staticmethod
+    def generate_recmods():
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        mods = User.query.filter_by(role_id = 2)
+        rec_count = Recommendation.query.filter_by(verification=1).count()
+        for mod in mods:
+            for i in range(int(rec_count / mods.count() * 0.9)):
+                rec_mod = Recommendation.query\
+                    .filter_by(verification=1)\
+                    .offset(randint(0, rec_count-1))\
+                    .first()
+                if rec_mod:
+                    days_since = (datetime.utcnow() - datetime.strptime(str(rec_mod.timestamp)[:10], '%Y-%m-%d')).days
+                    if randint(0,1) == 0:
+                        to_add = Rec_Moderation(user_id=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            recommendation_id=rec_mod.id, action = True)
+                        rec_mod.verification = 2
+                        db.session.add(to_add)
+                        db.session.add(rec_mod)
+                        db.session.commit()
+                    else:
+                        to_add = Rec_Moderation(user_id=mod.id,
+                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
+                            recommendation_id=rec_mod.id, action = False)
+                        rec_mod.verification = 0
+                        rec_mod.made_private = 1
+                        db.session.add(to_add)
+                        db.session.add(rec_mod)
+                        db.session.commit()
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'action': self.action,
+            'author': self.recommention.author_id,
+            'recommendation_id': self.recommendation_id,
+            'text': self.recommendation.text,
+            'timestamp': self.timestamp,
+            'title': self.recommention.title,
+            'user_id': self.user_id
+        }
+        
+        
+class Relationship(db.Model):
+    __tablename__ = 'relationship'
+    id = db.Column(db.INTEGER, primary_key=True)
+    follower = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    following = db.Column(db.INTEGER, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    
+    user_follower = db.relationship('User', backref=backref('following', lazy='dynamic'),
+        foreign_keys=[follower])
+    user_following = db.relationship('User', backref=backref('follower', lazy='dynamic'),
+        foreign_keys=[following])
+    
+    @staticmethod
+    def generate_followers(count):
+        from random import seed, randint
+        import forgery_py
+        
+        seed()
+        user_count=User.query.count()
+        for i in range(count):
+            u = User.query.offset(randint(0, user_count-1)).first()
+            v = User.query.offset(randint(0, user_count-1)).first()
+            u_time = datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')
+            v_time = datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d')
+            if u_time < v_time:
+                days_since = (datetime.utcnow() - v_time).days
+            else:
+                days_since = (datetime.utcnow() - u_time).days
+            if days_since == 0:
+                continue
+            if u.id != v.id and not u.following.filter_by(following=v.id).first():
+                f = Relationship(follower=u.id, following=v.id,
+                    timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since))
+                db.session.add(f)
+                db.session.commit()
+
+
+class Role(db.Model):
+    __tablename__ = 'role'
+    id = db.Column(db.INTEGER, primary_key=True)
     default = db.Column(db.BOOLEAN, default=False, index=True)
-    users = db.relationship('Users', backref='role', lazy='dynamic')
+    name = db.Column(db.String(64), unique=True)
 
     @staticmethod
     def generate_roles():
@@ -28,245 +318,24 @@ class Role(db.Model):
         db.session.add(role)
         db.session.commit()
 
-class API(db.Model):
-    __tablename__ = 'apirequests'
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.INTEGER, primary_key=True)
-    requester = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    endpoint = db.Column(db.String)
-    role = db.Column(db.INTEGER, default=3)
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
-    
-    @staticmethod
-    def access_request(requester, endpoint, role=3):
-        access = 0
-        if role == 3 and not requester.is_administrator():
-            fifteen_mins_ago = datetime.utcnow() - timedelta(minutes=15)
-            access = API.query\
-                .filter_by(requester = requester.id)\
-                .filter_by(role = 3)\
-                .filter(API.timestamp > fifteen_mins_ago)\
-                .count()
-        if access < 15:
-            to_add = API(requester=requester.id, endpoint=endpoint, role=requester.role_id)
-            db.session.add(to_add)
-            db.session.commit()
-            return True
-        else:
-            return False
-        
-        
-
-class Followers(db.Model):
-    __tablename__ = 'followers'
-    id = db.Column(db.INTEGER, primary_key=True)
-    follower = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    following = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
-    
-    @staticmethod
-    def generate_followers(count):
-        from random import seed, randint
-        import forgery_py
-        
-        seed()
-        user_count=Users.query.count()
-        for i in range(count):
-            u = Users.query.offset(randint(0, user_count-1)).first()
-            v = Users.query.offset(randint(0, user_count-1)).first()
-            u_time = datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')
-            v_time = datetime.strptime(str(v.member_since)[:10], '%Y-%m-%d')
-            if u_time < v_time:
-                days_since = (datetime.utcnow() - v_time).days
-            else:
-                days_since = (datetime.utcnow() - u_time).days
-            if days_since == 0:
-                continue
-            if u.id != v.id and not u.following.filter_by(following=v.id).first():
-                f = Followers(follower=u.id, following=v.id,
-                    timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since))
-                db.session.add(f)
-                db.session.commit()
-
-class Comments(db.Model):
-    __tablename__ = 'comments'
-    id = db.Column(db.INTEGER, primary_key=True)
-    comment_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    posted_on = db.Column(db.INTEGER, db.ForeignKey('recs.id'))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
-    verification = db.Column(db.INTEGER, default=1) 
-    # verification = 0->private, 1->public and unchecked, 2->OKayed
-    comment = db.Column(db.TEXT)
-    moderation = db.relationship('ComModerations', backref='com', lazy='dynamic')
-    
-    @staticmethod
-    def generate_comments(count):
-        from random import seed, randint
-        import forgery_py
-        
-        seed()
-        user_count=Users.query.count()
-        rec_count=Recommendation.query.count()
-        for i in range(count):
-            u = Users.query.offset(randint(0, user_count - 1)).first()
-            r = Recommendation.query.offset(randint(0, rec_count-1)).first()
-            days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
-            c = Comments(comment_by=u.id,
-                posted_on=r.id,
-                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                verification=1,
-                comment=forgery_py.lorem_ipsum.sentences(randint(2,5)))
-            db.session.add(c)
-            db.session.commit()
-            
-    def to_json(self):
-        json_rec = {
-            'id': self.id,
-            'author_id': self.comment_by,
-            'author_username': self.comm.username,
-            'posted_on': self.posted_on,
-            'timestamp': self.timestamp,
-            'comment': self.comment
-        }
-        return json_rec
-
-class RecModerations(db.Model):
-    __tablename__ = 'recmoderations'
-    id = db.Column(db.INTEGER, primary_key=True)
-    mod_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    mod_on = db.Column(db.INTEGER, db.ForeignKey('recs.id'))
-    timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
-    action = db.Column(db.BOOLEAN)
-
-    def to_json(self):
-        json_rec = {
-            'id': self.id,
-            'timestamp': self.timestamp,
-            'mod_by': self.mod_by,
-            'mod_on': self.mod_on,
-            'action': self.action,
-            'text': self.rec.text,
-            'title': self.rec.title,
-            'author': self.rec.author_id
-        }
-        return json_rec
-
-    @staticmethod
-    def generate_recmods():
-        from random import seed, randint
-        import forgery_py
-        
-        seed()
-        mods = Users.query.filter_by(role_id = 2)
-        rec_count = Recommendation.query.filter_by(verification=1).count()
-        for mod in mods:
-            for i in range(int(rec_count / mods.count() * 0.9)):
-                rec_mod = Recommendation.query\
-                    .filter_by(verification=1)\
-                    .offset(randint(0, rec_count-1))\
-                    .first()
-                if rec_mod:
-                    days_since = (datetime.utcnow() - datetime.strptime(str(rec_mod.timestamp)[:10], '%Y-%m-%d')).days
-                    if randint(0,1) == 0:
-                        to_add = RecModerations(mod_by=mod.id,
-                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                            mod_on=rec_mod.id, action = True)
-                        rec_mod.verification = 2
-                        db.session.add(to_add)
-                        db.session.add(rec_mod)
-                        db.session.commit()
-                    else:
-                        to_add = RecModerations(mod_by=mod.id,
-                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                            mod_on=rec_mod.id, action = False)
-                        rec_mod.verification = 0
-                        rec_mod.made_private = 1
-                        db.session.add(to_add)
-                        db.session.add(rec_mod)
-                        db.session.commit()
-
-
-class ComModerations(db.Model):
-    __tablename__ = 'commoderations'
-    id = db.Column(db.INTEGER, primary_key=True)
-    mod_by = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    mod_on = db.Column(db.INTEGER, db.ForeignKey('comments.id'))
-    timestamp = db.Column(db.DATETIME, default=datetime.utcnow)
-    action = db.Column(db.BOOLEAN)
-    
-    def to_json(self):
-        json_rec = {
-            'id': self.id,
-            'timestamp': self.timestamp,
-            'mod_by': self.mod_by,
-            'mod_on': self.mod_on,
-            'action': self.action,
-            'text': self.com.comment,
-            'author': self.com.comment_by,
-            'posted_on': self.com.posted_on
-        }
-        return json_rec
-    
-    @staticmethod
-    def generate_commods():
-        from random import seed, randint
-        import forgery_py
-        
-        seed()
-        mods = Users.query.filter_by(role_id = 2)
-        com_count = Comments.query\
-            .filter_by(verification=1)\
-            .count()
-        for mod in mods:
-            for i in range(int(com_count / mods.count() * 0.9)):
-                com_mod = Comments.query\
-                    .filter_by(verification=1)\
-                    .offset(randint(0, com_count-1))\
-                    .first()
-                if com_mod:
-                    days_since = (datetime.utcnow() - datetime.strptime(str(com_mod.timestamp)[:10], '%Y-%m-%d')).days
-                    if randint(0,1) == 0:
-                        to_add = ComModerations(mod_by=mod.id,
-                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                            mod_on=com_mod.id, action = True)
-                        com_mod.verification = 2
-                        db.session.add(to_add)
-                        db.session.add(com_mod)
-                        db.session.commit()
-                    else:
-                        to_add = ComModerations(mod_by=mod.id,
-                            timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                            mod_on=com_mod.id, action = False)
-                        com_mod.verification = 0
-                        db.session.add(to_add)
-                        db.session.add(com_mod)
-                        db.session.commit()
-
-class Users(UserMixin, db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.INTEGER, primary_key=True)
-    username = db.Column(db.String, unique=True)
-    email = db.Column(db.String, unique=True)
-    password_hash = db.Column(db.String(128))
-    api = db.Column(db.String())
-    updates = db.Column(db.BOOLEAN, default=True)
-    confirmed = db.Column(db.BOOLEAN, default=False)
-    role_id = db.Column(db.INTEGER, db.ForeignKey('roles.id'))
-    display = db.Column(db.INTEGER, default=10)
+    username = db.Column(db.String, unique=True, index=True)
+    email = db.Column(db.String, unique=True, index=True)
     about_me = db.Column(db.TEXT)
-    member_since = db.Column(db.DATETIME, default=datetime.utcnow)
-    last_login = db.Column(db.DATETIME, default=datetime.utcnow)
+    api = db.Column(db.String())
+    confirmed = db.Column(db.BOOLEAN, default=False)
+    display = db.Column(db.INTEGER, default=10)
     invalid_logins = db.Column(db.INTEGER, default=0)
-    rec_mods = db.relationship('RecModerations', backref='user', lazy='dynamic')
-    com_mods = db.relationship('ComModerations', backref='user', lazy='dynamic')
-    posts = db.relationship('Recommendation', backref='author', lazy='dynamic')
-    following = db.relationship('Followers', backref='user', 
-        foreign_keys=[Followers.follower], lazy='dynamic')
-    followed_by = db.relationship('Followers', backref='who', lazy='dynamic',
-        foreign_keys=[Followers.following])
-    commented_on = db.relationship('Comments', foreign_keys=[Comments.comment_by],
-        backref=db.backref('comm', lazy='joined'),
-        lazy='dynamic',
-        cascade='all, delete-orphan')
+    last_login = db.Column(db.DATETIME, default=datetime.utcnow)
+    member_since = db.Column(db.DATETIME, default=datetime.utcnow)
+    password_hash = db.Column(db.String(128))
+    role_id = db.Column(db.INTEGER, db.ForeignKey('role.id'))
+    updates = db.Column(db.BOOLEAN, default=True)
+    
+    role = db.relationship('Role', backref=backref('user', lazy='dynamic'))
 
     @property
     def password(self):
@@ -311,7 +380,7 @@ class Users(UserMixin, db.Model):
     @staticmethod
     def get_secret_key():
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-        return Users.get_random_string(10, chars)
+        return User.get_random_string(10, chars)
 
     def generate_auth_token(self):
         s = TimedSerializer(current_app.config['SECRET_KEY'])
@@ -327,7 +396,7 @@ class Users(UserMixin, db.Model):
             data = s.loads(token)
         except:
             return None
-        user = Users.query.get(data['id'])
+        user = User.query.get(data['id'])
         if user.api == token:
             return user
         else:
@@ -335,16 +404,16 @@ class Users(UserMixin, db.Model):
 
     def to_json(self):
         json_rec = {
-            'username': self.username,
+            'id': self.id,
+            'about_me': self.about_me,
+            'comments': self.comment.filter(Comment.verification>0).count(),
             'confirmed': self.confirmed,
             'display': self.display,
-            'about_me': self.about_me,
-            'member_since': self.member_since,
-            'recs': self.posts.filter_by(verification=2).count(),
-            'following_count' : self.following.count(),
             'followed_by_count': self.followed_by.count(),
-            'comments': self.commented_on.filter_by(verification=2).count(),
-            'id': self.id
+            'following_count' : self.following.count(),
+            'member_since': self.member_since,
+            'recs': self.recommendation.filter(Recommendation.verification>0).count(),
+            'username': self.username
         }
         if g.current_user.is_administrator():
             json_rec['email'] = self.email
@@ -355,6 +424,7 @@ class Users(UserMixin, db.Model):
                 json_rec['com_mods'] = self.com_mods.count()
         return json_rec
 
+    # move to relationship?
     def to_json_following(self):
         json_rec = {}
         json_rec['count'] = self.following.count()
@@ -385,7 +455,7 @@ class Users(UserMixin, db.Model):
             else:
                 role = 3
             
-            u = Users(username=forgery_py.internet.user_name(True),
+            u = User(username=forgery_py.internet.user_name(True),
                 email=forgery_py.internet.email_address(),
                 password=forgery_py.lorem_ipsum.word(),
                 confirmed=True,
@@ -414,74 +484,4 @@ login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
-
-
-class Recommendation(db.Model):
-    __tablename__ = 'recs'
-    id = db.Column(db.INTEGER, primary_key=True)
-    title = db.Column(db.String(64))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.INTEGER, db.ForeignKey('users.id'))
-    text = db.Column(db.TEXT)
-    new_comment = db.Column(db.BOOLEAN, default=False)
-    verification = db.Column(db.INTEGER) 
-    # verification = -1-> deleted, 0->private, 1->public and unchecked, 2->OKayed
-    made_private = db.Column(db.BOOLEAN, default=False)
-    moderation = db.relationship('RecModerations', backref='rec', lazy='dynamic')
-    comments = db.relationship('Comments', foreign_keys=[Comments.posted_on],
-        backref=db.backref('posted', lazy='joined'),
-        lazy='dynamic',
-        cascade='all, delete-orphan')
-    
-    def prepare_comments(self):
-        prep_query = self.comments\
-            .filter(Comments.verification > 0)\
-            .order_by(desc(Comments.timestamp))
-        d_c = prep_query\
-            .paginate(1, per_page=5, error_out=False)
-        count = prep_query.count()
-        return (d_c, count)
-    
-    def to_json(self):
-        json_rec = {
-            'text': self.text,
-            'title': self.title,
-            'author': self.author.username,
-            'author_id': self.author_id,
-            'timestamp': self.timestamp,
-            'comment_count': self.comments.filter(Comments.verification != 0).count(),
-            'id': self.id,
-            'private': self.verification == 0
-        }
-        return json_rec
-    
-    def to_json_comments(self):
-        json_rec = {com.id : com.to_json() for com in self.comments if com.verification != 0}
-        return json_rec
-    
-    @staticmethod
-    def generate_recs(count):
-        from random import seed, randint
-        import forgery_py
-        
-        seed()
-        user_count=Users.query.count()
-        for i in range(count):
-            u = Users.query.offset(randint(0, user_count - 1)).first()
-            days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
-            if days_since == 0:
-                continue
-            if randint(0,10)<8:
-                verified = 1
-            elif randint(0,1) == 0:
-                verified = 0
-            else:
-                verified = -1
-            r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
-                timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                author=u,
-                text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
-                verification=verified)
-            db.session.add(r)
-            db.session.commit()
+    return User.query.get(int(user_id))
