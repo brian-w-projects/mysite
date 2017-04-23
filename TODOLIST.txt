@@ -4,6 +4,9 @@
 
 
 1. Combine comment-edit/comment-delete?
+2. Redo following/followers.html (needs to work in: login on my page, login on other page, not logged in)
+3. Redo generate_comments and ensure its verification matches verification of recommendation
+4. check api requests/bring in line with changes to project
 
 
 Formatting:

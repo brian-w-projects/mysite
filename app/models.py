@@ -46,7 +46,7 @@ class Comment(db.Model):
     timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     verification = db.Column(db.INTEGER, default=1) 
-    # verification = 0->private, 1->public and unchecked, 2->OKayed
+    # verification = -1->private, 0->nothing, 1->unchecked, 2->OKayed
     
     recommendation = db.relationship('Recommendation', backref=backref('comment', lazy='dynamic'))
     user = db.relationship('User', backref=backref('comment', lazy='dynamic'))
@@ -89,7 +89,7 @@ class Com_Moderation(db.Model):
     timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
 
-    comment = db.relationship('Comment', backref='comment')
+    comment = db.relationship('Comment', backref=backref('com_moderation', lazy='dynamic'))
     user = db.relationship('User', backref=backref('com_moderation', lazy='dynamic'))
     
     @staticmethod
@@ -216,7 +216,7 @@ class Rec_Moderation(db.Model):
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
 
     user = db.relationship('User', backref=backref('rec_moderation', lazy='dynamic'))
-    recommendation = db.relationship('Recommendation', backref='rec_moderation')
+    recommendation = db.relationship('Recommendation', backref=backref('rec_moderation', lazy='dynamic'))
 
     @staticmethod
     def generate_recmods():

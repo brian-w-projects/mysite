@@ -12,15 +12,15 @@
     <div class='post-header'>
       <ul class='post-header-list'>
         <li>
-          {% if current_user.is_authenticated and current_user != rec.author %}
-            {% if current_user.following.filter_by(following=rec.author.id).first() %}
-              <i id='{{rec.author.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
+          {% if current_user.is_authenticated and current_user != rec.user %}
+            {% if current_user.following.filter_by(following=rec.user_id).first() %}
+              <i id='{{rec.user_id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
             {% else %}
-              <i id='{{rec.author.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
+              <i id='{{rec.user_id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
             {% endif %}
           {% endif %}
-          <a href="{{url_for('personal.profile', id=rec.author_id)}}">
-            {{rec.author.username}}
+          <a href="{{url_for('personal.profile', id=rec.user_id)}}">
+            {{rec.user.username}}
           </a>
         </li>
         <li>
@@ -36,14 +36,14 @@
         <li class='reckoner'>
           Comments: {{count}}
         </li>
-        {% if current_user.id == rec.author_id and rec.new_comment == True %}
+        {% if current_user.id == rec.user_id and rec.new_comment == True %}
           <li class='reckoner'>
             New Comment!
           </li>
         {% endif %}
-        {% if attributes or rec.author_id==current_user.id %}
+        {% if attributes or rec.user_id==current_user.id %}
           <li>
-            {% if rec.author_id==current_user.id %}
+            {% if rec.user_id==current_user.id %}
               <a class='icon-link' href="{{url_for('personal.edit', post_id=rec.id, next=link)}}">
                 <i class='font-link fa fa-pencil-square-o fa-2x'></i>
               </a>

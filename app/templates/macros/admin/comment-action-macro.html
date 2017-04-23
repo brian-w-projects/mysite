@@ -5,7 +5,7 @@
 
 {% macro render_mod(mod_com, moment, current_user) %}
   <div class='action-header'>
-    <i id='{{mod_com.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
+    <i id='{{mod_com.comment_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
       {% if mod_com.action %}
         Accepted
@@ -15,7 +15,7 @@
     </p>
     <p>{{moment(mod_com.timestamp).fromNow()}}</p>
   </div><!--action-header-->
-  {{comment_macro.render_comment(mod_com.com, moment, current_user)}}
+  {{comment_macro.render_comment(mod_com.comment, moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_comment_moderations(mod_coms, moment, current_user) %}

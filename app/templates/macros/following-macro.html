@@ -21,7 +21,7 @@
 {% macro ajax(display, moment, current_user, link=request.url) %}
   {% for id, rec, x in display.items %}
     <div class='name-header'>
-      <p class='reckoner name-header-display'>{{rec.author.username}}</p>
+      <p class='reckoner name-header-display'>{{rec.user.username}}</p>
     </div><!--name-header-->
     {% if rec != None %}
       {{rec_macro.single_rec(rec, moment, current_user, link)}}

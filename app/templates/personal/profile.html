@@ -43,11 +43,11 @@
     </div><!--profile-left-->
     <div class='profile-right'>
       <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
-      <p>Posts: {{user.posts.count()}}</p>
-      <p>Comments: {{user.commented_on.count()}}</p>
+      <p>Posts: {{user.recommendation.count()}}</p>
+      <p>Comments: {{user.comment.count()}}</p>
       <p>
         <a href="{{url_for('personal.followers', id=user.id)}}">
-          Followers: <span class='follower-count'>{{user.followed_by.count()}}</span>
+          Followers: <span class='follower-count'>{{user.follower.count()}}</span>
         </a>
       </p>
       <p>

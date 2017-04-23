@@ -15,14 +15,14 @@ from sqlalchemy.sql.expression import asc, desc, distinct, func
 @is_administrator
 def change_mod_comment_decision():
     id = int(request.args.get('id'))
-    comment = Comments.query\
+    comment = Comment.query\
         .filter_by(id=id)\
         .first_or_404()
-    mod = comment.moderation\
+    mod = comment.com_moderation\
         .first_or_404()
-    new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action=not mod.action)
+    new_mod = Com_Moderation(action=not mod.action, user_id=current_user.id, comment_id=id )
     if mod.action:
-        comment.verification = 0
+        comment.verification = -1
     else:
         comment.verification = 2
     db.session.add(new_mod)
@@ -39,9 +39,9 @@ def change_mod_decision():
     rec = Recommendation.query\
         .filter_by(id=id)\
         .first_or_404()
-    mod = rec.moderation\
+    mod = rec.rec_moderation\
         .first_or_404()
-    new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=not mod.action)
+    new_mod = Rec_Moderation(action=not mod.action, user_id=current_user.id, recommendation_id=id)
     if mod.action:
         rec.verification = 0
         rec.made_private = True
@@ -59,11 +59,11 @@ def change_mod_decision():
 @is_administrator
 def mod_com_ajax(id):
     page = int(request.args.get('page'))
-    mod = Users.query\
-        .filter(Users.role_id.between(1,2), Users.id==id)\
+    mod = User.query\
+        .filter(User.role_id.between(1,2), User.id==id)\
         .first_or_404()
-    mod_coms = mod.com_mods\
-        .order_by(desc(ComModerations.timestamp))\
+    mod_coms = mod.com_moderation\
+        .order_by(desc(Com_Moderation.timestamp))\
         .paginate(page=page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/comment-action-macro.html', 'ajax')
     return jsonify({
@@ -75,11 +75,11 @@ def mod_com_ajax(id):
 @is_administrator
 def mod_rec_ajax(id):
     page = int(request.args.get('page'))
-    mod = Users.query\
-        .filter(Users.role_id.between(1,2), Users.id==id)\
+    mod = User.query\
+        .filter(User.role_id.between(1,2), User.id==id)\
         .first_or_404()
-    mod_recs = mod.rec_mods\
-        .order_by(desc(RecModerations.timestamp))\
+    mod_recs = mod.rec_moderation\
+        .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(page=page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/rec-action-macro.html', 'ajax')
     return jsonify({
@@ -90,14 +90,14 @@ def mod_rec_ajax(id):
 @login_required
 @is_administrator
 def mod_history(id):
-    mod = Users.query\
-        .filter(Users.role_id.between(1,2), Users.id==id)\
+    mod = User.query\
+        .filter(User.role_id.between(1,2), User.id==id)\
         .first_or_404()
-    mod_recs = mod.rec_mods\
-        .order_by(desc(RecModerations.timestamp))\
+    mod_recs = mod.rec_moderation\
+        .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
-    mod_coms = mod.com_mods\
-        .order_by(desc(ComModerations.timestamp))\
+    mod_coms = mod.com_moderation\
+        .order_by(desc(Com_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('admin/mod-history.html', mod=mod,
         mod_recs=mod_recs, mod_coms=mod_coms)
@@ -109,9 +109,9 @@ def admin_splash():
     week_ago = datetime.today() - timedelta(days=7)
     data = {}
     
-    users = func.count(distinct(Users.id))
-    recent_users = func.count(distinct(case([(Users.member_since>week_ago, Users.id),])))
-    recent_logins = func.count(distinct(case([(Users.last_login>week_ago, Users.id),])))
+    users = func.count(distinct(User.id))
+    recent_users = func.count(distinct(case([(User.member_since>week_ago, User.id),])))
+    recent_logins = func.count(distinct(case([(User.last_login>week_ago, User.id),])))
     data['users'], data['recent_users'], data['recent_logins'] = db.session\
         .query(users, recent_users, recent_logins)\
         .all()[0]
@@ -123,21 +123,21 @@ def admin_splash():
         .query(recs, recent_recs, unverified_recs)\
         .all()[0]
     
-    comments = func.count(distinct(Comments.id))
-    recent_comments = func.count(distinct(case([(Comments.timestamp>week_ago, Comments.id),])))
-    unverified_comments = func.count(distinct(case([(Comments.verification==1, Comments.id),])))
+    comments = func.count(distinct(Comment.id))
+    recent_comments = func.count(distinct(case([(Comment.timestamp>week_ago, Comment.id),])))
+    unverified_comments = func.count(distinct(case([(Comment.verification==1, Comment.id),])))
     data['comments'], data['recent_comments'], data['unverified_comments'] = db.session\
         .query(comments, recent_comments, unverified_comments)\
         .all()[0]
 
-    rec_mods = func.count(distinct(RecModerations.id))
-    recent_rec_mods = func.count(distinct(case([(RecModerations.timestamp>week_ago, RecModerations.id),])))
-    com_mods = func.count(distinct(ComModerations.id))
-    recent_com_mods = func.count(distinct(case([(ComModerations.timestamp>week_ago, ComModerations.id),])))
-    data['mods'] = db.session.query(Users, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
-        .join(RecModerations)\
-        .join(ComModerations)\
-        .filter(Users.role_id==2)\
-        .group_by(Users.username)\
+    rec_mods = func.count(distinct(Rec_Moderation.id))
+    recent_rec_mods = func.count(distinct(case([(Rec_Moderation.timestamp>week_ago, Rec_Moderation.id),])))
+    com_mods = func.count(distinct(Com_Moderation.id))
+    recent_com_mods = func.count(distinct(case([(Com_Moderation.timestamp>week_ago, Com_Moderation.id),])))
+    data['mods'] = db.session.query(User, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
+        .join(Rec_Moderation)\
+        .join(Com_Moderation)\
+        .filter(User.role_id==2)\
+        .group_by(User.username)\
         .all()
     return render_template('admin/splash.html', data=data)

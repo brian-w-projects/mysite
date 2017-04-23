@@ -24,9 +24,9 @@ def about():
 @main.route('/highlight-ajax/<int:id>')
 def load_comments(id):
     page = int(request.args.get('page'))
-    display_comments = Comments.query\
-        .filter(Comments.verification!=0, Comments.posted_on==id)\
-        .order_by(desc(Comments.timestamp))\
+    display_comments = Comment.query\
+        .filter(Comment.verification>0, Comment.posted_on==id)\
+        .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
     return jsonify({
@@ -40,13 +40,13 @@ def highlight(id):
     display_recs = Recommendation.query\
         .filter(Recommendation.verification!=-1, Recommendation.id==id)\
         .first_or_404()
-    if display_recs.verification == 0 and display_recs.author_id != current_user.id:
+    if display_recs.verification == 0 and display_recs.user_id != current_user.id:
         abort(403)
-    display_comments = display_recs.comments\
-        .filter(Comments.verification>0)\
-        .order_by(desc(Comments.timestamp))\
+    display_comments = display_recs.comment\
+        .filter(Comment.verification>0)\
+        .order_by(desc(Comment.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
-    if display_recs.author_id == current_user.id:
+    if display_recs.user_id == current_user.id:
         display_recs.new_comment = False
         db.session.add(display_recs)
         db.session.commit()
@@ -54,9 +54,9 @@ def highlight(id):
         if not current_user.is_authenticated:
             abort(403)
         if form.validate():
-            to_add = Comments(comment_by=current_user.id, 
-                posted_on=id, 
-                comment=form.text.data)
+            to_add = Comment(user_id=current_user.id, 
+                recommendation_id=id, 
+                text=form.text.data)
             display_recs.new_comment = True
             db.session.add(to_add)
             db.session.add(display_recs)
@@ -73,11 +73,11 @@ def index():
     if current_user.is_administrator():
         return redirect(url_for('admin.admin_splash'))
     if current_user.is_authenticated:
-        my_list = [max(x.title.split(), key=len) for x in current_user.posts\
-            .order_by(Recommendation.timestamp.desc())\
+        my_list = [max(x.title.split(), key=len) for x in current_user.recommendation\
+            .order_by(desc(Recommendation.timestamp))\
             .limit(10)]
         display_recs = Recommendation.query\
-            .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
+            .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
             .filter(or_(*[Recommendation.title.contains(list_ele) for list_ele in my_list]))\
             .order_by(desc(Recommendation.timestamp))\
             .limit(100)\
@@ -108,14 +108,14 @@ def search_more_ajax():
 def search_query(page = 1):
     if session['type'] == 'Recs':
         display_recs = Recommendation.query\
-            .join(Users)\
+            .join(User)\
             .filter(Recommendation.verification>0)
         if session['search'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
             display_recs = display_recs\
-                .filter(Users.username.contains(session['user']))
+                .filter(User.username.contains(session['user']))
         if session['date'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.timestamp<=session['date'])
@@ -127,20 +127,20 @@ def search_query(page = 1):
             'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search'))}) 
     else:
-        display_comments = Comments.query\
-            .join(Users)\
-            .filter(Comments.verification>0)
+        display_comments = Comment.query\
+            .join(User)\
+            .filter(Comment.verification>0)
         if session['search'] != '':
             display_comments = display_comments\
-                .filter(Comments.comment.contains(session['search']))
+                .filter(Comment.text.contains(session['search']))
         if session['user'] != '':
             display_comments = display_comments\
-                .filter(Users.username.contains(session['user']))
+                .filter(User.username.contains(session['user']))
         if session['date'] != '':
             display_comments = display_comments\
-                .filter(Comments.timestamp<=session['date'])
+                .filter(Comment.timestamp<=session['date'])
         display_comments = display_comments\
-            .order_by(desc(Comments.timestamp))\
+            .order_by(desc(Comment.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
         to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
         return jsonify({
@@ -155,7 +155,7 @@ def search():
 @main.route('/-surprise')
 def surprise_ajax():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
+        .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
         .from_self()\
@@ -169,7 +169,7 @@ def surprise_ajax():
 @main.route('/surprise')
 def surprise():
     display_recs = Recommendation.query\
-        .filter(Recommendation.verification>0, Recommendation.author_id!=current_user.id)\
+        .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
         .from_self()\
@@ -180,7 +180,7 @@ def surprise():
 # Alternate Profile URL
 @main.route('/u/<string:username>')
 def find_user(username):
-    user = Users.query\
+    user = User.query\
         .filter_by(username=username)\
         .first_or_404()
     return redirect(url_for('personal.profile', id=user.id))

@@ -6,15 +6,15 @@
     <div class='post-header'>
       <ul class='post-header-list'>
         <li>
-          {% if current_user.is_authenticated and current_user != com.comm %}
-            {% if current_user.following.filter_by(following=com.comm.id).first() %}
-              <i id='{{com.comm.id}}' class="follow-button-comment font-link fa fa-heart fa-2x"></i>
+          {% if current_user.is_authenticated and current_user != com.user %}
+            {% if current_user.following.filter_by(following=com.user_id).first() %}
+              <i id='{{com.user_id}}' class="follow-button-comment font-link fa fa-heart fa-2x"></i>
             {% else %}
-              <i id='{{com.comm.id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
+              <i id='{{com.user_id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
             {% endif %}
           {% endif %}
-          <a href="{{url_for('personal.profile', id=com.comment_by)}}">
-            {{com.comm.username}}
+          <a href="{{url_for('personal.profile', id=com.user_id)}}">
+            {{com.user.username}}
           </a>
         </li>
         <li>
@@ -22,26 +22,26 @@
         </li>
         <li>
           {% if current_user.is_authenticated %}
-            {% if current_user.posts.filter_by(id=com.posted_on).first() or 
-              current_user.commented_on.filter_by(id=com.id).first() %}
+            {% if current_user.recommendation.filter_by(id=com.recommendation_id).first() or 
+              current_user.comment.filter_by(id=com.id).first() %}
               <a class='icon-link' href="{{url_for('personal.comment_delete', id=com.id, next=link)}}">
                 <i class='font-link fa fa-trash fa-2x'></i>
               </a>
             {% endif %}
-            {% if current_user.id == com.comment_by %}
+            {% if current_user.id == com.user_id %}
               <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, next=link)}}">
                 <i class='font-link fa fa-pencil-square-o fa-2x'></i>
               </a>
             {% endif %}
           {% endif %}
-          <a class='icon-link' href="{{url_for('main.highlight', id=com.posted_on)}}">
+          <a class='icon-link' href="{{url_for('main.highlight', id=com.recommendation_id)}}">
             <i class='font-link fa fa-wpforms fa-2x'></i>
           </a>
         </li>
       </ul>
     </div><!--post-header-->
     <p class='post-text'>
-      {{com.comment}}
+      {{com.text}}
     </p>
   </div><!--single-post-->
   <br/>

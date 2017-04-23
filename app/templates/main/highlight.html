@@ -9,14 +9,14 @@
 {% block maincontent %}
   {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>
-    <a href="{{url_for('personal.profile', id=rec.author.id)}}">{{rec.author.username}}</a>
+    <a href="{{url_for('personal.profile', id=rec.user_id)}}">{{rec.user.username}}</a>
   </h2>
   <div class='font-link-position'>
-    {% if current_user.is_authenticated and current_user != rec.author %}
-      {% if current_user.following.filter_by(following=rec.author.id).first() %}
-        <i id='{{rec.author.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
+    {% if current_user.is_authenticated and current_user != rec.user %}
+      {% if current_user.following.filter_by(following=rec.user_id).first() %}
+        <i id='{{rec.user_id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
       {% else %}
-        <i id='{{rec.author.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
+        <i id='{{rec.user_id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
       {% endif %}
     {% endif %}
   </div><!--font-link-position-->

@@ -36,11 +36,11 @@ def forgot_password():
     form = PasswordReset(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query\
+            check_user = User.query\
                 .filter_by(username=form.username.data)\
                 .first()
             if check_user is not None:
-                reset_password = Users.get_secret_key()
+                reset_password = User.get_secret_key()
                 check_user.password = reset_password
                 check_user.invalid_logins = 0
                 db.session.add(check_user)
@@ -66,7 +66,7 @@ def forgot_username():
     form = UsernameRecover(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query\
+            check_user = User.query\
                 .filter_by(email=form.email.data)\
                 .first()
             if check_user is not None:
@@ -89,7 +89,7 @@ def login():
     form = LoginForm(request.form)
     if request.method == 'POST':
         if form.validate():
-            check_user = Users.query\
+            check_user = User.query\
                 .filter_by(username=form.username.data)\
                 .first()
             if check_user is not None:
@@ -123,7 +123,7 @@ def logout():
 @auth.route('/-subscribe')
 def subscribe_ajax():
     username = request.args.get('username').strip().lower()
-    if Users.query\
+    if User.query\
         .filter_by(username=username)\
         .first():
         return jsonify({'exists':True})
@@ -133,7 +133,7 @@ def subscribe_ajax():
 @auth.route('/-subscribe-email')
 def subscribe_email_ajax():
     email = request.args.get('email').strip().lower()
-    if Users.query\
+    if User.query\
         .filter_by(email=email)\
         .first():
         return jsonify({'exists':True})
@@ -147,7 +147,7 @@ def subscribe():
         username_verify = form.username.data.strip().lower()
         email_verify = form.email.data.strip().lower()
         if form.validate():
-            user = Users(username=username_verify, email=email_verify, 
+            user = User(username=username_verify, email=email_verify, 
                 password=form.password.data, updates=form.updates.data)
             db.session.add(user)
             try:

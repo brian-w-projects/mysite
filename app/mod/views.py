@@ -13,9 +13,9 @@ from sqlalchemy.sql.expression import asc
 def moderate_com():
     id = request.args.get('id')
     verify = request.args.get('verify')
-    new_mod = ComModerations(mod_by=current_user.id, mod_on=id, action=verify)
+    new_mod = Com_Moderation(user_id=current_user.id, comment_id=id, action=verify)
     db.session.add(new_mod)
-    com = Comments.query\
+    com = Comment.query\
         .filter_by(id=id)\
         .first_or_404()
     if verify == 'true':
@@ -23,7 +23,7 @@ def moderate_com():
         db.session.add(com)
         db.session.commit()
     else:
-        com.verificition = 0
+        com.verificition = -1
         db.session.add(com)
         db.session.commit()
     return jsonify({'verify': verify == 'true'})
@@ -33,9 +33,9 @@ def moderate_com():
 @is_moderator
 def verify_com_ajax():
     page = int(request.args.get('page'))
-    display_comments = Comments.query\
+    display_comments = Comment.query\
         .filter_by(verification=1)\
-        .order_by(asc(Comments.timestamp))\
+        .order_by(asc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/moderator/mod-comment-macro.html', 'ajax')
     return jsonify({
@@ -46,9 +46,9 @@ def verify_com_ajax():
 @login_required
 @is_moderator
 def verify_comments():
-    display_comments = Comments.query\
+    display_comments = Comment.query\
         .filter_by(verification=1)\
-        .order_by(asc(Comments.timestamp))\
+        .order_by(asc(Comment.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('mod/verify-comments.html', d_c=display_comments)
 
@@ -58,7 +58,7 @@ def verify_comments():
 def moderate_recs():
     id = request.args.get('id')
     verify = request.args.get('verify')
-    new_mod = RecModerations(mod_by=current_user.id, mod_on=id, action=verify)
+    new_mod = Rec_Moderation(user_id=current_user.id, recommendation_id=id, action=verify)
     db.session.add(new_mod)
     rec = Recommendation.query\
             .filter_by(id=id)\

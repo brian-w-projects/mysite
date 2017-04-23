@@ -6,7 +6,7 @@
 
 {% macro render_mod(rec_mod, moment, current_user) %}
   <div class='action-header'>
-    <i id='{{rec_mod.mod_on}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
+    <i id='{{rec_mod.recommendation_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
       {% if rec_mod.action %}
         Accepted
@@ -16,7 +16,7 @@
     </p>
     <p>{{moment(rec_mod.timestamp).fromNow()}}</p>
   </div><!--action_header-->
-  {{rec_macro.single_rec(rec_mod.rec, moment, current_user)}}
+  {{rec_macro.single_rec(rec_mod.recommendation, moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
