@@ -1,16 +1,14 @@
 <!--REQUIREMENTS
   rec.js
-  comments.js
   -->
 {% import 'macros/rec-macro.html' as rec_macro %}
-{% import 'macros/comment-macro.html' as comment_macro %}
 
 {% macro initialize_following(display, moment, current_user) %}
   <div class='list-recs'>
     {% if display.items|length != 0 %}
       {{ajax(display, moment, current_user)}}
     {% else %}
-      <p>You aren't following anyone! Go to a user's profile to start following them.</p>
+      <p>This user isn't following anyone. You can follow someone by clicking their heart.</p>
     {% endif %}
     {% if display.pages != display.page and display.pages != 0 %}
       <a><p class='load-more'>Load More</p></a>
@@ -19,14 +17,11 @@
 {% endmacro %}
 
 {% macro ajax(display, moment, current_user, link=request.url) %}
-  {% for id, rec, x in display.items %}
+  {% for rec in display.items %}
     <div class='name-header'>
       <p class='reckoner name-header-display'>{{rec.user.username}}</p>
     </div><!--name-header-->
-    {% if rec != None %}
-      {{rec_macro.single_rec(rec, moment, current_user, link)}}
-    {% else %}
-      <br/>
-    {% endif %}
+    {{rec_macro.single_rec(rec, moment, current_user, link)}}
+    <br/>
   {% endfor %}
 {% endmacro %}

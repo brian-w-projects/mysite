@@ -24,8 +24,12 @@
   </div><!--list-comments-->
   <div class='w760'>
     <form method='POST'>
-      <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
-      {{form.text(class='comment-text-entry')}}
+      {% if current_user.id == com.user_id %}
+        <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
+        {{form.text(class='comment-text-entry')}}
+        <br/>
+      {% endif %}
+      {{form.delete.label(class='reckoner')}} {{form.delete(class='click')}}
       <br/>
       {{form.csrf_token}}
       {{form.submit(class='reckoner', id='submit')}}

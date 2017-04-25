@@ -10,13 +10,10 @@ class ChangeForm(FlaskForm):
     submit = SubmitField('Update')
 
 class CommentEditForm(FlaskForm):
+    delete = BooleanField('Delete Comment: ')
     submit = SubmitField('Submit')
-    text = TextAreaField('Rec: ', validators=[validators.DataRequired()])
+    text = TextAreaField('Rec: ')
     
-class DeleteForm(FlaskForm):
-    delete = BooleanField('Delete Comment: ', validators=[validators.DataRequired()])
-    submit = SubmitField('Submit')
-
 class EditForm(FlaskForm):
     delete = BooleanField('Delete: ', validators=[validators.EqualTo('delete_confirm')])
     delete_confirm = BooleanField('Delete Confirm: ')

@@ -1,6 +1,6 @@
 from flask import abort, current_app, flash, get_template_attribute, jsonify, redirect, render_template, request, url_for
 from . import personal
-from .forms import ChangeForm, CommentEditForm, DeleteForm, EditForm, PostForm
+from .forms import ChangeForm, CommentEditForm, EditForm, PostForm
 from .. import db
 from ..models import User, Comment, Relationship, Recommendation
 from datetime import datetime
@@ -22,29 +22,6 @@ def api():
         current_user.generate_auth_token()
     return render_template('personal/api.html')
 
-@personal.route('/comment-delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def comment_delete(id):
-    form = DeleteForm(request.form)
-    display_comments = Comment.query\
-        .filter(Comment.verification>0, Comment.id==id)\
-        .first_or_404()
-    display_recs = display_comments.recommendation
-    if display_recs.user_id != current_user.id and display_comments.user_id != current_user.id:
-        abort(403)
-    if request.method == 'POST':
-        if form.validate():
-            display_comments.verification = -1
-            db.session.add(display_comments)
-            db.session.commit()
-            flash(u'\u2713 Comment has been deleted')
-            return redirect(request.args.get('next') or url_for('main.index'))
-        else:
-            flash(u'\u2717 You must confirm deletion')
-            return redirect(url_for('personal.comment_delete', id=id, next=request.args.get('next')))
-    return render_template('personal/comment-delete.html', form=form, rec=display_recs, 
-        com=display_comments, next=request.args.get('next'))
-
 @personal.route('/comment-edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def comment_edit(id):
@@ -53,17 +30,23 @@ def comment_edit(id):
         .filter(Comment.verification>0, Comment.id==id)\
         .first_or_404()
     display_recs = display_comments.recommendation
-    if display_comments.user_id != current_user.id:
+    if current_user.id not in (display_comments.user_id, display_comments.recommendation.user_id):
         abort(403)
     if request.method == 'POST':
-        if form.validate():
-            display_comments.text = form.text.data
+        if form.delete.data:
+            display_comments.verification = -1
+            flash(u'\u2713 Comment has been deleted')
             db.session.add(display_comments)
             db.session.commit()
+            return redirect(request.args.get('next') or url_for('main.index'))
+        elif form.text.data:
+            display_comments.text = form.text.data
             flash(u'\u2713 Comment updated')
+            db.session.add(display_comments)
+            db.session.commit()
             return redirect(request.args.get('next') or url_for('main.index'))
         else:
-            flash(u'\u2717 Comment must contain text')
+            flash(u'\u2717 Check form entry')
             return redirect(url_for('personal.comment_edit', id=id, next=request.args.get('next')))
     form.text.data = display_comments.text
     return render_template('personal/comment-edit.html', form=form, rec=display_recs, 
@@ -142,7 +125,7 @@ def followers_ajax(id):
         .first_or_404()
     display_names = db.session.query(User.id, Recommendation, Relationship)\
         .join(Recommendation)\
-        .join(Relationship, Relationship.following == User.id)\
+        .join(Relationship, Relationship.follower == User.id)\
         .filter(User.id.in_([one.follower for one in user.follower]), 
             Recommendation.verification>0)\
         .order_by(desc(Relationship.timestamp))\
@@ -162,14 +145,20 @@ def followers(id=-1):
     user = User.query\
         .filter_by(id=id)\
         .first_or_404()
-    display_names = db.session.query(User.id, Recommendation, Relationship)\
-        .join(Recommendation)\
-        .join(Relationship, Relationship.following == User.id)\
-        .filter(User.id.in_([one.follower for one in user.follower]), 
-            Recommendation.verification>0)\
-        .order_by(desc(Relationship.timestamp))\
-        .group_by(User.id)\
+    
+    case_check = case([(Recommendation.user_id.in_([one.follower for one in user.follower]) & Recommendation.verification>0, Recommendation.id)], else_=None)
+    display_names = db.session.query(User, case_check, Recommendation)\
+        .outerjoin(Recommendation)\
+        .filter(User.id.in_([one.follower for one in user.follower]))\
         .paginate(1, per_page=current_user.display, error_out=False)
+    # display_names = db.session.query(User, Recommendation)\
+    #     .join(Relationship, Relationship.follower == User.id)\
+    #     .filter(User.id.in_([one.follower for one in user.follower]))\
+    #     .order_by(desc(Relationship.timestamp))\
+    #     .group_by(User.id)\
+    #     .paginate(1, per_page=current_user.display, error_out=False)
+    for x in display_names.items:
+        print(x)
     return render_template('personal/followers.html', display=display_names, 
         user=user)
 
@@ -201,14 +190,15 @@ def following(id=-1):
     user = User.query\
         .filter_by(id=id)\
         .first_or_404()
-    display_names = db.session.query(User.id, Recommendation, Relationship)\
-        .join(Recommendation)\
+    display_names = db.session.query(Recommendation)\
+        .join(User)\
         .join(Relationship, Relationship.follower == User.id)\
         .filter(User.id.in_([one.following for one in user.following]),
             Recommendation.verification>0)\
         .order_by(desc(Relationship.timestamp))\
         .group_by(User.id)\
         .paginate(1, per_page=current_user.display, error_out=False)
+    print(display_names.items[0])
     return render_template('personal/following.html', display=display_names, 
         user = user)
 

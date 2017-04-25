@@ -21,18 +21,10 @@
           {{moment(com.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
         </li>
         <li>
-          {% if current_user.is_authenticated %}
-            {% if current_user.recommendation.filter_by(id=com.recommendation_id).first() or 
-              current_user.comment.filter_by(id=com.id).first() %}
-              <a class='icon-link' href="{{url_for('personal.comment_delete', id=com.id, next=link)}}">
-                <i class='font-link fa fa-trash fa-2x'></i>
-              </a>
-            {% endif %}
-            {% if current_user.id == com.user_id %}
-              <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, next=link)}}">
-                <i class='font-link fa fa-pencil-square-o fa-2x'></i>
-              </a>
-            {% endif %}
+          {% if current_user.id == com.user_id or current_user.id == com.recommendation.user_id %}
+            <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, next=link)}}">
+              <i class='font-link fa fa-pencil-square-o fa-2x'></i>
+            </a>
           {% endif %}
           <a class='icon-link' href="{{url_for('main.highlight', id=com.recommendation_id)}}">
             <i class='font-link fa fa-wpforms fa-2x'></i>
