@@ -1,0 +1,51 @@
+<!--REQUIREMENTS
+  rec.js
+  -->
+{% import 'macros/rec-macro.html' as rec_macro %}
+
+{% macro initialize(display, moment, current_user) %}
+  <div class='list-recs'>
+    {% if display.items|length != 0 %}
+      {{ajax(display, moment, current_user)}}
+    {% else %}
+      <p>Nothing to display here. Click on a user's heart to start following them!</p>
+    {% endif %}
+    {% if display.pages != display.page and display.pages != 0 %}
+      <a><p class='load-more'>Load More</p></a>
+    {% endif %}
+  </div><!--list-recs-->
+{% endmacro %}
+
+{% macro ajax(display, moment, current_user, link=request.url) %}
+  {% for user, rec in display.items %}
+    <div class='name-header'>
+      <p class='reckoner name-header-display'>{{user.username}}</p>
+    </div><!--name-header-->
+    {% if rec != None %}
+      {{rec_macro.single_rec(rec, moment, current_user, link)}}
+    {% else %}
+      {{no_recs(user, current_user)}}
+      <br/>
+    {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+{% macro no_recs(user, current_user) %}
+  <div class='single-post'>
+    <div class='post-header'>
+      <ul class='post-header-list'>
+        <li>
+          {% if current_user.is_authenticated and current_user != user %}
+            {% if current_user.following.filter_by(following=user.id).first() %}
+              <i id='{{user.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
+            {% else %}
+              <i id='{{user.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
+            {% endif %}
+          {% endif %}
+          <a href="{{url_for('personal.profile', id=user.id)}}">
+            {{user.username}}
+          </a>
+        </li>
+    </div><!--post-header-->
+  </div><!--single-post-->
+{% endmacro %}

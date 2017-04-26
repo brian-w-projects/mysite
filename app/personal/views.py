@@ -7,7 +7,7 @@ from datetime import datetime
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
-from sqlalchemy.sql.expression import desc
+from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
 
 @personal.route('/-api')
 @login_required
@@ -120,16 +120,22 @@ def follow_ajax():
 @personal.route('/-followers/<int:id>')
 def followers_ajax(id):
     page = int(request.args.get('page'))
-    user = User.query\
-        .filter_by(id=id)\
-        .first_or_404()
-    display_names = db.session.query(User.id, Recommendation, Relationship)\
-        .join(Recommendation)\
+    user = User.query.get(int(id))
+    if user is None:
+        abort(404)
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+        .filter(Recommendation.verification>0)\
+        .group_by(Recommendation.user_id)\
+        .all()
+    display_names = db.session.query(User, Recommendation)\
+        .outerjoin(Recommendation, and_(
+            Recommendation.id.in_([each[0] for each in last_rec]),
+            Recommendation.user_id == User.id
+            )
+        )\
         .join(Relationship, Relationship.follower == User.id)\
-        .filter(User.id.in_([one.follower for one in user.follower]), 
-            Recommendation.verification>0)\
+        .filter(User.id.in_([one.follower for one in user.follower]))\
         .order_by(desc(Relationship.timestamp))\
-        .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/followed-macro.html', 'ajax')
     return jsonify({
@@ -142,39 +148,45 @@ def followers_ajax(id):
 def followers(id=-1):
     if current_user.is_authenticated and id == -1:
         id = current_user.id
-    user = User.query\
-        .filter_by(id=id)\
-        .first_or_404()
-    
-    case_check = case([(Recommendation.user_id.in_([one.follower for one in user.follower]) & Recommendation.verification>0, Recommendation.id)], else_=None)
-    display_names = db.session.query(User, case_check, Recommendation)\
-        .outerjoin(Recommendation)\
+    user = User.query.get(int(id))
+    if user is None:
+        abort(404)
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+        .filter(Recommendation.verification>0)\
+        .group_by(Recommendation.user_id)\
+        .all()
+    display_names = db.session.query(User, Recommendation)\
+        .outerjoin(Recommendation, and_(
+            Recommendation.id.in_([each[0] for each in last_rec]),
+            Recommendation.user_id == User.id
+            )
+        )\
+        .join(Relationship, Relationship.follower == User.id)\
         .filter(User.id.in_([one.follower for one in user.follower]))\
+        .order_by(desc(Relationship.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
-    # display_names = db.session.query(User, Recommendation)\
-    #     .join(Relationship, Relationship.follower == User.id)\
-    #     .filter(User.id.in_([one.follower for one in user.follower]))\
-    #     .order_by(desc(Relationship.timestamp))\
-    #     .group_by(User.id)\
-    #     .paginate(1, per_page=current_user.display, error_out=False)
-    for x in display_names.items:
-        print(x)
     return render_template('personal/followers.html', display=display_names, 
         user=user)
 
 @personal.route('/-following/<int:id>')
 def following_ajax(id):
     page = int(request.args.get('page'))
-    user = User.query\
-        .filter_by(id=id)\
-        .first_or_404()
-    display_names = db.session.query(User.id, Recommendation, Relationship)\
-        .join(Recommendation)\
-        .join(Relationship, Relationship.follower == User.id)\
-        .filter(User.id.in_([one.following for one in user.following]),
-            Recommendation.verification>0)\
+    user = User.query.get(int(id))
+    if user is None:
+        abort(404)
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+        .filter(Recommendation.verification>0)\
+        .group_by(Recommendation.user_id)\
+        .all()
+    display_names = db.session.query(User, Recommendation)\
+        .outerjoin(Recommendation, and_(
+            Recommendation.id.in_([each[0] for each in last_rec]),
+            Recommendation.user_id == User.id
+            )
+        )\
+        .join(Relationship, Relationship.following == User.id)\
+        .filter(User.id.in_([one.following for one in user.following]))\
         .order_by(desc(Relationship.timestamp))\
-        .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/following-macro.html', 'ajax')
     return jsonify({
@@ -187,18 +199,24 @@ def following_ajax(id):
 def following(id=-1):
     if current_user.is_authenticated and id == -1:
         id = current_user.id
-    user = User.query\
-        .filter_by(id=id)\
-        .first_or_404()
-    display_names = db.session.query(Recommendation)\
-        .join(User)\
-        .join(Relationship, Relationship.follower == User.id)\
-        .filter(User.id.in_([one.following for one in user.following]),
-            Recommendation.verification>0)\
+    user = User.query.get(int(id))
+    if user is None:
+        abort(404)
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+        .filter(Recommendation.verification>0)\
+        .group_by(Recommendation.user_id)\
+        .all()
+    display_names = db.session.query(User, Recommendation)\
+        .outerjoin(Recommendation, and_(
+            Recommendation.id.in_([each[0] for each in last_rec]),
+            Recommendation.user_id == User.id
+            )
+        )\
+        .join(Relationship, Relationship.following == User.id)\
+        .filter(User.id.in_([one.following for one in user.following]))\
         .order_by(desc(Relationship.timestamp))\
-        .group_by(User.id)\
         .paginate(1, per_page=current_user.display, error_out=False)
-    print(display_names.items[0])
+
     return render_template('personal/following.html', display=display_names, 
         user = user)
 
@@ -305,9 +323,9 @@ def profile(id=-1):
             id = current_user.id
         else:
             return redirect(url_for('auth.login', next='personal/profile'))
-    user = User.query\
-        .filter_by(id=id)\
-        .first_or_404()
+    user = User.query.get(int(id))
+    if user is None:
+        abort(404)
     com_count = 0
     rec_count = 0
     if current_user.is_moderator() and current_user.id == id:

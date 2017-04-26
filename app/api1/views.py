@@ -202,9 +202,8 @@ def delete_comments(id):
 @auth_request(role=3)
 def get_user(id):
     to_ret = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not to_ret:
+        .get(int(id))
+    if to_ret is None:
         return message(404, 'This user does not exist')
     return jsonify(to_ret.to_json())
 
@@ -213,9 +212,8 @@ def get_user(id):
 @auth_token_required
 def get_user_recs(id, page=1):
     user = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not user:
+        .get(int(id))
+    if user is None:
         return message(404, 'This user does not exist')
     if g.current_user.id == id:
         private = 0
@@ -233,9 +231,8 @@ def get_user_recs(id, page=1):
 @auth_request(role=3)
 def get_user_comments(id, page=1):
     user = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not user:
+        .get(int(id))
+    if user is None:
         return message(404, 'This user does not exist')
     comments = Comment.query\
         .filter(Comment.user_id==id, Comment.verification > 0)\
@@ -280,9 +277,8 @@ def put_user():
 @auth_request(role=3)
 def get_user_following(id):
     to_ret = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not to_ret:
+        .get(int(id))
+    if to_ret is None:
         return message(404, 'This user does not exist')
     return jsonify(to_ret.to_json_following())
 
@@ -291,9 +287,8 @@ def get_user_following(id):
 @auth_request(role=3)
 def get_user_followed_by(id):
     to_ret = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not to_ret:
+        .get(int(id))
+    if to_ret is None:
         return message(404, 'This user does not exist')
     return jsonify(to_ret.to_json_followed())
 
@@ -302,9 +297,8 @@ def get_user_followed_by(id):
 @auth_request(role=3)
 def put_follower(id):
     user = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not user:
+        .get(int(id))
+    if user is None:
         return message(404, 'This user does not exist')
     if id == g.current_user.id:
         return message(400, 'You may not follow yourself')
@@ -321,9 +315,8 @@ def put_follower(id):
 @auth_request(role=3)
 def delete_follow(id):
     user = User.query\
-        .filter_by(id=id)\
-        .first()
-    if not user:
+        .get(int(id))
+    if user is None:
         return message(404, 'This user does not exist')
     if id == g.current_user.id:
         return message(400, 'You may not unfollow yourself')

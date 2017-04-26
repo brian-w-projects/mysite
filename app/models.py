@@ -37,6 +37,8 @@ class API_Request(db.Model):
         else:
             return False
 
+    def __repr__(self):
+        return "API_Request(endpoint={self.endpoint}, user_id={self.user_id})".format(self=self)
 
 class Comment(db.Model):
     __tablename__ = 'comment'
@@ -63,9 +65,13 @@ class Comment(db.Model):
             u = User.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
+            if r.verification == -1:
+                ver = -1
+            else:
+                ver = 1
             c = Comment(user_id=u.id, recommendation_id=r.id,
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
-                verification=1,
+                verification=ver,
                 text=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
@@ -79,6 +85,9 @@ class Comment(db.Model):
             'timestamp': self.timestamp,
             'text': self.text
         }
+
+    def __repr__(self):
+        return "Comment(recommendation_id={self.recommendation.id}, text={self.text}, user_id={self.user_id}".format(self=self)
 
 
 class Com_Moderation(db.Model):
@@ -139,6 +148,8 @@ class Com_Moderation(db.Model):
             'timestamp': self.timestamp,
         }
 
+    def __repr__(self):
+        return "Com_Moderation(action={self.action}, comment_id={self.comment_id}, user_id={self.user_id})".format(self=self)
 
 class Recommendation(db.Model):
     __tablename__ = 'recommendation'
@@ -175,9 +186,8 @@ class Recommendation(db.Model):
             'title': self.title
         }
     
-    # put in comments?
     def to_json_comments(self):
-        json_rec = {com.id : com.to_json() for com in self.comment if com.verification != 0}
+        json_rec = {com.id : com.to_json() for com in self.comment if com.verification>0}
         return json_rec
     
     @staticmethod
@@ -206,6 +216,8 @@ class Recommendation(db.Model):
             db.session.add(r)
             db.session.commit()
 
+    def __repr__(self):
+        return "Recommendation(text={self.text}, title={self.title}, user_id={self.user_id}, verification={self.verification})".format(self=self)
 
 class Rec_Moderation(db.Model):
     __tablename__ = 'rec_moderation'
@@ -263,7 +275,10 @@ class Rec_Moderation(db.Model):
             'title': self.recommention.title,
             'user_id': self.user_id
         }
-        
+    
+    def __repr__(self):
+        return "Rec_Moderation(action={self.action}, recommendation_id={self.recommendation_id}, user_id={self.user_id})".format(self=self)
+
         
 class Relationship(db.Model):
     __tablename__ = 'relationship'
@@ -301,6 +316,9 @@ class Relationship(db.Model):
                 db.session.add(f)
                 db.session.commit()
 
+    def __repr__(self):
+        return "Relationship(follower={self.follower}, following={self.following})".format(self=self)
+
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -317,6 +335,9 @@ class Role(db.Model):
         role = Role(name='User', default=True)
         db.session.add(role)
         db.session.commit()
+
+    def __repr__(self):
+        return "Role(name={self.name})".format(self=self)
 
 
 class User(UserMixin, db.Model):
@@ -424,7 +445,6 @@ class User(UserMixin, db.Model):
                 json_rec['com_mods'] = self.com_mods.count()
         return json_rec
 
-    # move to relationship?
     def to_json_following(self):
         json_rec = {}
         json_rec['count'] = self.following.count()
@@ -469,6 +489,8 @@ class User(UserMixin, db.Model):
             except IntegrityError:
                 db.session.rollback()
 
+    def __repr__(self):
+        return "User(username={self.username}, email={self.email})".format(self=self)
 
 class AnonymousUser(AnonymousUserMixin):
     id = -1
@@ -479,6 +501,9 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+        
+    def __repr__(self):
+        return "AnonymousUser()".format(self=self)
 
 login_manager.anonymous_user = AnonymousUser
 

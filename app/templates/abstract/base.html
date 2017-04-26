@@ -4,8 +4,7 @@
   {{moment.include_moment()}}
   {% import 'macros/comment-macro.html' as comment_macro %}
   {% import 'macros/flash-macro.html' as flash_macro %}
-  {% import 'macros/followed-macro.html' as followed_macro %}
-  {% import 'macros/following-macro.html' as following_macro %}
+  {% import 'macros/relationship-macro.html' as relationship_macro %}
   {% import 'macros/rec-macro.html' as rec_macro %}
   {% if current_user.is_moderator %}
     {% import 'macros/moderator/mod-comment-macro.html' as mod_comment_macro %}
