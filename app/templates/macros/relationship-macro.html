@@ -22,7 +22,7 @@
       <p class='reckoner name-header-display'>{{user.username}}</p>
     </div><!--name-header-->
     {% if rec != None %}
-      {{rec_macro.single_rec(rec, moment, current_user, link)}}
+      {{rec_macro.single_rec((rec, current_user.following.filter_by(following=user.id).first()), moment, current_user, link)}}
     {% else %}
       {{no_recs(user, current_user)}}
       <br/>

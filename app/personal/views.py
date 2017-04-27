@@ -56,30 +56,34 @@ def comment_edit(id):
 @login_required
 def edit(post_id):
     form = EditForm(request.form)
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification>-1, Recommendation.id==post_id)\
         .first_or_404()
-    if display_recs.user_id != current_user.id:
+    if display_recs[0].user_id != current_user.id:
         abort(403)
     if request.method == 'POST':
         if form.validate():
             if form.delete.data == True and form.delete_confirm.data == True:
-                display_recs.verification = -1
-                db.session.add(display_recs)
-                for com in display_recs.comment:
+                display_recs[0].verification = -1
+                db.session.add(display_recs[0])
+                for com in display_recs[0].comment:
                     com.verification = -1
                     db.session.add(com)
                 db.session.commit()
                 flash(u'\u2713 Your rec has been deleted')
             else:
-                display_recs.title = form.title.data
-                display_recs.verification = form.public.data
-                display_recs.timestamp = datetime.utcnow()
-                display_recs.text = form.text.data
-                display_recs.verification = form.public.data
-                db.session.add(display_recs)
+                display_recs[0].title = form.title.data
+                display_recs[0].verification = form.public.data
+                display_recs[0].timestamp = datetime.utcnow()
+                display_recs[0].text = form.text.data
+                display_recs[0].verification = form.public.data
+                db.session.add(display_recs[0])
                 flash(u'\u2713 Your rec has been edited')
-                for com in display_recs.comment:
+                for com in display_recs[0].comment:
                     com.verification = 1
                     db.session.add(com)
                 db.session.commit()
@@ -92,9 +96,9 @@ def edit(post_id):
             if 'delete' in form.errors:
                 flash(u'\u2717 Check both boxes to delete this rec')
             return redirect(url_for('personal.edit', post_id=post_id, next=request.args.get('next')))
-    form.title.data = display_recs.title
-    form.public.data = display_recs.verification > 0
-    form.text.data = display_recs.text
+    form.title.data = display_recs[0].title
+    form.public.data = display_recs[0].verification > 0
+    form.text.data = display_recs[0].text
     return render_template('personal/edit.html', form=form, id=post_id,
         next=request.args.get('next'))
 
@@ -224,7 +228,11 @@ def following(id=-1):
 @login_required
 def inspiration_ajax():
     page = int(request.args.get('page'))
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.user_id.in_([one.following for one in current_user.following]), 
             Recommendation.verification>0)\
         .order_by(desc(Recommendation.timestamp))\
@@ -238,7 +246,11 @@ def inspiration_ajax():
 @personal.route('/inspiration')
 @login_required
 def inspiration():
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.user_id.in_([one.following for one in current_user.following]), 
             Recommendation.verification>0)\
         .order_by(desc(Recommendation.timestamp))\
@@ -249,7 +261,11 @@ def inspiration():
 @login_required
 def post_ajax():
     page = int(request.args.get('page'))
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification>0,
             Recommendation.user_id==current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
@@ -278,7 +294,11 @@ def post():
             if 'text' in form.errors:
                 flash(u'\u2717 Recs must contain text')
         return redirect(url_for('personal.post'))
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification>0,
             Recommendation.user_id==current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
@@ -305,7 +325,11 @@ def profile_ajax(id):
         private = 0
     else:
         private = 1
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.user_id==id, Recommendation.verification>=private)\
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out = False)
@@ -336,21 +360,25 @@ def profile(id=-1):
             .filter_by(verification=1)\
             .count()
     ver_case = case([(db.true() if current_user.id==id else db.false(), 0),], else_=1)
-    display_recs = user.recommendation\
-        .filter(Recommendation.verification>=ver_case)\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Recommendation.verification>=ver_case, Recommendation.user_id==id)\
         .order_by(desc(Recommendation.timestamp))
     display_comments = user.comment\
         .filter(Comment.verification>0)\
         .order_by(desc(Comment.timestamp))
     if current_user.id == id:
         for rec in display_recs:
-            if rec.made_private:
-                title = rec.title
-                if len(rec.title) > 10:
-                    title = rec.title[:10] + '...'
+            if rec[0].made_private:
+                title = rec[0].title
+                if len(rec[0].title) > 10:
+                    title = rec[0].title[:10] + '...'
                 flash("Rec '" + title + "' has been made private due to it's content.")
-                rec.made_private = False
-                db.session.add(rec)
+                rec[0].made_private = False
+                db.session.add(rec[0])
                 db.session.commit()
     display_recs = display_recs\
         .paginate(1, per_page=current_user.display, error_out=False)

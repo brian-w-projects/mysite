@@ -2,16 +2,20 @@ from flask import abort, flash, get_template_attribute, jsonify, redirect, rende
 from . import main
 from .forms import CommentForm, SearchForm
 from .. import db
-from ..models import Comment, Recommendation, User, Role
+from ..models import Comment, Recommendation, User, Role, Relationship
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
-from sqlalchemy.sql.expression import func, or_, desc
+from sqlalchemy.sql.expression import func, or_, desc, and_
 
 @main.route('/about')
 def about():
-    display_recs = Recommendation.query\
-        .filter_by(verification = 2)\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Recommendation.verification == 2)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(50)\
         .from_self()\
@@ -37,18 +41,22 @@ def load_comments(id):
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
 def highlight(id):
     form = CommentForm(request.form)
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification!=-1, Recommendation.id==id)\
         .first_or_404()
-    if display_recs.verification == 0 and display_recs.user_id != current_user.id:
+    if display_recs[0].verification == 0 and display_recs[0].user_id != current_user.id:
         abort(403)
-    display_comments = display_recs.comment\
+    display_comments = display_recs[0].comment\
         .filter(Comment.verification>0)\
         .order_by(desc(Comment.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
-    if display_recs.user_id == current_user.id:
-        display_recs.new_comment = False
-        db.session.add(display_recs)
+    if display_recs[0].user_id == current_user.id:
+        display_recs[0].new_comment = False
+        db.session.add(display_recs[0])
         db.session.commit()
     if request.method == 'POST':
         if not current_user.is_authenticated:
@@ -57,9 +65,9 @@ def highlight(id):
             to_add = Comment(user_id=current_user.id, 
                 recommendation_id=id, 
                 text=form.text.data)
-            display_recs.new_comment = True
+            display_recs[0].new_comment = True
             db.session.add(to_add)
-            db.session.add(display_recs)
+            db.session.add(display_recs[0])
             db.session.commit()
             flash(u'\u2713 Your comment has been successfully posted')
         else:
@@ -76,7 +84,11 @@ def index():
         my_list = [max(x.title.split(), key=len) for x in current_user.recommendation\
             .order_by(desc(Recommendation.timestamp))\
             .limit(10)]
-        display_recs = Recommendation.query\
+        display_recs = db.session.query(Recommendation, Relationship)\
+            .outerjoin(Relationship, and_(
+                Relationship.following == Recommendation.user_id,
+                Relationship.follower == current_user.id)
+            )\
             .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
             .filter(or_(*[Recommendation.title.contains(list_ele) for list_ele in my_list]))\
             .order_by(desc(Recommendation.timestamp))\
@@ -107,15 +119,18 @@ def search_more_ajax():
 
 def search_query(page = 1):
     if session['type'] == 'Recs':
-        display_recs = Recommendation.query\
-            .join(User)\
+        display_recs = db.session.query(Recommendation, Relationship)\
+            .outerjoin(Relationship, and_(
+                Relationship.following == Recommendation.user_id,
+                Relationship.follower == current_user.id)
+            )\
             .filter(Recommendation.verification>0)
         if session['search'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
             display_recs = display_recs\
-                .filter(User.username.contains(session['user']))
+                .filter(Recommendation.user.username.contains(session['user']))
         if session['date'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.timestamp<=session['date'])
@@ -154,7 +169,11 @@ def search():
     
 @main.route('/-surprise')
 def surprise_ajax():
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\
@@ -168,7 +187,11 @@ def surprise_ajax():
 
 @main.route('/surprise')
 def surprise():
-    display_recs = Recommendation.query\
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
         .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .limit(5*current_user.display)\

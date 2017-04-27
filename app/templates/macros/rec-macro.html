@@ -4,8 +4,9 @@
   comments.js
   -->
 
-{% macro render_rec(rec, count, moment, current_user, attributes=True, link=request.url) %}
+{% macro render_rec(rec2, count, moment, current_user, attributes=True, link=request.url) %}
   <div class='single-post'>
+    {% set rec, follow = rec2 %}
     <a href="{{url_for('main.highlight', id=rec.id)}}">
       <h3 class='rec-title'>{{rec.title}}</h3>
     </a>
@@ -13,7 +14,7 @@
       <ul class='post-header-list'>
         <li>
           {% if current_user.is_authenticated and current_user != rec.user %}
-            {% if current_user.following.filter_by(following=rec.user_id).first() %}
+            {% if follow %}
               <i id='{{rec.user_id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
             {% else %}
               <i id='{{rec.user_id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
@@ -79,7 +80,7 @@
 {% endmacro %}
 
 {% macro single_rec(rec, moment, current_user, attributes=True, link=request.url, in_comments=True) %}
-  {% set comments, count = rec.prepare_comments() %}
+  {% set comments, count = rec[0].prepare_comments() %}
   {{render_rec(rec, count, moment, current_user, attributes, link)}}
   {% if in_comments %}
     {{comment_macro.insert_comments(comments, moment, current_user, link)}}
