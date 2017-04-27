@@ -7,6 +7,7 @@ from datetime import datetime
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
 
 @personal.route('/-api')
@@ -210,16 +211,26 @@ def following(id=-1):
         .filter(Recommendation.verification>0)\
         .group_by(Recommendation.user_id)\
         .all()
-    display_names = db.session.query(User, Recommendation)\
+        
+    F = aliased(Relationship)
+    display_names = db.session.query(User, Recommendation, F)\
         .outerjoin(Recommendation, and_(
             Recommendation.id.in_([each[0] for each in last_rec]),
             Recommendation.user_id == User.id
             )
         )\
         .join(Relationship, Relationship.following == User.id)\
+        .outerjoin(F, and_(
+                F.following == Recommendation.user_id,
+                F.follower == current_user.id
+                )
+        )\
         .filter(User.id.in_([one.following for one in user.following]))\
         .order_by(desc(Relationship.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
+
+    for x in display_names.items:
+        print(x)
 
     return render_template('personal/following.html', display=display_names, 
         user = user)
