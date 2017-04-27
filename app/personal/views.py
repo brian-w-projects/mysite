@@ -10,17 +10,13 @@ from sqlalchemy import case
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
 
-@personal.route('/-api')
-@login_required
-def api_ajax():
-    current_user.generate_auth_token()
-    return current_user.api
-
 @personal.route('/api')
 @login_required
 def api():
     if not current_user.api:
         current_user.generate_auth_token()
+    if request.is_xhr: #ajax request
+        return current_user.api
     return render_template('personal/api.html')
 
 @personal.route('/comment-edit/<int:id>', methods=['GET', 'POST'])
@@ -122,32 +118,6 @@ def follow_ajax():
         db.session.commit()
         return jsonify({'added':True})
 
-@personal.route('/-followers/<int:id>')
-def followers_ajax(id):
-    page = int(request.args.get('page'))
-    user = User.query.get(int(id))
-    if user is None:
-        abort(404)
-    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
-        .filter(Recommendation.verification>0)\
-        .group_by(Recommendation.user_id)\
-        .all()
-    display_names = db.session.query(User, Recommendation)\
-        .outerjoin(Recommendation, and_(
-            Recommendation.id.in_([each[0] for each in last_rec]),
-            Recommendation.user_id == User.id
-            )
-        )\
-        .join(Relationship, Relationship.follower == User.id)\
-        .filter(User.id.in_([one.follower for one in user.follower]))\
-        .order_by(desc(Relationship.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/followed-macro.html', 'ajax')
-    return jsonify({
-        'last': display_names.pages in (0, display_names.page),
-        'ajax_request': to_return(display_names, _moment, current_user, 
-            link=url_for('personal.followers', id=id))}) 
-
 @personal.route('/followers/<int:id>')
 @personal.route('/followers')
 def followers(id=-1):
@@ -156,48 +126,36 @@ def followers(id=-1):
     user = User.query.get(int(id))
     if user is None:
         abort(404)
+    page = int(request.args.get('page', default=1))
     last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
         .filter(Recommendation.verification>0)\
         .group_by(Recommendation.user_id)\
         .all()
-    display_names = db.session.query(User, Recommendation)\
+    Rel = aliased(Relationship)
+    display_names = db.session.query(User, Recommendation, Relationship)\
         .outerjoin(Recommendation, and_(
             Recommendation.id.in_([each[0] for each in last_rec]),
             Recommendation.user_id == User.id
             )
         )\
-        .join(Relationship, Relationship.follower == User.id)\
+        .join(Rel, Rel.follower == User.id)\
+        .outerjoin(Relationship, and_(
+                Relationship.following == Recommendation.user_id,
+                Relationship.follower == current_user.id
+                )
+        )\
         .filter(User.id.in_([one.follower for one in user.follower]))\
-        .order_by(desc(Relationship.timestamp))\
-        .paginate(1, per_page=current_user.display, error_out=False)
+        .order_by(desc(Rel.timestamp))\
+        .group_by(User.id)\
+        .paginate(page, per_page=current_user.display, error_out=False)
+    if request.is_xhr: #ajax request
+        to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
+        return jsonify({
+            'last': display_names.pages in (0, display_names.page),
+            'ajax_request': to_return(display_names, _moment, current_user, 
+            link=url_for('personal.followers', id=id))}) 
     return render_template('personal/followers.html', display=display_names, 
         user=user)
-
-@personal.route('/-following/<int:id>')
-def following_ajax(id):
-    page = int(request.args.get('page'))
-    user = User.query.get(int(id))
-    if user is None:
-        abort(404)
-    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
-        .filter(Recommendation.verification>0)\
-        .group_by(Recommendation.user_id)\
-        .all()
-    display_names = db.session.query(User, Recommendation)\
-        .outerjoin(Recommendation, and_(
-            Recommendation.id.in_([each[0] for each in last_rec]),
-            Recommendation.user_id == User.id
-            )
-        )\
-        .join(Relationship, Relationship.following == User.id)\
-        .filter(User.id.in_([one.following for one in user.following]))\
-        .order_by(desc(Relationship.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/following-macro.html', 'ajax')
-    return jsonify({
-        'last': display_names.pages in (0, display_names.page),
-        'ajax_request': to_return(display_names, _moment, current_user, 
-            link=url_for('personal.following', id=id))}) 
 
 @personal.route('/following/<int:id>')
 @personal.route('/following')
@@ -207,56 +165,41 @@ def following(id=-1):
     user = User.query.get(int(id))
     if user is None:
         abort(404)
+    page = int(request.args.get('page', default=1))
     last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
         .filter(Recommendation.verification>0)\
         .group_by(Recommendation.user_id)\
         .all()
-        
-    F = aliased(Relationship)
-    display_names = db.session.query(User, Recommendation, F)\
+    Rel = aliased(Relationship)
+    display_names = db.session.query(User, Recommendation, Relationship)\
         .outerjoin(Recommendation, and_(
             Recommendation.id.in_([each[0] for each in last_rec]),
             Recommendation.user_id == User.id
             )
         )\
-        .join(Relationship, Relationship.following == User.id)\
-        .outerjoin(F, and_(
-                F.following == Recommendation.user_id,
-                F.follower == current_user.id
+        .join(Rel, Rel.following == User.id)\
+        .outerjoin(Relationship, and_(
+                Relationship.following == Recommendation.user_id,
+                Relationship.follower == current_user.id
                 )
         )\
         .filter(User.id.in_([one.following for one in user.following]))\
-        .order_by(desc(Relationship.timestamp))\
-        .paginate(1, per_page=current_user.display, error_out=False)
-
-    for x in display_names.items:
-        print(x)
-
+        .order_by(desc(Rel.timestamp))\
+        .group_by(User.id)\
+        .paginate(page, per_page=current_user.display, error_out=False)
+    if request.is_xhr: #ajax request
+        to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
+        return jsonify({
+            'last': display_names.pages in (0, display_names.page),
+            'ajax_request': to_return(display_names, _moment, current_user, 
+                link=url_for('personal.following', id=id))}) 
     return render_template('personal/following.html', display=display_names, 
         user = user)
-
-@personal.route('/-inspiration')
-@login_required
-def inspiration_ajax():
-    page = int(request.args.get('page'))
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.user_id.in_([one.following for one in current_user.following]), 
-            Recommendation.verification>0)\
-        .order_by(desc(Recommendation.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({
-        'last': display_recs.pages in (0, display_recs.page),
-        'ajax_request': to_return(display_recs, _moment, current_user, 
-            link=url_for('personal.inspiration'))}) 
 
 @personal.route('/inspiration')
 @login_required
 def inspiration():
+    page = int(request.args.get('page', default=1))
     display_recs = db.session.query(Recommendation, Relationship)\
         .outerjoin(Relationship, and_(
             Relationship.following == Recommendation.user_id,
@@ -265,28 +208,15 @@ def inspiration():
         .filter(Recommendation.user_id.in_([one.following for one in current_user.following]), 
             Recommendation.verification>0)\
         .order_by(desc(Recommendation.timestamp))\
-        .paginate(1, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    if request.is_xhr: #ajax request
+        to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
+        return jsonify({
+            'last': display_recs.pages in (0, display_recs.page),
+            'ajax_request': to_return(display_recs, _moment, current_user, 
+                link=url_for('personal.inspiration'))}) 
     return render_template('personal/inspiration.html', display=display_recs)
 
-@personal.route('/-post')
-@login_required
-def post_ajax():
-    page = int(request.args.get('page'))
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.verification>0,
-            Recommendation.user_id==current_user.id)\
-        .order_by(desc(Recommendation.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({
-        'last': display_recs.pages in (0, display_recs.page),
-        'ajax_request': to_return(display_recs, _moment, current_user, 
-            link=url_for('personal.post'))})
-    
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
 def post():
@@ -305,6 +235,7 @@ def post():
             if 'text' in form.errors:
                 flash(u'\u2717 Recs must contain text')
         return redirect(url_for('personal.post'))
+    page = int(request.args.get('page', default=1))
     display_recs = db.session.query(Recommendation, Relationship)\
         .outerjoin(Relationship, and_(
             Relationship.following == Recommendation.user_id,
@@ -313,7 +244,13 @@ def post():
         .filter(Recommendation.verification>0,
             Recommendation.user_id==current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
-        .paginate(1, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=current_user.display, error_out=False)
+    if request.is_xhr: #ajax request
+        to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
+        return jsonify({
+            'last': display_recs.pages in (0, display_recs.page),
+            'ajax_request': to_return(display_recs, _moment, current_user, 
+            link=url_for('personal.post'))})
     return render_template('personal/post.html', form=form, display=display_recs)
 
 @personal.route('/-profile-com/<int:id>')

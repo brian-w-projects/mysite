@@ -3,7 +3,10 @@
 3. Mobile Pages?
 
 
+Ajax simplification
 
+Personal:
+    Profile
 
 
 Formatting:

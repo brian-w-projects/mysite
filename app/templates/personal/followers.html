@@ -14,6 +14,6 @@
 {% block supplemental %}
   {{relationship_macro.initialize(display, moment, current_user)}}
   <script>
-    var goto_rec = "{{url_for('personal.followers_ajax', id=user.id)}}";
+    var goto_rec = "{{url_for('personal.followers', id=user.id)}}";
   </script>
 {% endblock %}
