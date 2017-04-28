@@ -3,11 +3,7 @@
 3. Mobile Pages?
 
 
-Ajax simplification
-
-Personal:
-    Profile
-
+1. Finish input-icon pairing
 
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

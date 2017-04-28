@@ -12,20 +12,32 @@
   <h2>Search</h2>
   <form method='POST'>
     {{form.type.label(class='reckoner')}}
-    <i class='form-icon fa fa-search fa-2x'></i>
-    {{form.type(class='entry type')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-search fa-2x'></i>
+      {{form.type(class='entry entry')}}
+    </div><!--icon-input-->
+    <br/>
     <br/>
     {{form.search.label(class='reckoner')}}
-    <i class='form-icon fa fa-lightbulb-o fa-2x'></i>
-    {{form.search(class='entry search', id='tags')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-lightbulb-o fa-2x'></i>
+      {{form.search(class='entry search', id='tags')}}
+    </div><!--icon-input-->
+    <br/>
     <br/>
     {{form.user.label(class='reckoner')}}
-    <i class='form-icon fa fa-user fa-2x'></i>
-    {{form.user(class='entry')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-user fa-2x'></i>
+      {{form.user(class='entry')}}
+    </div><!--icon-input-->
+    <br/>
     <br/>
     {{form.date.label(class='reckoner')}}
-    <i class='form-icon fa fa-calendar fa-2x'></i>
-    {{form.date(id='datepicker', class='entry')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-calendar fa-2x'></i>
+      {{form.date(id='datepicker', class='entry')}}
+    </div><!--icon-input-->
+    <br/>
     <br/>
     {{form.csrf_token}}
     {{form.submit(class='reckoner', id='submit')}}
@@ -41,9 +53,9 @@
     <a><p class='load-more-com'>Load More</p></a>
   </div><!--list-comments-->
   <script>
-    var goto_comment = "{{url_for('main.search_more_ajax')}}";
+    var goto_comment = "{{url_for('main.search_ajax')}}";
     var goto_initial = "{{url_for('main.search_ajax')}}";
-    var goto_rec = "{{url_for('main.search_more_ajax')}}";
+    var goto_rec = "{{url_for('main.search_ajax')}}";
   </script>
   <script src="{{url_for('static', filename='js/main/search.js')}}"></script>
   <script src="{{url_for('static', filename='js/speciality/jquery-ui.js')}}"></script>

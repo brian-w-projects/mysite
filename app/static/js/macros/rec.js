@@ -3,10 +3,11 @@
 /* global goto_rec */
 /* global flask_moment_render_all*/
 /* global load_rec_attributes */
+/* global page */
 
 (function($, window, document){
 
-    var page = 1;
+    page = 1; //global
     
     var $content = $('#content');
     var $follower_count = $('.follower-count');

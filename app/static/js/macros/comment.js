@@ -1,10 +1,11 @@
 /* global goto_comment */
 /* global goto_follow */
 /* global flask_moment_render_all */
+/* global page_com */
 
 (function($, window, document){
    
-    var page_com = 1;
+    page_com = 1;
     
     var $content = $('#content');
     var $load_more_comments = $('.load-more-com');

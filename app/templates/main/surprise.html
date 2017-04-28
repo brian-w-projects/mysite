@@ -13,6 +13,6 @@
 {% block supplemental %}
   {{rec_macro.initialize_recs(display, moment, current_user)}}
   <script>
-    var goto_rec = "{{url_for('main.surprise_ajax')}}"
+    var goto_rec = "{{url_for('main.surprise')}}"
   </script>
 {% endblock %}

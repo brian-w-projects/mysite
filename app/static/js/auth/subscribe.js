@@ -102,16 +102,12 @@
     });
     
     function animate_bad($which){
-        $which.animate({
-            backgroundColor: '#ff0000'}, 'fast');
-        $which.prev().animate({
+        $which.parent().animate({
             backgroundColor: '#ff0000'}, 'fast');
     }
     
     function animate_good($which){
-        $which.animate({
-            backgroundColor: '#efefef'}, 'fast');
-        $which.prev().animate({
+        $which.parent().animate({
             backgroundColor: '#efefef'}, 'fast');
     }
     

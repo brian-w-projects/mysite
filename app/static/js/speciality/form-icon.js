@@ -4,14 +4,8 @@
         #type, #tags, #user, #datepicker');
 
     $(function(){
-        $font_icons.on('mouseover focus', function(){
-           $(this).prev().css('borderBottomWidth', '2px');
-        });
-        
-        $font_icons.on('mouseout blur', function(){
-            if(!$(this).is(':focus')){
-                $(this).prev().css('borderBottomWidth', '1px');
-            }
+        $font_icons.on('focus blur', function(){
+           $(this).parent().toggleClass('hovered');
         });
     });
 

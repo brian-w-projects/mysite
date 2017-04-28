@@ -102,20 +102,18 @@ def index():
         display_recs = None
     return render_template('main/index.html', display = display_recs)
 
-@main.route('/-search', methods=['POST'])
+@main.route('/-search', methods=['GET', 'POST'])
 def search_ajax():
-    session['type'] = request.form['type']
-    session['search'] = request.form['search']
-    session['user'] = request.form['user']
-    if request.form['date'] != '':
-        session['date'] = datetime.strptime(request.form['date'], '%m/%d/%Y') + timedelta(days=1)
-    else:
-        session['date'] = ''
-    return search_query()
-    
-@main.route('/-additional-results')
-def search_more_ajax():
-    return search_query(page = int(request.args.get('page')))
+    page = int(request.args.get('page', default=1))
+    if page == 1: #ajax
+        session['type'] = request.form['type']
+        session['search'] = request.form['search']
+        session['user'] = request.form['user']
+        if request.form['date'] != '':
+            session['date'] = datetime.strptime(request.form['date'], '%m/%d/%Y') + timedelta(days=1)
+        else:
+            session['date'] = ''
+    return search_query(page=page)
 
 def search_query(page = 1):
     if session['type'] == 'Recs':
@@ -124,13 +122,14 @@ def search_query(page = 1):
                 Relationship.following == Recommendation.user_id,
                 Relationship.follower == current_user.id)
             )\
+            .join(User, User.id == Recommendation.user_id)\
             .filter(Recommendation.verification>0)
         if session['search'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.title.contains(session['search']))
         if session['user'] != '':
             display_recs = display_recs\
-                .filter(Recommendation.user.username.contains(session['user']))
+                .filter(User.username.contains(session['user']))
         if session['date'] != '':
             display_recs = display_recs\
                 .filter(Recommendation.timestamp<=session['date'])
@@ -167,24 +166,6 @@ def search():
     form = SearchForm(request.form)
     return render_template('main/search.html', form=form)
     
-@main.route('/-surprise')
-def surprise_ajax():
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.verification>0, Recommendation.user_id!=current_user.id)\
-        .order_by(desc(Recommendation.timestamp))\
-        .limit(5*current_user.display)\
-        .from_self()\
-        .order_by(func.random())\
-        .paginate(1, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({
-        'last': display_recs.pages in (0, display_recs.page),
-        'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise'))}) 
-
 @main.route('/surprise')
 def surprise():
     display_recs = db.session.query(Recommendation, Relationship)\
@@ -198,6 +179,11 @@ def surprise():
         .from_self()\
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
+    if request.is_xhr: #ajax_request
+        to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
+        return jsonify({
+            'last': display_recs.pages in (0, display_recs.page),
+            'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise'))}) 
     return render_template('main/surprise.html', display=display_recs)
 
 # Alternate Profile URL

@@ -11,12 +11,17 @@
   <h2>Log In</h2>
   <form method="POST">
     {{form.username.label(class='reckoner')}}
-    <i class='form-icon fa fa-user fa-2x'></i>
-    {{form.username(class='entry')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-user fa-2x'></i>
+      {{form.username(class='entry')}}
+    </div><!--icon-input-->
+    <br/>
     <br/>
     {{form.password.label(class='reckoner')}}
-    <i class='form-icon fa fa-key fa-2x'></i>
-    {{form.password(class='entry')}}
+    <div class='icon-input'>
+      <i class='form-icon fa fa-key fa-2x'></i>
+      {{form.password(class='entry')}}
+    </div><!--icon-input-->
     <br/>
     {{form.csrf_token}}
     {{form.submit(class='reckoner', id='submit')}}

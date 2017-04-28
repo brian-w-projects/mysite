@@ -19,17 +19,21 @@
 .entry{
     background: transparent;
     border: 0;
-    border-bottom: 1px solid black;
     font-size: 120%;
-    margin: 5px 20px 20px -4px;
     outline: 0;
-    padding: 10px;
-    vertical-align: top;
 }
 
-.entry:hover, .entry:focus{
+.icon-input{
+    display: inline-block;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-radius: 10px;
+    margin-bottom: 1px
+}
+
+.icon-input:hover, .hovered{
     border-bottom: 2px solid black;
-    margin-bottom: 19px;
+    margin-bottom: 0;
 }
 
 .api-entry{
@@ -42,19 +46,6 @@
     width: 550px;
 }
 /*TEXT ENTRY FORM ELEMENTS*/
-
-/*DROP DOWN FORM ELEMENTS*/
-.type{
-    background: transparent;
-    border: 0;
-    border-bottom: 1px solid black;
-    font-size: 120%;
-    margin: 4px 20px 20px -4px;
-    outline: 0;
-    padding: 10px;
-    vertical-align: top;
-}
-/*DROP DOWN FORM ELEMENTS*/
 
 /*CLICK ENTRY FORM ELEMENTS */
 .click{
@@ -149,9 +140,6 @@
 
 /*FORM ICON*/
 .form-icon{
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    border-bottom-left-radius: 10px;
     margin-top: 5px;
     padding: 5px;
 }
