@@ -3,9 +3,6 @@
 3. Mobile Pages?
 
 
-1. error on nothing found in search
-2. bar across top indicating loading?
-
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores

@@ -78,7 +78,7 @@
 /*REC AND COMMENT FORMATTING*/
 
 /*LOAD MORE BAR */
-.load-more, .load-more-com{
+.load-more, .load-more-com, .error{
     border: 2px solid black;
     font-size: larger;
     margin: 5px 0 5px 0;

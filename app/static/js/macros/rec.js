@@ -4,6 +4,7 @@
 /* global flask_moment_render_all*/
 /* global load_rec_attributes */
 /* global page */
+/* global NProgress */
 
 (function($, window, document){
 
@@ -17,17 +18,17 @@
         
         $load_more_recs.on('click', function(){
             page += 1;
-            NProgress.start();
-            $load_more_recs.prev().show();
-            rec_ajax({'page':page}).done(function(data){
+            rec_ajax({'page':page}).always(function(){
                 NProgress.done();
                 $load_more_recs.prev().hide();
+            }).done(function(data){
                 $load_more_recs.prev().before(data['ajax_request']);
-                $load_more_recs.html('Load More');
                 if(data['last'] == true){
                     $load_more_recs.remove();
                 }
                 flask_moment_render_all();
+            }).fail(function(){
+                page -= 1;
             });
         });
 
@@ -88,17 +89,12 @@
             contentType: 'application/json;charset=UTF-8',
             url: goto_rec,
             datatype:'json',
-            data: page_info
-        });
-    }
-    
-    function rec_comment_ajax(id_info){
-        return $.ajax({
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-            url: goto_insert_com,
-            datatype:'json',
-            data: id_info
+            data: page_info,
+            timeout: 10000,
+            beforeSend: function(){
+                NProgress.start();
+                $load_more_recs.prev().show();
+            },
         });
     }
     
@@ -108,7 +104,8 @@
             contentType: 'application/json;charset=UTF-8',
             url: goto_follow,
             datatype:'json',
-            data: id_info
+            data: id_info,
+            timeout: 5000,
         });
     }
 }(window.jQuery, window, document));
