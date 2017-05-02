@@ -3,7 +3,8 @@
 3. Mobile Pages?
 
 
-1. Finish input-icon pairing
+1. error on nothing found in search
+2. bar across top indicating loading?
 
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

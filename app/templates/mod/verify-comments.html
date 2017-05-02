@@ -13,7 +13,7 @@
 {% block supplemental %}
   {{mod_comment_macro.initialize_moderate(d_c, moment, current_user)}}
   <script>
-    var goto_comment = "{{url_for('mod.verify_com_ajax')}}";
+    var goto_comment = "{{url_for('mod.verify_comments')}}";
     var goto_mod = "{{url_for('mod.moderate_com')}}";
   </script>
   <script src="{{url_for('static', filename='js/macros/moderator/mod.js')}}"></script>

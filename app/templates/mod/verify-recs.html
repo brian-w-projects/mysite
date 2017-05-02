@@ -14,7 +14,7 @@
   {{mod_rec_macro.initialize_moderate(display, moment, current_user)}}
   <script>
     var goto_mod = "{{url_for('mod.moderate_recs')}}";
-    var goto_rec = "{{url_for('mod.verify_recs_ajax')}}";
+    var goto_rec = "{{url_for('mod.verify_recs')}}";
   </script>
   <script src="{{url_for('static', filename='js/macros/moderator/mod.js')}}"></script>
 {% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% extends 'abstract/one-column.html' %}
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Profile {{user.username}}</title>
+  <link href="{{url_for('static', filename='css/profile/profile.css')}}" type='text/css', rel='stylesheet'/>
+{% endblock %}
+
+{% block maincontent %}
+  {% if current_user.is_moderator() and current_user.id == user.id %}
+    <h2>Welcome, Moderator</h2>
+    <div class='profile-box'>
+      <div class='profile-left'>
+        <p>
+          <a href="{{url_for('mod.verify_recs')}}"> Unverified Recs: {{rec_count}}</a>
+        </p>
+        <p>
+          <a href="{{url_for('mod.verify_comments')}}">Unverified Comments: {{com_count}}</a>
+        </p>
+      </div><!--profile-left-->
+    </div><!--profile-box-->
+  {% endif %}
+  {{flash_macro.render_flash(get_flashed_messages())}}
+  <h2>Profile</h2>
+  <div class='profile-box'>
+    <h2>{{user.username}}</h2>
+    <div class='font-link-position'>
+      {% if current_user.is_authenticated and current_user != user %}
+        {% if current_user.following.filter_by(following=user.id).first() %}
+          <i id='{{user.id}}' class="follow-button font-link fa fa-heart fa-2x"></i>
+        {% else %}
+          <i id='{{user.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
+        {% endif %}
+      {% elif current_user.id == user.id %}
+        <a class='icon-link' href="{{url_for('personal.update')}}">
+          <i class='font-link fa fa-pencil-square-o fa-2x'></i>
+        </a>
+      {% endif %}
+    </div><!--font-link-position-->
+    <div class='profile-left'>
+      <p class='post-text'>{{user.about_me}}</p>
+    </div><!--profile-left-->
+    <div class='profile-right'>
+      <p>Member Since: {{moment(user.member_since).format("MMMM Do YYYY")}}</p>
+      <p>Posts: {{user.recommendation.count()}}</p>
+      <p>Comments: {{user.comment.count()}}</p>
+      <p>
+        <a href="{{url_for('personal.followers', id=user.id)}}">
+          Followers: <span class='follower-count'>{{user.follower.count()}}</span>
+        </a>
+      </p>
+      <p>
+        <a href="{{url_for('personal.following', id=user.id)}}">
+          Following: {{user.following.count()}}
+        </a>
+      </p>
+    </div><!--profile-right-->
+  </div><!--profile-box-->
+  <div class='button-div'>
+    <button class='reckoner button-width-set' id='submit'>Comments</button>
+  </div><!--button-div-->
+  {% endblock %}
+  
+{% block supplemental %}
+  <br/>
+  <br/>
+  {{rec_macro.initialize_recs(display, moment, current_user)}}
+  {{comment_macro.initialize_comments(d_c, moment, current_user)}}
+  <script>
+    var goto_comment = "{{url_for('profile.profile_com_ajax', id=user.id)}}";
+    var goto_rec = "{{url_for('profile.profile_ajax', id=user.id)}}";
+  </script>
+  <script src="{{url_for('static', filename='js/speciality/rec-comment-swap.js')}}"></script>
+{% endblock %}

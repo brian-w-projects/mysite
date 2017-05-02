@@ -123,9 +123,7 @@ def follow_ajax():
 def followers(id=-1):
     if current_user.is_authenticated and id == -1:
         id = current_user.id
-    user = User.query.get(int(id))
-    if user is None:
-        abort(404)
+    user = User.query.get_or_404(int(id))
     page = int(request.args.get('page', default=1))
     last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
         .filter(Recommendation.verification>0)\
@@ -162,9 +160,7 @@ def followers(id=-1):
 def following(id=-1):
     if current_user.is_authenticated and id == -1:
         id = current_user.id
-    user = User.query.get(int(id))
-    if user is None:
-        abort(404)
+    user = User.query.get_or_404(int(id))
     page = int(request.args.get('page', default=1))
     last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
         .filter(Recommendation.verification>0)\
@@ -252,88 +248,6 @@ def post():
             'ajax_request': to_return(display_recs, _moment, current_user, 
             link=url_for('personal.post'))})
     return render_template('personal/post.html', form=form, display=display_recs)
-
-@personal.route('/-profile-com/<int:id>')
-def profile_com_ajax(id):
-    page = int(request.args.get('page'))
-    display_comments = Comment.query\
-        .filter(Comment.user_id==id, Comment.verification>0)\
-        .order_by(desc(Comment.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out=False)
-    to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
-    return jsonify({
-        'last': display_comments.pages in (0, display_comments.page),
-        'ajax_request': to_return(display_comments, _moment, current_user, 
-            link=url_for('personal.profile', id=id))}) 
-
-@personal.route('/-profile-rec/<int:id>')
-def profile_ajax(id):
-    page = int(request.args.get('page'))
-    if(current_user.id == id):
-        private = 0
-    else:
-        private = 1
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.user_id==id, Recommendation.verification>=private)\
-        .order_by(desc(Recommendation.timestamp))\
-        .paginate(page, per_page=current_user.display, error_out = False)
-    to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
-    return jsonify({
-        'last': display_recs.pages in (0, display_recs.pages),
-        'ajax_request': to_return(display_recs, _moment, current_user, 
-            link=url_for('personal.profile', id=id))}) 
-
-@personal.route('/profile')
-@personal.route('/profile/<int:id>')
-def profile(id=-1):
-    if id == -1:
-        if current_user.is_authenticated:
-            id = current_user.id
-        else:
-            return redirect(url_for('auth.login', next='personal/profile'))
-    user = User.query.get(int(id))
-    if user is None:
-        abort(404)
-    com_count = 0
-    rec_count = 0
-    if current_user.is_moderator() and current_user.id == id:
-        com_count = Comment.query\
-            .filter_by(verification=1)\
-            .count()
-        rec_count = Recommendation.query\
-            .filter_by(verification=1)\
-            .count()
-    ver_case = case([(db.true() if current_user.id==id else db.false(), 0),], else_=1)
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.verification>=ver_case, Recommendation.user_id==id)\
-        .order_by(desc(Recommendation.timestamp))
-    display_comments = user.comment\
-        .filter(Comment.verification>0)\
-        .order_by(desc(Comment.timestamp))
-    if current_user.id == id:
-        for rec in display_recs:
-            if rec[0].made_private:
-                title = rec[0].title
-                if len(rec[0].title) > 10:
-                    title = rec[0].title[:10] + '...'
-                flash("Rec '" + title + "' has been made private due to it's content.")
-                rec[0].made_private = False
-                db.session.add(rec[0])
-                db.session.commit()
-    display_recs = display_recs\
-        .paginate(1, per_page=current_user.display, error_out=False)
-    display_comments = display_comments\
-        .paginate(1, per_page=current_user.display, error_out=False)
-    return render_template('personal/profile.html', user=user, display=display_recs, 
-        d_c=display_comments, com_count = com_count, rec_count=rec_count)
 
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required

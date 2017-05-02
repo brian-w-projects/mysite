@@ -17,8 +17,13 @@
         
         $load_more_recs.on('click', function(){
             page += 1;
+            NProgress.start();
+            $load_more_recs.prev().show();
             rec_ajax({'page':page}).done(function(data){
-                $load_more_recs.before(data['ajax_request']);
+                NProgress.done();
+                $load_more_recs.prev().hide();
+                $load_more_recs.prev().before(data['ajax_request']);
+                $load_more_recs.html('Load More');
                 if(data['last'] == true){
                     $load_more_recs.remove();
                 }

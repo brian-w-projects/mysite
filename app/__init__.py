@@ -42,5 +42,8 @@ def create_app(config_name):
     
     from .personal import personal as personal_blueprint
     app.register_blueprint(personal_blueprint, url_prefix='/personal')
+    
+    from .profile import profile as profile_blueprint
+    app.register_blueprint(profile_blueprint, url_prefix='/u')
 
     return app

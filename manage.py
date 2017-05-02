@@ -11,8 +11,8 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 
 def make_shell_context():
-    return dict(app=app, db=db, Users=Users, Role=Role, Recommendation=Recommendation,\
-        Comments=Comments, Followers=Followers)
+    return dict(app=app, db=db, User=User, Role=Role, Recommendation=Recommendation,\
+        Comment=Comment, Relationship=Relationship)
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
@@ -38,25 +38,18 @@ def hashed_static_file(endpoint, values):
 
 if __name__ == '__main__':
     # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    #     Role.generate_roles()
-    #     user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
-    #     db.session.add(user)
-    #     user2 = User(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
-    #     db.session.add(user2)
-    #     User.generate_users(100, [user, user2])
-    #     print('Finished users')
-    #     db.session.commit()
-        # Recommendation.generate_recs(50)
-        # print('Finished recs')
-        # Comment.generate_comments(100)
-        # print('Finished comments')
-        # Relationship.generate_followers(50)
-        # print('Finished followers')
+        # db.drop_all()
+        # db.create_all()
+        # Role.generate_roles()
+        # user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
+        # db.session.add(user)
+        # user2 = User(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
+        # db.session.add(user2)
+        # User.generate_users(5000, None)
+        # Recommendation.generate_recs(20000)
+        # Comment.generate_comments(50000)
+        # Relationship.generate_followers(75000)
         # Rec_Moderation.generate_recmods()
-        # print('Finished recmods')
         # Com_Moderation.generate_commods()
-        # print('Finished commods')
         # db.session.commit()
     manager.run()

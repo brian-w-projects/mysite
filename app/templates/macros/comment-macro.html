@@ -13,7 +13,7 @@
               <i id='{{com.user_id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
             {% endif %}
           {% endif %}
-          <a href="{{url_for('personal.profile', id=com.user_id)}}">
+          <a href="{{url_for('profile.user_profile', username=com.user.username)}}">
             {{com.user.username}}
           </a>
         </li>
@@ -43,7 +43,10 @@
   <div class='list-comments'>
     {{ajax(d_c, moment, current_user, link)}}
     {% if d_c.pages != d_c.page and d_c.pages != 0 %}
-      <a><p class='load-more-com'>Load More</p></a>
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
+      <p class='load-more-com'>Load More</p>
     {% endif %}
   </div><!--list-comments-->
 {% endmacro %}

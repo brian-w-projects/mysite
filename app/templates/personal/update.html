@@ -19,18 +19,33 @@
     {{form.about_me(class='about-me-text-entry')}}
     <br/>
     <div class='fieldset'>
-      {{form.password.label(class='reckoner')}} {{form.password(class='entry')}}
+      {{form.password.label(class='reckoner')}}
+      <div class='icon-input'>
+        <i class='form-icon fa fa-key fa-2x'></i>
+        {{form.password(class='entry')}}
+      </div><!--icon-input-->
       <br/>
-      {{form.password_confirm.label(class='reckoner')}} {{form.password_confirm(class='entry')}}
+      <br/>
+      {{form.password_confirm.label(class='reckoner')}}
+      <div class='icon-input'>
+        <i class='form-icon fa fa-lock fa-2x'></i>
+        {{form.password_confirm(class='entry')}}
+      </div><!--icon-input-->
     </div><!--fieldset-->
     {{form.updates.label(class='reckoner')}} {{form.updates(checked=current_user.updates,
       class='click')}}
     <br/>
-    {{form.limit.label(class='reckoner')}} {{form.limit(class='entry')}}
+    {{form.limit.label(class='reckoner')}} 
+    <div class='icon-input'>
+      <i class='form-icon fa fa-list-ol fa-2x'></i>
+      {{form.limit(class='entry')}}
+    </div>
+    <br/>
     <br/>
     {{form.csrf_token}}
     <br/>
     {{form.submit(class='reckoner', id='submit')}}
   </form>
   <script src="{{url_for('static', filename='js/speciality/form-count.js')}}"></script>
+  <script src="{{url_for('static', filename='js/speciality/form-icon.js')}}"></script>
 {% endblock %}

@@ -13,8 +13,12 @@
     $(function(){
         $load_more_comments.on('click', function(){
             page_com += 1;
+            NProgress.start();
+            $load_more_comments.prev().show();
             comment_ajax({'page':page_com}).done(function(data){
-                $load_more_comments.before(data['ajax_request']);
+                NProgress.done();
+                $load_more_comments.prev().hide();
+                $load_more_comments.prev().before(data['ajax_request']);
                 if(data['last'] == true){
                     $load_more_comments.remove();
                 }

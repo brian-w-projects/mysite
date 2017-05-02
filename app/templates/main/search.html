@@ -43,14 +43,23 @@
     {{form.submit(class='reckoner', id='submit')}}
   </form>
   <br/>
+  <div class='loading initial-search'>
+    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+  </div>
 {% endblock %}
 
 {% block supplemental %}
   <div class='list-recs'>
+    <div class='loading'>
+      <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+    </div>
     <p class='load-more'>Load More</p>
   </div><!--list-recs-->
   <div class='list-comments'>
-    <a><p class='load-more-com'>Load More</p></a>
+    <div class='loading'>
+      <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+    </div>
+    <p class='load-more-com'>Load More</p>
   </div><!--list-comments-->
   <script>
     var goto_comment = "{{url_for('main.search_ajax')}}";

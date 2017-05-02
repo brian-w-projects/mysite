@@ -185,11 +185,3 @@ def surprise():
             'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise'))}) 
     return render_template('main/surprise.html', display=display_recs)
-
-# Alternate Profile URL
-@main.route('/u/<string:username>')
-def find_user(username):
-    user = User.query\
-        .filter_by(username=username)\
-        .first_or_404()
-    return redirect(url_for('personal.profile', id=user.id))

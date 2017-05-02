@@ -19,6 +19,7 @@
       <link href="{{url_for('static', filename='css/abstract/rec-comment.css')}}" type='text/css', rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/abstract/form.css')}}" type='text/css', rel='stylesheet'/>
       <link href="{{url_for('static', filename='css/speciality/font-awesome.min.css')}}" type='text/css', rel='stylesheet'/>
+      <link href="{{url_for('static', filename='css/speciality/nprogress.css')}}" type='text/css' rel='stylesheet'/>
     {% endblock %}
   </head>
   <body>
@@ -41,7 +42,7 @@
             <li><a href="{{url_for('main.index')}}">Home</a></li>
             <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
             <div class='submenu-container'>
-              <li class='submenu-header'><a href="{{url_for('personal.profile')}}">My Profile</a></li>
+              <li class='submenu-header'><a href="{{url_for('profile.user_profile', username=current_user.username)}}">My Profile</a></li>
               {% if current_user.is_authenticated %}
                 <div class='submenu'>
                   <a href="{{url_for('personal.inspiration')}}">My Inspiration</a>
@@ -84,5 +85,7 @@
     <script src="{{url_for('static', filename='js/macros/comment.js')}}"></script>
     <script src="{{url_for('static', filename='js/macros/flash.js')}}"></script>
     <script src="{{url_for('static', filename='js/macros/rec.js')}}"></script>
+    <script src="{{url_for('static', filename='js/speciality/nprogress.js')}}"></script>
+    <script src="{{url_for('static', filename='js/abstract/base.js')}}"></script>
   </body>
 </html

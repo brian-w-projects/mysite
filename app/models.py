@@ -62,6 +62,8 @@ class Comment(db.Model):
         user_count=User.query.count()
         rec_count=Recommendation.query.count()
         for i in range(count):
+            if i % 100 == 0:
+                print(str(i) + ' of ' + str(count))
             u = User.query.offset(randint(0, user_count - 1)).first()
             r = Recommendation.query.offset(randint(0, rec_count-1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(r.timestamp)[:10], '%Y-%m-%d')).days
@@ -75,7 +77,8 @@ class Comment(db.Model):
                 text=forgery_py.lorem_ipsum.sentences(randint(2,5)))
             db.session.add(c)
             db.session.commit()
-            
+        print('Finished comments')
+    
     def to_json(self):
         return {
             'id': self.id,
@@ -198,6 +201,8 @@ class Recommendation(db.Model):
         seed()
         user_count=User.query.count()
         for i in range(count):
+            if i % 100 == 0:
+                print(str(i) + ' of ' + str(count))
             u = User.query.offset(randint(0, user_count - 1)).first()
             days_since = (datetime.utcnow() - datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')).days
             if days_since == 0:
@@ -215,6 +220,7 @@ class Recommendation(db.Model):
                 verification=verified)
             db.session.add(r)
             db.session.commit()
+        print('Finished recs')
 
     def __repr__(self):
         return "Recommendation(text={self.text}, title={self.title}, user_id={self.user_id}, verification={self.verification})".format(self=self)
@@ -300,6 +306,8 @@ class Relationship(db.Model):
         seed()
         user_count=User.query.count()
         for i in range(count):
+            if i % 100 == 0:
+                print(str(i) + ' of ' + str(count))
             u = User.query.offset(randint(0, user_count-1)).first()
             v = User.query.offset(randint(0, user_count-1)).first()
             u_time = datetime.strptime(str(u.member_since)[:10], '%Y-%m-%d')
@@ -315,6 +323,7 @@ class Relationship(db.Model):
                     timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since))
                 db.session.add(f)
                 db.session.commit()
+        print('Finished relationships')
 
     def __repr__(self):
         return "Relationship(follower={self.follower}, following={self.following})".format(self=self)
@@ -464,12 +473,15 @@ class User(UserMixin, db.Model):
         import forgery_py
         
         seed()
-        for custom in preload:
-            custom.member_since=forgery_py.date.date(True, min_delta=0, max_delta=365)
-            db.session.add(custom)
-            db.session.commit()
+        if preload:
+            for custom in preload:
+                custom.member_since=forgery_py.date.date(True, min_delta=0, max_delta=365)
+                db.session.add(custom)
+                db.session.commit()
         
         for i in range(count):
+            if i % 100 == 0:
+                print(str(i) + ' of ' + str(count))
             if randint(0,100) == 10:
                 role = 2
             else:
@@ -488,7 +500,8 @@ class User(UserMixin, db.Model):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
-
+        print('Finished users')
+    
     def __repr__(self):
         return "User(username={self.username}, email={self.email})".format(self=self)
 

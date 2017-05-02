@@ -20,8 +20,8 @@
 {% macro ajax(display, moment, current_user) %}
   {% for mod_check in display.items %}
     <div class='mod-container'>
-      <i id='{{mod_check.id}}' class='verify mod-button font-link fa fa-check-circle fa-2x'></i>
-      <i id='{{mod_check.id}}' class='private mod-button font-link fa fa-times-circle fa-2x'></i>
+      <i id='{{mod_check[0].id}}' class='verify mod-button font-link fa fa-check-circle fa-2x'></i>
+      <i id='{{mod_check[0].id}}' class='private mod-button font-link fa fa-times-circle fa-2x'></i>
       {{rec_macro.single_rec(mod_check, moment, current_user)}}
     </div><!--mod-container-->
   {% endfor %}

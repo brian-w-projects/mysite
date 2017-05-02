@@ -125,3 +125,10 @@
     float: right;
 }
 /*MODERATER MODERATE STYLE*/
+
+/*LOADING*/
+.loading{
+    display: none;
+    text-align: center;
+}
+/*LOADING*/
