@@ -9,8 +9,8 @@
 {% block maincontent %}
   {{flash_macro.render_flash(get_flashed_messages())}}
   <h2>
-    <a href="{{url_for('personal.profile', id=rec.user_id)}}">
-      {{rec.user.username}}
+    <a href="{{url_for('profile.user_profile', username=rec[0].user.username)}}">
+      {{rec[0].user.username}}
     </a>
   </h2>
 {% endblock %}

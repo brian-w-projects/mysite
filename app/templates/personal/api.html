@@ -24,6 +24,9 @@
       it should ever become compromised.
     </p>
     <p>
+      Users are limited to 15 queries in any 15 minute window.
+    </p>
+    <p>
       Below you will find documentation for all the features available in this api.
     </p>
   </div><!--api-welcome-->
@@ -66,9 +69,11 @@
       '"public" must be True or False'],
     ''
   )}}
-  {{api_macro.render_api([url_for('api1.get_rec_comments', id=1, _scheme='https', _external='True')],
+  {{api_macro.render_api([url_for('api1.get_rec_comments', id=1, _scheme='https', _external='True'),
+      url_for('api1.get_rec_comments', id=1, page=2, _scheme='https', _external='True')],
     'GET', 'token',
-    ['Retrieves the comments posted on the rec indicated by id number.'],
+    ['Retrieves the comments posted on the rec indicated by id number in quantity set by 
+      user. Optional page parameter passed to retrieve following pages'],
     '{"399": { "author_id": 21, "author_username": "deborah63", "comment": "Morbi...",
       "id": 399, "posted_on": 74, "timestamp": "Mon, 13 Feb 2017 00:00:00 GMT"}}'
   )}}
@@ -112,14 +117,17 @@
       'GET', 'token',
       ['Retrieves recs in quantity set by user. Optional page parameter can be passed to 
         retrieve following pages'],
-      '{"1":{...}, "200":{...}}'
+      '{"1":{"author": "katie55", "author_id": 1, "comment_count": 10, "id":50,
+        "private": false, "text": example, "timestamp": "Wed, 03 May 2017 23:04:30 GMT"
+        "title": "example"}, "200":{...}}'
   )}}
   {{api_macro.render_api([url_for('api1.get_user_comments', id=1, _scheme='https', _external='True'),
     url_for('api1.get_user_comments', id=1, page=2, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrieves comments in quantity set by user. Optional page parameter can be passed to 
       retrieve following pages'],
-    '{"1":{...}, "200":{...}}'
+    '{"1":{"author_id": 1, "author_username": katie33, "id": 19348, "posted_on": 100, 
+      "text": example, "timestamp": "Tue, 21 Feb 2017 00:00:00 GMT"}, "200":{...}}'
   )}}
   {{api_macro.render_api([url_for('api1.put_user', _scheme='https', _external='True')],
     'PUT', 'token',
@@ -133,21 +141,21 @@
   {{api_macro.render_api([url_for('api1.get_user_following', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrives the users that the user indicated by id number is following.'],
-    '{"count": 5, "following": { "305": "Fri, 30 Sep 2016 00:00:00 GMT",
-      "331": "Thu, 15 Dec 2016 00:00:00 GMT",
-      "4": "Mon, 14 Nov 2016 00:00:00 GMT",
-      "467": "Sun, 15 Jan 2017 00:00:00 GMT",
-      "470": "Mon, 13 Mar 2017 00:00:00 GMT"}}'
+    '{"count": 5, "following": { "305": "Fri, 30 Sep 2016 10:50:22 GMT",
+      "331": "Thu, 15 Dec 2016 08:10:30 GMT",
+      "4": "Mon, 14 Nov 2016 05:02:05 GMT",
+      "467": "Sun, 15 Jan 2017 08:05:22 GMT",
+      "470": "Mon, 13 Mar 2017 23:10:10 GMT"}}'
   )}}
   {{api_macro.render_api([url_for('api1.get_user_followed_by', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrives the users that are following the user indicated by id number'],
-    '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 00:00:00 GMT"}}',
+    '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 11:02:23 GMT"}}',
   )}}
   <h2>/follow</h2>
   <p>Retrieves information related to following and unfollowing users</p>
   {{api_macro.render_api([url_for('api1.put_follower', id=1, _scheme='https', _external='True')],
-    'PUT', 'token',
+    'POST', 'token',
     ['Adds user indicated by id number to requesting user\'s following list'],
     ''
   )}}
@@ -166,7 +174,8 @@
       '"term" search rec titles for matches',
       '"user" searches for recs only from matching user',
       '"date" searches for recs before indicated date. Must be in MM/DD/YYYY format'],
-    '{"1":{...}, "200":{...}}'
+    '{"1":{"author_id": 1, "author_username": katie33, "id": 19348, "posted_on": 100, 
+      "text": example, "timestamp": "Tue, 21 Feb 2017 00:00:00 GMT"}, "200":{...}}'
   )}}
   {{api_macro.render_api([url_for('api1.get_search_comments', _scheme='https', _external='True'),
     url_for('api1.get_search_comments', page=2, _scheme='https', _external='True')],

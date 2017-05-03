@@ -1,18 +1,10 @@
-# mysite
-mysite
+<h1>Recommend Me</h1>
 
-THis is a test
+Welcome to Recommend Me. In this repo, you will find files for a site I
+created to demonstrate my experience with Python, Flask, SQLAlchemy, RESTful
+API and other technologies.
 
-        <!--slider, move to index-->
-          <div class='slider'>
-            <div class='slide-viewer'>
-              <div class='slide-group'>
-                <div class='slide slide-1'><img src="{{url_for('static', filename='images/one.jpg')}}"/></div>
-                <div class='slide slide-2'><img src="{{url_for('static', filename='images/two.png')}}"/></div>
-                <div class='slide slide-3'><img src="{{url_for('static', filename='images/three.gif')}}"/></div>
-                <div class='slide slide-4'><img src="{{url_for('static', filename='images/four.jpg')}}"/></div>
-              </div><!--slide-group-->
-            </div><!--slide-viewer-->
-            <div class='slide-buttons'></div>
-          </div><!--slider-->
-        <!--slider, move to index-->
+You can visit this site at: [site not currently deployed]
+
+I can be contacted at: [email not currently posted]
+

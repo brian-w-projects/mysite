@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
-from sqlalchemy.sql.expression import asc, desc, distinct, func
+from sqlalchemy.sql.expression import asc, desc, distinct, func, and_
 
 @admin.route('/-change-mod-comment-decision')
 @login_required
@@ -134,10 +134,17 @@ def admin_splash():
     recent_rec_mods = func.count(distinct(case([(Rec_Moderation.timestamp>week_ago, Rec_Moderation.id),])))
     com_mods = func.count(distinct(Com_Moderation.id))
     recent_com_mods = func.count(distinct(case([(Com_Moderation.timestamp>week_ago, Com_Moderation.id),])))
-    data['mods'] = db.session.query(User, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
+    # data['mods'] = db.session.query(User, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
+    #     .join(Rec_Moderation)\
+    #     .join(Com_Moderation)\
+    #     .all()
+    data['mods'] = db.session.query(User, rec_mods, recent_rec_mods)\
         .join(Rec_Moderation)\
-        .join(Com_Moderation)\
-        .filter(User.role_id==2)\
+        .filter(User.role_id == 2)\
         .group_by(User.username)\
         .all()
+    print(data['mods'])
+    
+    for x in db.session.query(User).filter(User.role_id == 2).all():
+        print(x)
     return render_template('admin/splash.html', data=data)

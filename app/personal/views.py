@@ -26,7 +26,13 @@ def comment_edit(id):
     display_comments = Comment.query\
         .filter(Comment.verification>0, Comment.id==id)\
         .first_or_404()
-    display_recs = display_comments.recommendation
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Recommendation.verification!=-1, Recommendation.id==display_comments.recommendation_id)\
+        .first_or_404()
     if current_user.id not in (display_comments.user_id, display_comments.recommendation.user_id):
         abort(403)
     if request.method == 'POST':

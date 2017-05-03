@@ -15,7 +15,7 @@ def admin_token_required(f):
         if not request.authorization:
             return message(401, 'Must send token for authentication')
         token = request.authorization['username']
-        check = Users.verify_auth_token(token)
+        check = User.verify_auth_token(token)
         if check is None:
             return message(401, 'Invalid token')
         if not check.is_administrator():
@@ -31,7 +31,7 @@ def auth_login_required(f):
             return message(401, 'Must send username and password for authentication')
         username = request.authorization['username']
         password = request.authorization['password']
-        user = Users.query\
+        user = User.query\
             .filter_by(username=username)\
             .first()
         if not user or not user.verify_password(password):
@@ -64,7 +64,7 @@ def auth_token_required(f):
         if not request.authorization:
             return message(401, 'Must send token for authentication')
         token = request.authorization['username']
-        check = Users.verify_auth_token(token)
+        check = User.verify_auth_token(token)
         if check is None:
             return message(401, 'Invalid token')
         g.current_user = check
@@ -77,7 +77,7 @@ def moderator_token_required(f):
         if not request.authorization:
             return message(401, 'Must send token for authentication')
         token = request.authorization['username']
-        check = Users.verify_auth_token(token)
+        check = User.verify_auth_token(token)
         if check is None:
             return message(401, 'Invalid token')
         if not check.is_moderator():

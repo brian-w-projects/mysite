@@ -6,7 +6,7 @@
     {% set mod, rec_mods, recent_rec_mods, com_mods, recent_com_mods = mod_info %}
     <div class='mod-display'>
       <div class='headline'>
-        <a class='headline-element' href="{{url_for('personal.profile', id=mod.id)}}">
+        <a class='headline-element' href="{{url_for('profile.user_profile', username=mod.username)}}">
           {{mod.username}}
         </a>
         <a class='headline-elements' href="{{url_for('admin.mod_history', id=mod.id)}}">

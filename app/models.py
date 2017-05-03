@@ -188,11 +188,7 @@ class Recommendation(db.Model):
             'timestamp': self.timestamp,
             'title': self.title
         }
-    
-    def to_json_comments(self):
-        json_rec = {com.id : com.to_json() for com in self.comment if com.verification>0}
-        return json_rec
-    
+
     @staticmethod
     def generate_recs(count):
         from random import seed, randint
@@ -439,7 +435,7 @@ class User(UserMixin, db.Model):
             'comments': self.comment.filter(Comment.verification>0).count(),
             'confirmed': self.confirmed,
             'display': self.display,
-            'followed_by_count': self.followed_by.count(),
+            'followed_by_count': self.follower.count(),
             'following_count' : self.following.count(),
             'member_since': self.member_since,
             'recs': self.recommendation.filter(Recommendation.verification>0).count(),
@@ -450,8 +446,8 @@ class User(UserMixin, db.Model):
             json_rec['role_id'] = self.role_id
             json_rec['last_login'] = self.last_login
             if self.is_moderator():
-                json_rec['rec_mods'] = self.rec_mods.count()
-                json_rec['com_mods'] = self.com_mods.count()
+                json_rec['rec_mods'] = self.rec_moderation.count()
+                json_rec['com_mods'] = self.com_moderation.count()
         return json_rec
 
     def to_json_following(self):
@@ -462,8 +458,8 @@ class User(UserMixin, db.Model):
     
     def to_json_followed(self):
         json_rec = {}
-        json_rec['count'] = self.followed_by.count()
-        json_rec['followed_by'] = {followed_by.id : followed_by.timestamp for followed_by in self.followed_by}
+        json_rec['count'] = self.follower.count()
+        json_rec['followed_by'] = {follower.id : follower.timestamp for follower in self.follower}
         return json_rec
 
     @staticmethod
