@@ -11,7 +11,10 @@
       <p>There are no recs in need of moderation. Good job!</p>
     {% endif %}
     {% if d_c.pages != d_c.page and d_c.pages != 0%}
-      <a><p class='load-more-com'>Load More</p></a>
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
+      <p class='load-more-com'>Load More</p>
     {% endif %}
   </div><!--list-comments-->
 {% endmacro %}

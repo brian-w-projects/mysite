@@ -402,54 +402,49 @@ def get_admin():
         .query(comments, recent_comments, unverified_comments)\
         .all()[0]
 
-    rec_mods = func.count(distinct(Rec_Moderation.id))
-    recent_rec_mods = func.count(distinct(case([(Rec_Moderation.timestamp>week_ago, Rec_Moderation.id),])))
-    com_mods = func.count(distinct(Com_Moderation.id))
-    recent_com_mods = func.count(distinct(case([(Com_Moderation.timestamp>week_ago, Com_Moderation.id),])))
-    data['mods'] = db.session.query(User, rec_mods, recent_rec_mods, com_mods, recent_com_mods)\
-        .join(Rec_Moderation)\
-        .join(Com_Moderation)\
+    mod_query = db.session.query(User)\
         .filter(User.role_id==2)\
-        .group_by(User.username)\
         .all()
+    data['mod_ids'] = [x.id for x in mod_query]
     data['mods_count'] = len(data['mods'])
     return jsonify(data)
 
 @api1.route('/mods/<int:id>/recs', methods=['GET'])
+@api1.route('/mods/<int:id>/recs/page/<int:page>', methods=['GET'])
 @admin_token_required
 @auth_request(role=1)
-def get_mod_rec_history(id):
+def get_mod_rec_history(id, page=1):
     mod = User.query\
-        .filter(User.role_id.between(1,2), User.id==id)\
+        .filter(User.role_id==2, User.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
-    data = {}
-    data['recs_private'] = {x.id : x.to_json() for x in mod.rec_moderation if x.action is True}
-    data['recs_approved'] = {x.id: x.to_json() for x in mod.rec_moderation if x.action is False}
-    return jsonify(data)
+    mod_recs = mod.rec_moderation\
+        .order_by(desc(Rec_Moderation.timestamp))\
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    return jsonify({x.id: x.to_json() for x in mod_recs.items})
 
 @api1.route('/mods/<int:id>/comments', methods=['GET'])
+@api1.route('/mods/<int:id>/comments/page/<int:page>', methods=['GET'])
 @admin_token_required
 @auth_request(role=1)
-def get_mod_com_history(id):
+def get_mod_com_history(id, page=1):
     mod = User.query\
-        .filter(User.role_id.between(1,2), User.id==id)\
+        .filter(User.role_id==2, User.id==id)\
         .first()
     if not mod:
         return message(404, 'This user is not a moderator')
-    data = {}
-    data['comments_private'] = {x.id : x.to_json() for x in mod.com_moderation if x.action is True}
-    data['comments_approved'] = {x.id : x.to_json() for x in mod.com_moderation if x.action is False}
-    return jsonify(data)
+    mod_coms = mod.com_moderation\
+        .order_by(desc(Com_Moderation.timestamp))\
+        .paginate(page, per_page=g.current_user.display, error_out=False)
+    return jsonify({x.id: x.to_json() for x in mod_coms.items})
 
 @api1.route('/moderations/recs/<int:id>', methods=['GET'])
 @admin_token_required
 @auth_request(role=1)
 def get_rec_mods(id):
     to_ret = Rec_Moderation.query\
-        .filter_by(id=id)\
-        .first()
+        .get(int(id))
     if not to_ret:
         return message(404, 'This Rec Moderation does not exist')
     return jsonify(to_ret.to_json())
@@ -459,12 +454,11 @@ def get_rec_mods(id):
 @auth_request(role=1)
 def put_rec_mods(id):
     to_ret = Rec_Moderation.query\
-        .filter_by(id=id)\
-        .first()
+        .get(int(id))
     if not to_ret:
         return message(404, 'This Rec Moderation does not exist')
     to_ret.action = not to_ret.action
-    rec = to_ret.rec
+    rec = to_ret.recommendation
     if to_ret.action is False:
         rec.verification = 0
         rec.made_private = True
@@ -484,8 +478,7 @@ def put_rec_mods(id):
 @auth_request(role=1)
 def get_com_mods(id):
     to_ret = Com_Moderation.query\
-        .filter_by(id=id)\
-        .first()
+        .get(int(id))
     if not to_ret:
         return message(404, 'This Comment Moderation does not exist')
     return jsonify(to_ret.to_json())
@@ -495,12 +488,11 @@ def get_com_mods(id):
 @auth_request(role=1)
 def put_com_mods(id):
     to_ret = Com_Moderation.query\
-        .filter_by(id=id)\
-        .first()
+        .get(int(id))
     if not to_ret:
         return message(404, 'This Comment Moderation does not exist')
     to_ret.action = not to_ret.action
-    com = to_ret.com
+    com = to_ret.comment
     if to_ret.action is False:
         com.verification = -1
         db.session.add(to_ret)
@@ -580,7 +572,7 @@ def moderate_comments(id):
         comment.verification = 2
     else:
         comment.verification = -1
-    to_add = ComModerations(mod_by=g.current_user.id, mod_on=id, action=(comment.verification == 2))
+    to_add = Com_Moderation(user_id=g.current_user.id, comment_id=id, action=(comment.verification == 2))
     db.session.add(comment)
     db.session.add(to_add)
     db.session.commit()

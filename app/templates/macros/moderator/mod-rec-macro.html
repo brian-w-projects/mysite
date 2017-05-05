@@ -12,7 +12,10 @@
       <p>There are no recs in need of moderation. Good job!</p>
     {% endif %}
     {% if display.pages != display.page and display.pages != 0 %}
-      <a><p class='load-more'>Load More</p></a>
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
+      <p class='load-more'>Load More</p>
     {% endif %}
   </div><!--list-recs-->
 {% endmacro %}

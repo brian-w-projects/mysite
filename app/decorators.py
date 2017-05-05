@@ -33,8 +33,8 @@ def auth_login_required(f):
         password = request.authorization['password']
         user = User.query\
             .filter_by(username=username)\
-            .first()
-        if not user or not user.verify_password(password):
+            .first_or_404()
+        if not user.verify_password(password):
             user.invalid_logins += 1
             db.session.add(user)
             db.session.commit()

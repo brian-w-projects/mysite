@@ -22,7 +22,10 @@
   <div class='list-comments'>
     {{ajax(mod_coms, moment, current_user)}}
     {% if mod_coms.pages != mod_coms.page and mod_coms.pages != 0 %}
-      <a><p class='load-more-com'>Load More</p></a>
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
+      <p class='load-more-com'>Load More</p>
     {% endif %}
   </div><!--list-comments-->
 {% endmacro %}

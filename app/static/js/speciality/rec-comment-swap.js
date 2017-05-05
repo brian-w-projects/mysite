@@ -1,3 +1,5 @@
+/* global NProgress */
+
 (function($, window, document){
 
     var $list_comments = $('.list-comments');
@@ -6,13 +8,13 @@
     var $load_more_comments = $('.load-more-com');
     var $load_more_recs = $('.load-more');
     
-    var $submit_button = $('#submit');
+    var $swap_button = $('#swap');
 
     $(function(){
         $load_more_comments.hide();
         $list_comments.hide();
     
-        $submit_button.on('click', function(){
+        $swap_button.on('click', function(){
             if($(this).text() == 'Comments'){
                 $(this).text('Recs');
                 $list_recs.hide();

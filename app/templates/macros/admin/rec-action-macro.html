@@ -16,13 +16,16 @@
     </p>
     <p>{{moment(rec_mod.timestamp).fromNow()}}</p>
   </div><!--action_header-->
-  {{rec_macro.single_rec(rec_mod.recommendation, moment, current_user)}}
+  {{rec_macro.single_rec((rec_mod.recommendation, current_user.following.filter_by(following=rec_mod.recommendation.user_id).first()), moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
   <div class='list-recs'>
     {{ajax(mod_recs, moment, current_user)}}
     {% if mod_recs.pages != mod_recs.page and mod_recs.pages != 0 %}
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
       <p class='load-more'>Load More</p>
     {% endif %}
   </div><!--list-recs-->

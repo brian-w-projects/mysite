@@ -81,7 +81,7 @@
 /*TEXT AREA FORM ELEMENTS*/
 
 /*BUTTON ELEMENTS*/
-.button, .edit-button, #submit{
+.button, .edit-button, #submit, #swap{
     background: -webkit-gradient(linear, left top, left bottom, from(#beeae9), to(#a8cfce));
     background: -moz-linear-gradient(top, #beeae9, #a8cfce);
     background: -o-linear-gradient(top, #beeae9, #a8cfce);

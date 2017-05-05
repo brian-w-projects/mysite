@@ -270,12 +270,11 @@ class Rec_Moderation(db.Model):
         return {
             'id': self.id,
             'action': self.action,
-            'author': self.recommention.author_id,
+            'author': self.recommendation.user_id,
             'recommendation_id': self.recommendation_id,
             'text': self.recommendation.text,
             'timestamp': self.timestamp,
-            'title': self.recommention.title,
-            'user_id': self.user_id
+            'title': self.recommendation.title,
         }
     
     def __repr__(self):

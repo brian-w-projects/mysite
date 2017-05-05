@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
 @personal.route('/api')
 @login_required
 def api():
-    if not current_user.api:
+    if not current_user.api or request.is_xhr:
         current_user.generate_auth_token()
     if request.is_xhr: #ajax request
         return current_user.api
