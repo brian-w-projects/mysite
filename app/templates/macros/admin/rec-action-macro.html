@@ -4,19 +4,19 @@
   -->
 {% import 'macros/rec-macro.html' as rec_macro %}
 
-{% macro render_mod(rec_mod, moment, current_user) %}
+{% macro render_mod(rec, moment, current_user) %}
   <div class='action-header'>
-    <i id='{{rec_mod.recommendation_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
+    <i id='{{rec[2].recommendation_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
-      {% if rec_mod.action %}
+      {% if rec[2].action %}
         Accepted
       {% else %}
         Made Private
       {% endif %}
     </p>
-    <p>{{moment(rec_mod.timestamp).fromNow()}}</p>
+    <p>{{moment(rec[2].timestamp).fromNow()}}</p>
   </div><!--action_header-->
-  {{rec_macro.single_rec((rec_mod.recommendation, current_user.following.filter_by(following=rec_mod.recommendation.user_id).first()), moment, current_user)}}
+  {{rec_macro.single_rec((rec[0], rec[1]), moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_rec_moderations(mod_recs, moment, current_user) %}
@@ -32,7 +32,7 @@
 {% endmacro %}
 
 {% macro ajax(mod_recs, moment, current_user) %}
-  {% for rec_mod in mod_recs.items %}
-    {{render_mod(rec_mod, moment, current_user)}}
+  {% for rec in mod_recs.items %}
+    {{render_mod(rec, moment, current_user)}}
   {% endfor %}
 {% endmacro %}

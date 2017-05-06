@@ -3,7 +3,7 @@ from . import admin
 from .. import db
 from ..decorators import is_administrator
 from ..email import send_email
-from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, User
+from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, User, Relationship
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
@@ -37,8 +37,7 @@ def change_mod_comment_decision():
 def change_mod_decision():
     id = int(request.args.get('id'))
     rec = Recommendation.query\
-        .filter_by(id=id)\
-        .first_or_404()
+        .get_or_404(int(id))
     mod = rec.rec_moderation\
         .first_or_404()
     new_mod = Rec_Moderation(action=not mod.action, user_id=current_user.id, recommendation_id=id)
@@ -75,12 +74,14 @@ def mod_com_ajax(id):
 @is_administrator
 def mod_rec_ajax(id):
     page = int(request.args.get('page'))
-    mod = User.query\
-        .filter(User.role_id.between(1,2), User.id==id)\
-        .first_or_404()
-    mod_recs = mod.rec_moderation\
+    mod_recs = db.session.query(Recommendation, Relationship, Rec_Moderation)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Rec_Moderation.user_id == id, Rec_Moderation.recommendation_id==Recommendation.id)\
         .order_by(desc(Rec_Moderation.timestamp))\
-        .paginate(page=page, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/rec-action-macro.html', 'ajax')
     return jsonify({
         'last': mod_recs.pages in (0, mod_recs.page),
@@ -93,7 +94,12 @@ def mod_history(id):
     mod = User.query\
         .filter(User.role_id.between(1,2), User.id==id)\
         .first_or_404()
-    mod_recs = mod.rec_moderation\
+    mod_recs = db.session.query(Recommendation, Relationship, Rec_Moderation)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Rec_Moderation.user_id == id, Rec_Moderation.recommendation_id==Recommendation.id)\
         .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     mod_coms = mod.com_moderation\

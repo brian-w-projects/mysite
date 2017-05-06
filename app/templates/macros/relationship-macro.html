@@ -11,7 +11,10 @@
       <p>Nothing to display here. Click on a user's heart to start following them!</p>
     {% endif %}
     {% if display.pages != display.page and display.pages != 0 %}
-      <a><p class='load-more'>Load More</p></a>
+      <div class='loading'>
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+      </div>
+      <p class='load-more'>Load More</p>
     {% endif %}
   </div><!--list-recs-->
 {% endmacro %}
@@ -42,7 +45,7 @@
               <i id='{{user.id}}' class='follow-button font-link fa fa-heart-o fa-2x'></i>
             {% endif %}
           {% endif %}
-          <a href="{{url_for('personal.profile', id=user.id)}}">
+          <a href="{{url_for('profile.user_profile', username=user.username)}}">
             {{user.username}}
           </a>
         </li>
