@@ -2,13 +2,12 @@ from flask import get_template_attribute, jsonify, render_template, request
 from . import admin
 from .. import db
 from ..decorators import is_administrator
-from ..email import send_email
-from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, User, Relationship
+from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, Relationship, User
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
-from sqlalchemy.sql.expression import asc, desc, distinct, func, and_
+from sqlalchemy.sql.expression import and_, desc, distinct, func
 
 @admin.route('/-change-mod-comment-decision')
 @login_required
@@ -16,8 +15,7 @@ from sqlalchemy.sql.expression import asc, desc, distinct, func, and_
 def change_mod_comment_decision():
     id = int(request.args.get('id'))
     comment = Comment.query\
-        .filter_by(id=id)\
-        .first_or_404()
+        .get_or_404(int(id))
     mod = comment.com_moderation\
         .first_or_404()
     new_mod = Com_Moderation(action=not mod.action, user_id=current_user.id, comment_id=id )
@@ -61,9 +59,15 @@ def mod_com_ajax(id):
     mod = User.query\
         .filter(User.role_id.between(1,2), User.id==id)\
         .first_or_404()
-    mod_coms = mod.com_moderation\
+    mod_coms = db.session.query(Comment, Relationship, Com_Moderation)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Com_Moderation.user_id == id, Com_Moderation.comment_id==Comment.id)\
         .order_by(desc(Com_Moderation.timestamp))\
-        .paginate(page=page, per_page=current_user.display, error_out=False)
+        .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/comment-action-macro.html', 'ajax')
     return jsonify({
         'last': mod_coms.pages in (0, mod_coms.page),
@@ -102,7 +106,13 @@ def mod_history(id):
         .filter(Rec_Moderation.user_id == id, Rec_Moderation.recommendation_id==Recommendation.id)\
         .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
-    mod_coms = mod.com_moderation\
+    mod_coms = db.session.query(Comment, Relationship, Com_Moderation)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Com_Moderation.user_id == id, Com_Moderation.comment_id==Comment.id)\
         .order_by(desc(Com_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('admin/mod-history.html', mod=mod,

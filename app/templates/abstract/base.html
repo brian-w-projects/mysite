@@ -42,28 +42,30 @@
             <li><a href="{{url_for('main.index')}}">Home</a></li>
             <li><a href="{{url_for('personal.post')}}">My Recs</a></li>
             <div class='submenu-container'>
-              <li class='submenu-header'><a href="{{url_for('profile.user_profile', username=current_user.username)}}">My Profile</a></li>
               {% if current_user.is_authenticated %}
-                <div class='submenu'>
-                  <a href="{{url_for('personal.inspiration')}}">My Inspiration</a>
-                  <a href="{{url_for('personal.following')}}">Following</a>
-                  <a href="{{url_for('personal.followers')}}">Followers</a>
-                </div><!--submenu-->
+                <li class='submenu-header'><a href="{{url_for('profile.user_profile', username=current_user.username)}}">My Profile</a></li>
+              {% else %}
+                <li class='submenu-header'><a href="{{url_for('auth.login', next=url_for('profile.user_profile'))}}">My Profile</a></li>
               {% endif %}
+                <div class='submenu'>
+                  <a class='submenu-link' href="{{url_for('personal.inspiration')}}">My Inspiration</a>
+                  <a class='submenu-link' href="{{url_for('personal.following')}}">Following</a>
+                  <a class='submenu-link' href="{{url_for('personal.followers')}}">Followers</a>
+                </div><!--submenu-->
             </div><!--submenu-container-->
             <div class='submenu-container'>
               <li class='submenu-header'><a href="{{url_for('main.search')}}">Search</a></li>
               <div class='submenu'>
-                <a href="{{url_for('main.search')}}">Search</a>
-                <a href="{{url_for('main.surprise')}}">Surprise Me</a>
+                <a class='submenu-link' href="{{url_for('main.search')}}">Search</a>
+                <a class='submenu-link' href="{{url_for('main.surprise')}}">Surprise Me</a>
               </div><!--submenu-->
             </div><!--submenu-container-->
             <div class='submenu-container'>
               <li class='submenu-header'><a href="{{url_for('personal.update', next=request.url)}}">Settings</a></li>
               <div class='submenu'>
-                <a href="{{url_for('main.about')}}">About</a>
-                <a href="{{url_for('personal.update', next=request.url)}}">My Settings</a>
-                <a href="{{url_for('auth.logout')}}">Sign Out</a>
+                <a class='submenu-link' href="{{url_for('main.about')}}">About</a>
+                <a class='submenu-link' href="{{url_for('personal.update', next=request.url)}}">My Settings</a>
+                <a class='submenu-link' href="{{url_for('auth.logout')}}">Sign Out</a>
               </div><!--submenu-->
             </div><!--submenu-container-->
           </ul>

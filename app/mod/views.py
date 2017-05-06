@@ -5,7 +5,7 @@ from ..decorators import is_moderator
 from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, Relationship
 from flask_login import login_required, current_user
 from flask_moment import _moment
-from sqlalchemy.sql.expression import asc, and_
+from sqlalchemy.sql.expression import and_, asc
 
 @mod.route('/-moderate-comments')
 @login_required

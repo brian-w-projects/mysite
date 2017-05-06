@@ -37,7 +37,7 @@ a{
     text-decoration: none;
 }
 
-a:hover{
+a:not(.submenu-link):hover{
     border-bottom: 1px solid black;
 }
 
@@ -116,7 +116,7 @@ nav a{
     min-width: 160px;
     position: absolute;
     right:0px;
-    top:20px;
+    top:23px;
     z-index: 1;
 }
 

@@ -1,9 +1,8 @@
 1. Integrate Celery to send emails
 2. incorporate sslify to keep links secure and remove external from url_for
-3. Mobile Pages?
+3. Set Up Email Server to send confirmation emails
 
 
-1. include following on comments queries
 
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

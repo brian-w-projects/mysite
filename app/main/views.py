@@ -2,11 +2,11 @@ from flask import abort, flash, get_template_attribute, jsonify, redirect, rende
 from . import main
 from .forms import CommentForm, SearchForm
 from .. import db
-from ..models import Comment, Recommendation, User, Role, Relationship
+from ..models import Comment, Recommendation, Relationship, Role, User 
 from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
-from sqlalchemy.sql.expression import func, or_, desc, and_
+from sqlalchemy.sql.expression import and_, desc, func, or_ 
 
 @main.route('/about')
 def about():
@@ -35,14 +35,13 @@ def load_comments(id):
             )
         )\
         .filter(Comment.verification > 0,
-            Comment.recommendation_id==display_recs[0].id)\
+            Comment.recommendation_id==id)\
         .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
     return jsonify({
         'last': display_comments.pages in (0, display_comments.page),
         'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('main.highlight', id=id))}) 
-
 
 @main.route('/highlight/<int:id>', methods=['GET', 'POST'])
 def highlight(id):

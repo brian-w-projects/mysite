@@ -550,6 +550,7 @@ def moderate_recs(id):
 def get_moderate_comments(page=1):
     com = Comment.query\
         .filter_by(verification = 1)\
+        .order_by(asc(Comment.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
     to_ret = {x.id : x.to_json() for x in com.items}
     return jsonify(to_ret)

@@ -3,19 +3,19 @@
   -->
 {% import 'macros/comment-macro.html' as comment_macro %}
 
-{% macro render_mod(mod_com, moment, current_user) %}
+{% macro render_mod(com, moment, current_user) %}
   <div class='action-header'>
-    <i id='{{mod_com.comment_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
+    <i id='{{com[2].comment_id}}' class="change-decision font-link fa fa-frown-o fa-2x"></i>
     <p class='reckoner'>
-      {% if mod_com.action %}
+      {% if com[2].action %}
         Accepted
       {% else %}
         Deleted
       {% endif %}
     </p>
-    <p>{{moment(mod_com.timestamp).fromNow()}}</p>
+    <p>{{moment(com[2].timestamp).fromNow()}}</p>
   </div><!--action-header-->
-  {{comment_macro.render_comment(mod_com.comment, moment, current_user)}}
+  {{comment_macro.render_comment((com[0], com[1]), moment, current_user)}}
 {% endmacro %}
 
 {% macro initialize_comment_moderations(mod_coms, moment, current_user) %}
@@ -31,7 +31,7 @@
 {% endmacro %}
 
 {% macro ajax(mod_coms, moment, current_user) %}
-  {% for mod_com in mod_coms.items %}
-    {{render_mod(mod_com, moment, current_user)}}
+  {% for com in mod_coms.items %}
+    {{render_mod(com, moment, current_user)}}
   {% endfor %}
 {% endmacro %}

@@ -1,11 +1,11 @@
-from flask import redirect, url_for, flash, render_template, request, get_template_attribute, jsonify
+from flask import flash, get_template_attribute, jsonify, redirect, render_template, request, url_for
 from . import profile
 from .. import db
-from ..models import User, Recommendation, Relationship, Comment
+from ..models import  Comment, Recommendation, Relationship, User
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
-from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
+from sqlalchemy.sql.expression import and_, desc, or_
 
 @profile.route('/-profile-com/<int:id>')
 def profile_com_ajax(id):
@@ -45,9 +45,10 @@ def profile_ajax(id):
             link=url_for('profile.user_profile', username=User.query.get(int(id))))}) 
 
 @profile.route('/<string:username>')
-def user_profile(username):
-    if username is None:
-        return redirect(url_for('auth.login', next='personal/profile'))
+@profile.route('/')
+def user_profile(username = None):
+    if username is None and current_user.is_authenticated:
+        return redirect(url_for('profile.user_profile', username=current_user.username))
     user = User.query\
         .filter_by(username=username)\
         .first_or_404()

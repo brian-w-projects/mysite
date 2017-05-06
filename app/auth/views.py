@@ -1,6 +1,6 @@
 from flask import flash, jsonify, redirect, render_template, request, session, url_for
 from . import auth
-from .forms import SignUpForm, LoginForm, PasswordReset, UsernameRecover
+from .forms import LoginForm, SignUpForm, PasswordReset, UsernameRecover
 from .. import db
 from ..models import User
 from ..email import send_email
@@ -19,7 +19,7 @@ def confirm(token):
     else:
         return redirect(url_for('auth.confirmationsent'))
     flash(u'\u2713 Your account has been confirmed!')
-    return(redirect(url_for('personal.profile')))
+    return(redirect(url_for('profile.user_profile', username=current_user.username)))
 
 @auth.route('/confirmationsent/<username>')
 @login_required
@@ -178,7 +178,6 @@ def subscribe():
     return render_template('auth/subscribe.html', form=form)
 
 @auth.route('/unconfirmed')
-@login_required
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
@@ -187,5 +186,6 @@ def unconfirmed():
 @auth.before_app_request
 def before_request():
     if current_user.is_authenticated and not current_user.confirmed \
-        and request.endpoint[:5] != 'auth.' and request.endpoint != 'static':
+        and not request.endpoint.startswith(('auth', 'main')) \
+        and request.endpoint != 'static':
         return redirect(url_for('auth.unconfirmed'))
