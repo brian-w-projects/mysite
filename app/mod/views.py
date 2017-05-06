@@ -31,8 +31,13 @@ def moderate_com():
 @is_moderator
 def verify_comments():
     page = int(request.args.get('page', default=1))
-    display_comments = Comment.query\
-        .filter_by(verification=1)\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification==1)\
         .order_by(asc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     if request.is_xhr: #ajax

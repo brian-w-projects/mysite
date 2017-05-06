@@ -23,7 +23,12 @@ def api():
 @login_required
 def comment_edit(id):
     form = CommentEditForm(request.form)
-    display_comments = Comment.query\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
         .filter(Comment.verification>0, Comment.id==id)\
         .first_or_404()
     display_recs = db.session.query(Recommendation, Relationship)\
@@ -31,27 +36,27 @@ def comment_edit(id):
             Relationship.following == Recommendation.user_id,
             Relationship.follower == current_user.id)
         )\
-        .filter(Recommendation.verification!=-1, Recommendation.id==display_comments.recommendation_id)\
+        .filter(Recommendation.verification!=-1, Recommendation.id==display_comments[0].recommendation_id)\
         .first_or_404()
-    if current_user.id not in (display_comments.user_id, display_comments.recommendation.user_id):
+    if current_user.id not in (display_comments[0].user_id, display_comments[0].recommendation.user_id):
         abort(403)
     if request.method == 'POST':
         if form.delete.data:
-            display_comments.verification = -1
+            display_comments[0].verification = -1
             flash(u'\u2713 Comment has been deleted')
-            db.session.add(display_comments)
+            db.session.add(display_comments[0])
             db.session.commit()
             return redirect(request.args.get('next') or url_for('main.index'))
         elif form.text.data:
-            display_comments.text = form.text.data
+            display_comments[0].text = form.text.data
             flash(u'\u2713 Comment updated')
-            db.session.add(display_comments)
+            db.session.add(display_comments[0])
             db.session.commit()
             return redirect(request.args.get('next') or url_for('main.index'))
         else:
             flash(u'\u2717 Check form entry')
             return redirect(url_for('personal.comment_edit', id=id, next=request.args.get('next')))
-    form.text.data = display_comments.text
+    form.text.data = display_comments[0].text
     return render_template('personal/comment-edit.html', form=form, rec=display_recs, 
         com=display_comments, next=request.args.get('next'))
 

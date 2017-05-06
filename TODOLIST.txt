@@ -3,6 +3,8 @@
 3. Mobile Pages?
 
 
+1. include following on comments queries
+
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores

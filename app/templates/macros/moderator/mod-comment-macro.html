@@ -22,8 +22,8 @@
 {% macro ajax(d_c, moment, current_user) %}
   {% for mod_check in d_c.items %}
     <div class='mod-container'>
-      <i id='{{mod_check.id}}' class='verify mod-button font-link fa fa-check-circle fa-2x'></i>
-      <i id='{{mod_check.id}}' class='private mod-button font-link fa fa-times-circle fa-2x'></i>
+      <i id='{{mod_check[0].id}}' class='verify mod-button font-link fa fa-check-circle fa-2x'></i>
+      <i id='{{mod_check[0].id}}' class='private mod-button font-link fa fa-times-circle fa-2x'></i>
       {{comment_macro.render_comment(mod_check, moment, current_user)}}
     </div><!--mod-container-->
   {% endfor %}

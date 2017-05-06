@@ -2,38 +2,39 @@
   comments.js
   -->
 {% macro render_comment(com, moment, current_user, link=request.url) %}
+  {% set comment, relationship = com %}
   <div class='single-post'>
     <div class='post-header'>
       <ul class='post-header-list'>
         <li>
-          {% if current_user.is_authenticated and current_user != com.user %}
-            {% if current_user.following.filter_by(following=com.user_id).first() %}
-              <i id='{{com.user_id}}' class="follow-button-comment font-link fa fa-heart fa-2x"></i>
+          {% if current_user.is_authenticated and current_user != comment.user %}
+            {% if relationship %}
+              <i id='{{comment.user_id}}' class="follow-button-comment font-link fa fa-heart fa-2x"></i>
             {% else %}
-              <i id='{{com.user_id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
+              <i id='{{comment.user_id}}' class='follow-button-comment font-link fa fa-heart-o fa-2x'></i>
             {% endif %}
           {% endif %}
-          <a href="{{url_for('profile.user_profile', username=com.user.username)}}">
-            {{com.user.username}}
+          <a href="{{url_for('profile.user_profile', username=comment.user.username)}}">
+            {{comment.user.username}}
           </a>
         </li>
         <li>
-          {{moment(com.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
+          {{moment(comment.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
         </li>
         <li>
-          {% if current_user.id == com.user_id or current_user.id == com.recommendation.user_id %}
-            <a class='icon-link' href="{{url_for('personal.comment_edit', id=com.id, next=link)}}">
+          {% if current_user.id == comment.user_id or current_user.id == comment.recommendation.user_id %}
+            <a class='icon-link' href="{{url_for('personal.comment_edit', id=comment.id, next=link)}}">
               <i class='font-link fa fa-pencil-square-o fa-2x'></i>
             </a>
           {% endif %}
-          <a class='icon-link' href="{{url_for('main.highlight', id=com.recommendation_id)}}">
+          <a class='icon-link' href="{{url_for('main.highlight', id=comment.recommendation_id)}}">
             <i class='font-link fa fa-wpforms fa-2x'></i>
           </a>
         </li>
       </ul>
     </div><!--post-header-->
     <p class='post-text'>
-      {{com.text}}
+      {{comment.text}}
     </p>
   </div><!--single-post-->
   <br/>

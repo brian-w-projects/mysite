@@ -10,8 +10,14 @@ from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
 @profile.route('/-profile-com/<int:id>')
 def profile_com_ajax(id):
     page = int(request.args.get('page'))
-    display_comments = Comment.query\
-        .filter(Comment.user_id==id, Comment.verification>0)\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification>0, 
+            Comment.user_id==id)\
         .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
@@ -62,8 +68,14 @@ def user_profile(username):
         )\
         .filter(Recommendation.verification>=ver_case, Recommendation.user==user)\
         .order_by(desc(Recommendation.timestamp))
-    display_comments = user.comment\
-        .filter(Comment.verification>0)\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification>0, 
+            Comment.user_id==user.id)\
         .order_by(desc(Comment.timestamp))
     if current_user.id == id:
         for rec in display_recs:

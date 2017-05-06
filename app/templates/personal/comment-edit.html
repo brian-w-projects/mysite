@@ -24,7 +24,7 @@
   </div><!--list-comments-->
   <div class='w760'>
     <form method='POST'>
-      {% if current_user.id == com.user_id %}
+      {% if current_user.id == com[0].user_id %}
         <p class='chars-format'>Characters Left: <span class='comment-chars-left'></span></p>
         {{form.text(class='comment-text-entry')}}
         <br/>

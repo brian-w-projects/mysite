@@ -28,8 +28,14 @@ def about():
 @main.route('/highlight-ajax/<int:id>')
 def load_comments(id):
     page = int(request.args.get('page'))
-    display_comments = Comment.query\
-        .filter(Comment.verification>0, Comment.posted_on==id)\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification > 0,
+            Comment.recommendation_id==display_recs[0].id)\
         .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
@@ -50,8 +56,14 @@ def highlight(id):
         .first_or_404()
     if display_recs[0].verification == 0 and display_recs[0].user_id != current_user.id:
         abort(403)
-    display_comments = display_recs[0].comment\
-        .filter(Comment.verification>0)\
+    display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification > 0,
+            Comment.recommendation_id==display_recs[0].id)\
         .order_by(desc(Comment.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     if display_recs[0].user_id == current_user.id:
@@ -141,9 +153,13 @@ def search_query(page = 1):
             'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search'))}) 
     else:
-        display_comments = Comment.query\
-            .join(User)\
-            .filter(Comment.verification>0)
+        display_comments = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification > 0)
         if session['search'] != '':
             display_comments = display_comments\
                 .filter(Comment.text.contains(session['search']))

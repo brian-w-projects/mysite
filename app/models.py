@@ -2,11 +2,11 @@ from flask import current_app, g, url_for
 from . import db
 from . import login_manager
 from datetime import datetime, timedelta
-from flask_login import AnonymousUserMixin, UserMixin
+from flask_login import AnonymousUserMixin, UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as TimedSerializer, JSONWebSignatureSerializer as Serializer
 from random import SystemRandom
 from sqlalchemy.orm import backref
-from sqlalchemy.sql.expression import desc
+from sqlalchemy.sql.expression import desc, and_
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -169,12 +169,21 @@ class Recommendation(db.Model):
     user = db.relationship('User', backref=backref('recommendation', lazy='dynamic'))
     
     def prepare_comments(self):
-        prep_query = self.comment\
-            .filter(Comment.verification > 0)\
+        prep_query = db.session.query(Comment, Relationship)\
+            .outerjoin(Relationship, and_(
+                Relationship.following==Comment.user_id,
+                current_user.id == Relationship.follower
+                )
+            )\
+            .filter(Comment.verification > 0,
+                Comment.recommendation_id==self.id)\
             .order_by(desc(Comment.timestamp))
-        d_c = prep_query\
-            .paginate(1, per_page=5, error_out=False)
         count = prep_query.count()
+        if count != 0:
+            d_c = prep_query\
+                .paginate(1, per_page=5, error_out=False)
+        else:
+            d_c = None
         return (d_c, count)
     
     def to_json(self):
