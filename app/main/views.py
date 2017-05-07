@@ -7,6 +7,30 @@ from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy.sql.expression import and_, desc, func, or_ 
+from ..tasks import test
+
+@main.route('/start')
+def start():
+    task = test.apply_async()
+    return jsonify({'id': task.id})
+
+@main.route('/start1/<id>')
+def start1(id):
+    print(id)
+    task = test.AsyncResult(id)
+    print('here')
+    print(task.state)
+    print(task.info)
+    response = {
+        'state': task.state,
+        'current': task.info.get('current', 0),
+        'total': task.info.get('total', 1),
+        'status': task.info.get('status', ''),
+    }
+    return jsonify(response)
+    
+
+
 
 @main.route('/about')
 def about():

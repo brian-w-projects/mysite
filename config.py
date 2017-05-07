@@ -13,6 +13,11 @@ class Config:
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    REDIS_URL = 'redis://0.0.0.0:6379/0'
+    CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
+    CELERY_BACKEND = 'redis://0.0.0.0:6379/0'
+    CELERY_IMPORTS = ('app.tasks',)
+
 
     @staticmethod
     def init_app(app):

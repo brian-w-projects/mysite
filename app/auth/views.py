@@ -8,7 +8,6 @@ from datetime import datetime
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
-    
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):

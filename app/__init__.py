@@ -1,5 +1,6 @@
 from flask import Flask
-from config import config
+from config import config, Config
+from celery import Celery
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
@@ -12,6 +13,10 @@ db = SQLAlchemy(query_class=BaseQuery)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+celery = Celery(__name__)
+celery.conf.broker_url = 'redis://localhost:6379/0'
+celery.conf.result_backend = 'redis://localhost:6379/0'
+celery.conf.imports = ('app.tasks',)
 
 
 def create_app(config_name):
@@ -22,6 +27,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    
     
     # sslify = SSLify(app)
 
