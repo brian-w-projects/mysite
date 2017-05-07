@@ -1,0 +1,21 @@
+{% extends 'abstract/one-column.html' %}
+
+{% block head %}
+  {{super()}}
+  <title>Recommend Me - Surprise Me</title>
+{% endblock %}
+
+{% block maincontent %}
+  <h2>Surprise Me</h2>
+{% endblock %}
+
+{% block supplemental %}
+  <div class='insert'>
+    Started
+    {{id}}
+  </div>
+  <script>
+    var goto_rec = "{{url_for('main.surprise')}}"
+    var goto_insert_com = "{{url_for('main.start1', id=id)}}"
+  </script>
+{% endblock %}

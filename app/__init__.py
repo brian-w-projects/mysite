@@ -1,11 +1,13 @@
 from flask import Flask
 from config import config, Config
 from celery import Celery
+# from flask_celery import Celery
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from flask_sslify import SSLify
+import os
 
 mail = Mail()
 moment = Moment()
@@ -13,10 +15,7 @@ db = SQLAlchemy(query_class=BaseQuery)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-celery = Celery(__name__)
-celery.conf.broker_url = 'redis://localhost:6379/0'
-celery.conf.result_backend = 'redis://localhost:6379/0'
-celery.conf.imports = ('app.tasks',)
+celery = Celery(__name__, backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
 
 
 def create_app(config_name):
@@ -27,7 +26,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-    
+
     
     # sslify = SSLify(app)
 

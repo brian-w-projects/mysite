@@ -7,27 +7,30 @@ from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy.sql.expression import and_, desc, func, or_ 
-from ..tasks import test
+from ..tasks import test, testb
 
 @main.route('/start')
 def start():
-    task = test.apply_async()
-    return jsonify({'id': task.id})
+    display_recs = db.session.query(Recommendation, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following == Recommendation.user_id,
+            Relationship.follower == current_user.id)
+        )\
+        .filter(Recommendation.verification == 2)\
+        .order_by(desc(Recommendation.timestamp))\
+        .limit(5)
+    process = [x[0].id for x in display_recs]
+    id = current_user.id
+    task = test.apply_async([process, id])
+    return render_template('main/start.html', id=task.id)
 
 @main.route('/start1/<id>')
 def start1(id):
-    print(id)
     task = test.AsyncResult(id)
-    print('here')
     print(task.state)
-    print(task.info)
-    response = {
-        'state': task.state,
-        'current': task.info.get('current', 0),
-        'total': task.info.get('total', 1),
-        'status': task.info.get('status', ''),
-    }
-    return jsonify(response)
+    if task.state == 'PROGRESS':
+        return jsonify({'status' : 'PROGRESS'})
+    return jsonify({'status': 'FINISHED'})
     
 
 

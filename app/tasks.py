@@ -1,24 +1,47 @@
 from . import celery
+from .models import Comment, Relationship, User, Recommendation
+from . import db
+from sqlalchemy.sql.expression import desc, and_
+from flask_login import AnonymousUserMixin, UserMixin, current_user
+from flask_moment import _moment
+from flask import jsonify, get_template_attribute, url_for
+
+@celery.task(bind=True)
+def test(self, process, id):
+    print('here')
+    self.update_state(state='PROGRESS', meta={'a':1})
+    to_ret = {}
+    
+    for x in process:
+        prep_query = db.session.query(Comment, Relationship)\
+            .outerjoin(Relationship, and_(
+                Relationship.following==Comment.user_id,
+                id == Relationship.follower
+                )
+            )\
+            .filter(Comment.verification > 0,
+                Comment.recommendation_id==x)\
+            .order_by(desc(Comment.timestamp))\
+            .limit(5)
+        to_ret[x] = [(com.id, rel) for com, rel in prep_query]
+        print(to_ret)
+    print('finished')
+    return to_ret
 
 
 @celery.task(bind=True)
-def test(self):
-    import random
-    import time
-    print('got here')
-    verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
-    adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
-    noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
-    message = ''
-    total = random.randint(10, 20)
-    for i in range(total):
-        if not message or random.random() < 0.25:
-            message = '{0} {1} {2}...'.format(random.choice(verb),
-                                              random.choice(adjective),
-                                              random.choice(noun))
-        self.update_state(state='PROGRESS',
-                          meta={'current': i, 'total': total,
-                                'status': message})
-        time.sleep(1)
-    return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'result': 42}
+def testb(self):
+    self.update_state(state='PROGRESS')
+    d_c = db.session.query(Comment, Relationship)\
+        .outerjoin(Relationship, and_(
+            Relationship.following==Comment.user_id,
+            current_user.id == Relationship.follower
+            )
+        )\
+        .filter(Comment.verification > 0,
+            Comment.recommendation_id==self.id)\
+        .order_by(desc(Comment.timestamp))\
+        .paginate(1, per_page=5, error_out=False)
+    to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
+    return jsonify({'status': 'FINISHED',
+        'ajax_request': to_return(d_c, _moment, current_user)}) 

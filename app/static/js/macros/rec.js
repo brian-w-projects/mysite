@@ -16,6 +16,8 @@
     
     $(function(){
         
+        comment_injection();
+        
         $load_more_recs.on('click', function(){
             page += 1;
             rec_ajax({'page':page}).always(function(){
@@ -73,6 +75,21 @@
         load_rec_attributes();
     });
 
+    function comment_injection(){
+        begin_comment_ajax().done(function(data){
+            if(data['status'] == 'FINISHED'){
+                $('.insert').text('did it');
+                
+            }
+            else{
+                console.log('there');
+                setTimeout(function(){
+                    comment_injection();
+                }, 2000);
+            }
+        });
+    }
+
     function follow_change(add, id){
         $('[id='+id+']').each(function(){
            if(add){
@@ -106,6 +123,16 @@
             datatype:'json',
             data: id_info,
             timeout: 5000,
+        });
+    }
+    
+    function begin_comment_ajax(){
+        console.log('began ajax');
+        return $.ajax({
+           type: 'GET', 
+           contentType: 'application/json;charset=UTF-8',
+           url: goto_insert_com,
+           datatype: 'json',
         });
     }
 }(window.jQuery, window, document));

@@ -1,12 +1,12 @@
 from flask import current_app, render_template
-from . import celery
+# from . import celery
 from . import mail
 from flask_mail import Message
 
-@celery.task
-def send_async_email(app, msg):
-    with app.app_context():
-        mail.send(msg)
+# @celery.task
+# def send_async_email(app, msg):
+#     with app.app_context():
+#         mail.send(msg)
 
 def send_email(to, subject, template, **kwargs):
     app = current_app._get_current_object()
