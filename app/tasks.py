@@ -8,8 +8,7 @@ from flask import jsonify, get_template_attribute, url_for
 
 @celery.task(bind=True)
 def test(self, process, id):
-    print('here')
-    self.update_state(state='PROGRESS', meta={'a':1})
+    self.update_state(state='PROGRESS', meta={'a': 1})
     to_ret = {}
     
     for x in process:
@@ -23,9 +22,7 @@ def test(self, process, id):
                 Comment.recommendation_id==x)\
             .order_by(desc(Comment.timestamp))\
             .limit(5)
-        to_ret[x] = [(com.id, rel) for com, rel in prep_query]
-        print(to_ret)
-    print('finished')
+        to_ret[x] = [(com.id, rel != None) for com, rel in prep_query]
     return to_ret
 
 

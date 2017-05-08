@@ -77,15 +77,14 @@
 
     function comment_injection(){
         begin_comment_ajax().done(function(data){
-            if(data['status'] == 'FINISHED'){
-                $('.insert').text('did it');
-                
-            }
-            else{
-                console.log('there');
+            if(data['status'] == 'PROGRESS'){
                 setTimeout(function(){
                     comment_injection();
                 }, 2000);
+            }
+            else{
+                console.log(data['results'][14344]);
+                // $('.insert').html($(data['results']).html());
             }
         });
     }
@@ -127,7 +126,6 @@
     }
     
     function begin_comment_ajax(){
-        console.log('began ajax');
         return $.ajax({
            type: 'GET', 
            contentType: 'application/json;charset=UTF-8',

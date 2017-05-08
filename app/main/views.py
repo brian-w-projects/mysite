@@ -30,7 +30,16 @@ def start1(id):
     print(task.state)
     if task.state == 'PROGRESS':
         return jsonify({'status' : 'PROGRESS'})
-    return jsonify({'status': 'FINISHED'})
+    info = task.get()
+    print(info)
+    to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
+    to_ret = {}
+    
+    for rec_id, comments in info.items():
+        to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
+            _moment, current_user)
+    return jsonify({'results' : to_ret})
+    
     
 
 

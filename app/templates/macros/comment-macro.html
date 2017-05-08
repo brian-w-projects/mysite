@@ -60,6 +60,8 @@
 
 {% macro insert_comments(d_c, moment, current_user, link=request.url) %}
   <div class='inline-comments'>
-    {{ajax(d_c, moment, current_user, link)}}
+    {% for com in d_c %}
+      {{render_comment(com, moment, current_user, link)}}
+    {% endfor %}
   </div><!--inline-comments-->
 {% endmacro %}
