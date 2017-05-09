@@ -83,6 +83,13 @@
 {% endmacro %}
 
 {% macro single_rec(rec, moment, current_user, attributes=True, link=request.url, in_comments=True) %}
+  {{render_rec(rec, count, moment, current_user, attributes, link)}}
+  <div class='inline-comments' id='{{rec[0].id}}'>
+    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+  </div><!--inline-comments-->
+{% endmacro %}
+    
+{% macro single_rec_save(rec, moment, current_user, attributes=True, link=request.url, in_comments=True) %}
   {% set comments, count = rec[0].prepare_comments() %}
   {{render_rec(rec, count, moment, current_user, attributes, link)}}
   {% if in_comments %}

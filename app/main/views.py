@@ -18,23 +18,20 @@ def start():
         )\
         .filter(Recommendation.verification == 2)\
         .order_by(desc(Recommendation.timestamp))\
-        .limit(5)
-    process = [x[0].id for x in display_recs]
+        .paginate(1, per_page=5, error_out=False)
+    process = [x[0].id for x in display_recs.items]
     id = current_user.id
     task = test.apply_async([process, id])
-    return render_template('main/start.html', id=task.id)
+    return render_template('main/start.html', display = display_recs, id=task.id)
 
 @main.route('/start1/<id>')
 def start1(id):
     task = test.AsyncResult(id)
-    print(task.state)
     if task.state == 'PROGRESS':
         return jsonify({'status' : 'PROGRESS'})
     info = task.get()
-    print(info)
     to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
     to_ret = {}
-    
     for rec_id, comments in info.items():
         to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
             _moment, current_user)
@@ -216,7 +213,22 @@ def search_query(page = 1):
 def search():
     form = SearchForm(request.form)
     return render_template('main/search.html', form=form)
-    
+
+@main.route('/insert_comments')
+def insert_comments():
+    id = request.args.get('id')
+    print(id)
+    task = test.AsyncResult(id)
+    if task.state == 'PROGRESS':
+        return jsonify({'status' : 'PROGRESS'})
+    info = task.get()
+    to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
+    to_ret = {}
+    for rec_id, comments in info.items():
+        to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
+            _moment, current_user)
+    return jsonify({'results' : to_ret})
+
 @main.route('/surprise')
 def surprise():
     display_recs = db.session.query(Recommendation, Relationship)\
@@ -230,9 +242,13 @@ def surprise():
         .from_self()\
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in display_recs.items]
+    task = test.apply_async([process, current_user.id])
     if request.is_xhr: #ajax_request
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
             'last': display_recs.pages in (0, display_recs.page),
-            'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise'))}) 
-    return render_template('main/surprise.html', display=display_recs)
+            'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.surprise')),
+            'id': task.id
+        }) 
+    return render_template('main/surprise.html', display=display_recs, id=task.id)

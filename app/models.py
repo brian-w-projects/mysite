@@ -168,23 +168,24 @@ class Recommendation(db.Model):
 
     user = db.relationship('User', backref=backref('recommendation', lazy='dynamic'))
     
-    def prepare_comments(self):
-        prep_query = db.session.query(Comment, Relationship)\
-            .outerjoin(Relationship, and_(
-                Relationship.following==Comment.user_id,
-                current_user.id == Relationship.follower
-                )
-            )\
-            .filter(Comment.verification > 0,
-                Comment.recommendation_id==self.id)\
-            .order_by(desc(Comment.timestamp))
-        count = prep_query.count()
-        if count != 0:
-            d_c = prep_query\
-                .paginate(1, per_page=5, error_out=False)
-        else:
-            d_c = None
-        return (d_c, count)
+    # TO DELETE UPON COMPLETING CELERY
+    # def prepare_comments(self):
+    #     prep_query = db.session.query(Comment, Relationship)\
+    #         .outerjoin(Relationship, and_(
+    #             Relationship.following==Comment.user_id,
+    #             current_user.id == Relationship.follower
+    #             )
+    #         )\
+    #         .filter(Comment.verification > 0,
+    #             Comment.recommendation_id==self.id)\
+    #         .order_by(desc(Comment.timestamp))
+    #     count = prep_query.count()
+    #     if count != 0:
+    #         d_c = prep_query\
+    #             .paginate(1, per_page=5, error_out=False)
+    #     else:
+    #         d_c = None
+    #     return (d_c, count)
     
     def to_json(self):
         return {

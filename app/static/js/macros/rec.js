@@ -5,6 +5,7 @@
 /* global load_rec_attributes */
 /* global page */
 /* global NProgress */
+/* global id */
 
 (function($, window, document){
 
@@ -16,7 +17,7 @@
     
     $(function(){
         
-        comment_injection();
+        comment_injection(id);
         
         $load_more_recs.on('click', function(){
             page += 1;
@@ -28,6 +29,7 @@
                 if(data['last'] == true){
                     $load_more_recs.remove();
                 }
+                comment_injection(data['id']);
                 flask_moment_render_all();
             }).fail(function(){
                 page -= 1;
@@ -75,16 +77,18 @@
         load_rec_attributes();
     });
 
-    function comment_injection(){
-        begin_comment_ajax().done(function(data){
+    function comment_injection(id){
+        begin_comment_ajax(id).done(function(data){
             if(data['status'] == 'PROGRESS'){
                 setTimeout(function(){
-                    comment_injection();
+                    comment_injection(id);
                 }, 2000);
             }
             else{
-                console.log(data['results'][14344]);
-                // $('.insert').html($(data['results']).html());
+                $('.inline-comments').each(function(){
+                    var id = parseInt($(this).attr('id'));
+                   $(this).html($(data['results'][id]).html());
+                });
             }
         });
     }
@@ -125,12 +129,13 @@
         });
     }
     
-    function begin_comment_ajax(){
+    function begin_comment_ajax(id){
         return $.ajax({
            type: 'GET', 
            contentType: 'application/json;charset=UTF-8',
            url: goto_insert_com,
            datatype: 'json',
+           data: {'id': id},
         });
     }
 }(window.jQuery, window, document));
