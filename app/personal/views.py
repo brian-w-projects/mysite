@@ -9,6 +9,7 @@ from flask_moment import _moment
 from sqlalchemy import case
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import desc, or_, and_, distinct, func
+from ..tasks import prepare_comments
 
 @personal.route('/api')
 @login_required
@@ -157,14 +158,18 @@ def followers(id=-1):
         .order_by(desc(Rel.timestamp))\
         .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
+    process = [x[1].id for x in display_names.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
         return jsonify({
             'last': display_names.pages in (0, display_names.page),
             'ajax_request': to_return(display_names, _moment, current_user, 
-            link=url_for('personal.followers', id=id))}) 
+            link=url_for('personal.followers', id=id)),
+            'id': task.id
+        }) 
     return render_template('personal/followers.html', display=display_names, 
-        user=user)
+        user=user, id=task.id)
 
 @personal.route('/following/<int:id>')
 @personal.route('/following')
@@ -194,14 +199,18 @@ def following(id=-1):
         .order_by(desc(Rel.timestamp))\
         .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
+    process = [x[1].id for x in display_names.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
         return jsonify({
             'last': display_names.pages in (0, display_names.page),
             'ajax_request': to_return(display_names, _moment, current_user, 
-                link=url_for('personal.following', id=id))}) 
+                link=url_for('personal.following', id=id)),
+            'id': task.id
+        }) 
     return render_template('personal/following.html', display=display_names, 
-        user = user)
+        user = user, id=task.id)
 
 @personal.route('/inspiration')
 @login_required
@@ -216,13 +225,17 @@ def inspiration():
             Recommendation.verification>0)\
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
             'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, 
-                link=url_for('personal.inspiration'))}) 
-    return render_template('personal/inspiration.html', display=display_recs)
+                link=url_for('personal.inspiration')),
+            'id': task.id
+        }) 
+    return render_template('personal/inspiration.html', display=display_recs, id=task.id)
 
 @personal.route('/post', methods=['GET', 'POST'])
 @login_required
@@ -252,13 +265,17 @@ def post():
             Recommendation.user_id==current_user.id)\
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
             'last': display_recs.pages in (0, display_recs.page),
             'ajax_request': to_return(display_recs, _moment, current_user, 
-            link=url_for('personal.post'))})
-    return render_template('personal/post.html', form=form, display=display_recs)
+            link=url_for('personal.post')),
+            'id': task.id
+        })
+    return render_template('personal/post.html', form=form, display=display_recs, id=task.id)
 
 @personal.route('/update', methods=['GET', 'POST'])
 @login_required

@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
 from sqlalchemy.sql.expression import and_, desc, or_
+from ..tasks import prepare_comments
 
 @profile.route('/-profile-com/<int:id>')
 def profile_com_ajax(id):
@@ -39,10 +40,14 @@ def profile_ajax(id):
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out = False)
     to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     return jsonify({
         'last': display_recs.pages in (0, display_recs.pages),
         'ajax_request': to_return(display_recs, _moment, current_user, 
-            link=url_for('profile.user_profile', username=User.query.get(int(id))))}) 
+            link=url_for('profile.user_profile', username=User.query.get(int(id)))),
+        'id': task.id
+    }) 
 
 @profile.route('/<string:username>')
 @profile.route('/')
@@ -88,7 +93,9 @@ def user_profile(username = None):
             db.session.commit()
     display_recs = display_recs\
         .paginate(1, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     display_comments = display_comments\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('profile/profile.html', user=user, display=display_recs, 
-        d_c=display_comments, com_count = com_count, rec_count=rec_count)
+        d_c=display_comments, com_count = com_count, rec_count=rec_count, id=task.id)

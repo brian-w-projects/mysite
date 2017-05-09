@@ -7,39 +7,7 @@ from datetime import datetime, timedelta
 from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy.sql.expression import and_, desc, func, or_ 
-from ..tasks import test, testb
-
-@main.route('/start')
-def start():
-    display_recs = db.session.query(Recommendation, Relationship)\
-        .outerjoin(Relationship, and_(
-            Relationship.following == Recommendation.user_id,
-            Relationship.follower == current_user.id)
-        )\
-        .filter(Recommendation.verification == 2)\
-        .order_by(desc(Recommendation.timestamp))\
-        .paginate(1, per_page=5, error_out=False)
-    process = [x[0].id for x in display_recs.items]
-    id = current_user.id
-    task = test.apply_async([process, id])
-    return render_template('main/start.html', display = display_recs, id=task.id)
-
-@main.route('/start1/<id>')
-def start1(id):
-    task = test.AsyncResult(id)
-    if task.state == 'PROGRESS':
-        return jsonify({'status' : 'PROGRESS'})
-    info = task.get()
-    to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
-    to_ret = {}
-    for rec_id, comments in info.items():
-        to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
-            _moment, current_user)
-    return jsonify({'results' : to_ret})
-    
-    
-
-
+from ..tasks import prepare_comments
 
 @main.route('/about')
 def about():
@@ -56,7 +24,9 @@ def about():
         .limit(5)\
         .from_self()\
         .paginate(1, per_page=5, error_out=False)
-    return render_template('main/about.html', display=display_recs)
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
+    return render_template('main/about.html', display=display_recs, id=task.id)
 
 @main.route('/highlight-ajax/<int:id>')
 def load_comments(id):
@@ -142,9 +112,12 @@ def index():
             .limit(5)\
             .from_self()\
             .paginate(1, per_page=5, error_out=False)
+        process = [x[0].id for x in display_recs.items]
+        task = prepare_comments.apply_async([process, current_user.id])
+        return render_template('main/index.html', display = display_recs, id=task.id)
     else:
         display_recs = None
-    return render_template('main/index.html', display = display_recs)
+        return render_template('main/index.html', display = display_recs, id='None')
 
 @main.route('/-search', methods=['GET', 'POST'])
 def search_ajax():
@@ -180,10 +153,15 @@ def search_query(page = 1):
         display_recs = display_recs\
             .order_by(desc(Recommendation.timestamp))\
             .paginate(page, per_page=current_user.display, error_out=False)
+            
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
+        process = [x[0].id for x in display_recs.items]
+        task = prepare_comments.apply_async([process, current_user.id])
         return jsonify({
             'last': display_recs.pages in (0, display_recs.page),
-            'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search'))}) 
+            'ajax_request': to_return(display_recs, _moment, current_user, link=url_for('main.search')),
+            'id' : task.id
+        }) 
     else:
         display_comments = db.session.query(Comment, Relationship)\
         .outerjoin(Relationship, and_(
@@ -207,27 +185,13 @@ def search_query(page = 1):
         to_return = get_template_attribute('macros/comment-macro.html', 'ajax')
         return jsonify({
             'last': display_comments.page == display_comments.pages or display_comments.pages == 0,
-            'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('main.search'))}) 
+            'ajax_request': to_return(display_comments, _moment, current_user, link=url_for('main.search'))
+        }) 
     
 @main.route('/search')
 def search():
     form = SearchForm(request.form)
     return render_template('main/search.html', form=form)
-
-@main.route('/insert_comments')
-def insert_comments():
-    id = request.args.get('id')
-    print(id)
-    task = test.AsyncResult(id)
-    if task.state == 'PROGRESS':
-        return jsonify({'status' : 'PROGRESS'})
-    info = task.get()
-    to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
-    to_ret = {}
-    for rec_id, comments in info.items():
-        to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
-            _moment, current_user)
-    return jsonify({'results' : to_ret})
 
 @main.route('/surprise')
 def surprise():
@@ -243,7 +207,7 @@ def surprise():
         .order_by(func.random())\
         .paginate(1, per_page=current_user.display, error_out=False)
     process = [x[0].id for x in display_recs.items]
-    task = test.apply_async([process, current_user.id])
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax_request
         to_return = get_template_attribute('macros/rec-macro.html', 'ajax')
         return jsonify({
@@ -252,3 +216,17 @@ def surprise():
             'id': task.id
         }) 
     return render_template('main/surprise.html', display=display_recs, id=task.id)
+
+@main.route('/insert_comments')
+def insert_comments():
+    id = request.args.get('id')
+    task = prepare_comments.AsyncResult(id)
+    if task.state == 'PROGRESS':
+        return jsonify({'status' : 'PROGRESS'})
+    info = task.get()
+    to_return = get_template_attribute('macros/comment-macro.html', 'insert_comments')
+    to_ret = {}
+    for rec_id, comments in info.items():
+        to_ret[rec_id] = to_return([(Comment.query.get(int(com[0])), com[1]) for com in comments],
+            _moment, current_user)
+    return jsonify({'results' : to_ret})

@@ -39,6 +39,9 @@
   <br/>
   {{rec_macro.initialize_recs(display, moment, current_user)}}
   <script src="{{url_for('static', filename='js/speciality/photo-slider.js')}}"></script>
+  <script>
+    var id = "{{id}}";
+  </script>
 {% endblock %}
 
 {% block c1 %}

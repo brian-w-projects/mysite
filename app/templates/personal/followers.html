@@ -14,5 +14,6 @@
   {{relationship_macro.initialize(display, moment, current_user)}}
   <script>
     var goto_rec = "{{url_for('personal.followers', id=user.id)}}";
+    var id = "{{id}}";
   </script>
 {% endblock %}

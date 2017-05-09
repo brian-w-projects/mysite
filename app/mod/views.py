@@ -6,6 +6,7 @@ from ..models import Comment, Com_Moderation, Rec_Moderation, Recommendation, Re
 from flask_login import login_required, current_user
 from flask_moment import _moment
 from sqlalchemy.sql.expression import and_, asc
+from ..tasks import prepare_comments
 
 @mod.route('/-moderate-comments')
 @login_required
@@ -80,9 +81,13 @@ def verify_recs():
         .filter(Recommendation.verification==1)\
         .order_by(asc(Recommendation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in display_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax
         to_return = get_template_attribute('macros/moderator/mod-rec-macro.html', 'ajax')        
         return jsonify({
             'last': display_recs.pages in (0, display_recs.page),
-            'ajax_request': to_return(display_recs, _moment, current_user)})
-    return render_template('mod/verify-recs.html', display=display_recs)
+            'ajax_request': to_return(display_recs, _moment, current_user),
+            'id': task.id
+        })
+    return render_template('mod/verify-recs.html', display=display_recs, id=task.id)

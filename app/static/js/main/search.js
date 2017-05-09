@@ -48,6 +48,7 @@
                     }
                 }
                 flask_moment_render_all();
+                comment_injection(data['id']);
             }).fail(function(){
                 $error.text('Could not load content').show();
             });

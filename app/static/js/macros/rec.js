@@ -17,7 +17,9 @@
     
     $(function(){
         
-        comment_injection(id);
+        if(typeof id !== 'undefined' && id != 'None'){
+            comment_injection(id);
+        }
         
         $load_more_recs.on('click', function(){
             page += 1;
@@ -77,7 +79,8 @@
         load_rec_attributes();
     });
 
-    function comment_injection(id){
+    window.comment_injection = function (id){
+        console.log('here');
         begin_comment_ajax(id).done(function(data){
             if(data['status'] == 'PROGRESS'){
                 setTimeout(function(){

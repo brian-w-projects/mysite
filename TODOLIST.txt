@@ -2,11 +2,6 @@
 2. incorporate sslify to keep links secure and remove external from url_for
 3. Set Up Email Server to send confirmation emails
 
-Gameplan:
-    - query information and send it to ajax call upon success. 
-    - send to rec.js through ajax call and put into html
-    - add spinner in case of early opening of comments, remove when placing comments
-
 
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

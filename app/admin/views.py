@@ -8,6 +8,7 @@ from flask_login import current_user, login_required
 from flask_moment import _moment
 from sqlalchemy import case
 from sqlalchemy.sql.expression import and_, desc, distinct, func
+from ..tasks import prepare_comments
 
 @admin.route('/-change-mod-comment-decision')
 @login_required
@@ -87,9 +88,13 @@ def mod_rec_ajax(id):
         .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(page, per_page=current_user.display, error_out=False)
     to_return = get_template_attribute('macros/admin/rec-action-macro.html', 'ajax')
+    process = [x[0].id for x in mod_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     return jsonify({
         'last': mod_recs.pages in (0, mod_recs.page),
-        'ajax_request': to_return(mod_recs, _moment, current_user)}) 
+        'ajax_request': to_return(mod_recs, _moment, current_user),
+        'id': task.id
+    }) 
 
 @admin.route('/mod-history/<int:id>')
 @login_required
@@ -106,6 +111,8 @@ def mod_history(id):
         .filter(Rec_Moderation.user_id == id, Rec_Moderation.recommendation_id==Recommendation.id)\
         .order_by(desc(Rec_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
+    process = [x[0].id for x in mod_recs.items]
+    task = prepare_comments.apply_async([process, current_user.id])
     mod_coms = db.session.query(Comment, Relationship, Com_Moderation)\
         .outerjoin(Relationship, and_(
             Relationship.following==Comment.user_id,
@@ -116,7 +123,7 @@ def mod_history(id):
         .order_by(desc(Com_Moderation.timestamp))\
         .paginate(1, per_page=current_user.display, error_out=False)
     return render_template('admin/mod-history.html', mod=mod,
-        mod_recs=mod_recs, mod_coms=mod_coms)
+        mod_recs=mod_recs, mod_coms=mod_coms, id=task.id)
     
 @admin.route('/splash')
 @login_required

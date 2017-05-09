@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from config import config, Config
 from celery import Celery
 # from flask_celery import Celery
