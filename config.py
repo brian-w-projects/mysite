@@ -1,4 +1,5 @@
 import os
+import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -17,6 +18,13 @@ class Config:
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     CELERY_BACKEND_URL = 'redis://localhost:6379/0'
     CELERY_IMPORTS = ('app.tasks',)
+    CELERYBEAT_SCHEDULE = {
+        'updates': {
+            'task': 'app.tasks.updates',
+            'schedule' : datetime.timedelta(seconds=30),
+            'args': ("Message",)
+        },
+    }
 
 
     @staticmethod
