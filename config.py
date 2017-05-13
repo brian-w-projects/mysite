@@ -33,13 +33,19 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
+    if os.environ.get('DATABASE_URL') is None:
+        SQLALCHEMY_DATABASE_URI = \
+            'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'db/data-pro.sqlite')
+    if os.environ.get('DATABASE_URL') is None:
+        SQLALCHEMY_DATABASE_URI = \
+            'sqlite:///' + os.path.join(basedir, 'db/datapro.sqlite')
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
