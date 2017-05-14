@@ -2,9 +2,6 @@
 2. incorporate sslify to keep links secure and remove external from url_for
 3. Set Up Email Server to send confirmation emails
 
-Next:
-    - Weekly Digest
-
 
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens

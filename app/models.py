@@ -16,7 +16,7 @@ class API_Request(db.Model):
     __tablename__ = 'api_request'
     id = db.Column(db.INTEGER, primary_key=True)
     endpoint = db.Column(db.String)
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     
     user = db.relationship('User', backref=backref('api_request', lazy='dynamic'))
@@ -45,7 +45,7 @@ class Comment(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     recommendation_id = db.Column(db.INTEGER, db.ForeignKey('recommendation.id'))
     text = db.Column(db.TEXT)
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     verification = db.Column(db.INTEGER, default=1) 
     # verification = -1->private, 0->nothing, 1->unchecked, 2->OKayed
@@ -98,7 +98,7 @@ class Com_Moderation(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     action = db.Column(db.BOOLEAN)
     comment_id = db.Column(db.INTEGER, db.ForeignKey('comment.id'))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
 
     comment = db.relationship('Comment', backref=backref('com_moderation', lazy='dynamic'))
@@ -160,7 +160,7 @@ class Recommendation(db.Model):
     made_private = db.Column(db.BOOLEAN, default=False)
     new_comment = db.Column(db.BOOLEAN, default=False)
     text = db.Column(db.TEXT)
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     title = db.Column(db.String(64))
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     verification = db.Column(db.INTEGER) 
@@ -236,7 +236,7 @@ class Rec_Moderation(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     action = db.Column(db.BOOLEAN)
     recommendation_id = db.Column(db.INTEGER, db.ForeignKey('recommendation.id'))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
 
     user = db.relationship('User', backref=backref('rec_moderation', lazy='dynamic'))
@@ -296,7 +296,7 @@ class Relationship(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     follower = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     following = db.Column(db.INTEGER, db.ForeignKey('user.id'))
-    timestamp = db.Column(db.DATETIME, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     
     user_follower = db.relationship('User', backref=backref('following', lazy='dynamic'),
         foreign_keys=[follower])
@@ -364,8 +364,8 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.BOOLEAN, default=False)
     display = db.Column(db.INTEGER, default=10)
     invalid_logins = db.Column(db.INTEGER, default=0)
-    last_login = db.Column(db.DATETIME, default=datetime.utcnow)
-    member_since = db.Column(db.DATETIME, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime, default=datetime.utcnow)
+    member_since = db.Column(db.DateTime, default=datetime.utcnow)
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.INTEGER, db.ForeignKey('role.id'))
     updates = db.Column(db.BOOLEAN, default=True)

@@ -31,26 +31,28 @@ class Config:
     def init_app(app):
         pass
 
+# On Cloud9, with SQLITE
 class DevelopmentConfig(Config):
     DEBUG = True
     if os.environ.get('DATABASE_URL') is None:
         SQLALCHEMY_DATABASE_URI = \
             'sqlite:///' + os.path.join(basedir, 'db/data.sqlite')
-    else:
-        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# On Cloud9, with Postgres
+class DeploymentConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql://ubuntu:123456789@localhost/data'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# On Heroku, with Postgres
 class ProductionConfig(Config):
-    if os.environ.get('DATABASE_URL') is None:
-        SQLALCHEMY_DATABASE_URI = \
-            'sqlite:///' + os.path.join(basedir, 'db/datapro.sqlite')
-    else:
-        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', None)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 config = {
     'development': DevelopmentConfig,
+    'deployment': DeploymentConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
 }

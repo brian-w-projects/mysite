@@ -8,6 +8,8 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from flask_sslify import SSLify
 import os
+import sys
+import logging
 
 mail = Mail()
 moment = Moment()
@@ -21,6 +23,9 @@ celery = Celery(__name__, backend='redis://localhost:6379/0', broker='redis://lo
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
+    app.logger.setLevel(logging.DEBUG)
+    app.debug = True
     config[config_name].init_app(app)
     mail.init_app(app)
     moment.init_app(app)

@@ -6,17 +6,9 @@ from flask_script import Manager, Server, Shell
 from flask_migrate import Migrate, MigrateCommand
 import os
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-manager = Manager(app)
+# app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app('deployment')
 migrate = Migrate(app, db)
-
-def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role, Recommendation=Recommendation,\
-        Comment=Comment, Relationship=Relationship)
-
-manager.add_command('shell', Shell(make_context=make_shell_context))
-manager.add_command('db', MigrateCommand)
-manager.add_command('runserver', Server(host='0.0.0.0', port='8080'))
 
 @app.url_defaults
 def hashed_static_file(endpoint, values):
@@ -37,9 +29,9 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
+    # with app.app_context():
+    #     db.drop_all()
+    #     db.create_all()
         # Role.generate_roles()
         # user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
         # db.session.add(user)
@@ -51,5 +43,6 @@ if __name__ == '__main__':
         # Relationship.generate_followers(75000)
         # Rec_Moderation.generate_recmods()
         # Com_Moderation.generate_commods()
-        db.session.commit()
-    manager.run()
+        # db.session.commit()
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
