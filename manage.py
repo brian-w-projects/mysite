@@ -37,9 +37,9 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    # with app.app_context():
-        # db.drop_all()
-        # db.create_all()
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
         # Role.generate_roles()
         # user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
         # db.session.add(user)
@@ -51,5 +51,5 @@ if __name__ == '__main__':
         # Relationship.generate_followers(75000)
         # Rec_Moderation.generate_recmods()
         # Com_Moderation.generate_commods()
-        # db.session.commit()
+        db.session.commit()
     manager.run()
