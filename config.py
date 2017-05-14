@@ -41,7 +41,7 @@ class DevelopmentConfig(Config):
 
 # On Cloud9, with Postgres
 class DeploymentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://ubuntu:123456789@localhost/data'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://ubuntu:123456789@localhost:5432/data'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # On Heroku, with Postgres

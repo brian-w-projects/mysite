@@ -32,9 +32,9 @@ if __name__ == '__main__':
     # with app.app_context():
     #     db.drop_all()
     #     db.create_all()
-        # Role.generate_roles()
-        # user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
-        # db.session.add(user)
+    #     Role.generate_roles()
+    #     user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
+    #     db.session.add(user)
         # user2 = User(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
         # db.session.add(user2)
         # User.generate_users(5000, None)
