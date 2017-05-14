@@ -1,6 +1,11 @@
-1. Integrate Celery to send emails
-2. incorporate sslify to keep links secure and remove external from url_for
-3. Set Up Email Server to send confirmation emails
+1. incorporate sslify to keep links secure and remove external from url_for
+2. Set Up Email Server to send confirmation emails
+
+
+Integrate Postgres:
+    - Go through each page and fix postgres integration issues
+    - Look at heroku for celery fix
+    - Look at heroku for email sending fix
 
 
 Formatting:

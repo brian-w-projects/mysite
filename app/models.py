@@ -161,7 +161,7 @@ class Recommendation(db.Model):
     new_comment = db.Column(db.BOOLEAN, default=False)
     text = db.Column(db.TEXT)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    title = db.Column(db.String(64))
+    title = db.Column(db.String(101))
     user_id = db.Column(db.INTEGER, db.ForeignKey('user.id'))
     verification = db.Column(db.INTEGER) 
     # verification = -1-> deleted, 0->private, 1->public and unchecked, 2->OKayed
@@ -219,7 +219,7 @@ class Recommendation(db.Model):
                 verified = 0
             else:
                 verified = -1
-            r = Recommendation(title=forgery_py.lorem_ipsum.sentence(),
+            r = Recommendation(title=forgery_py.lorem_ipsum.words(quantity=4),
                 timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
                 user=u,
                 text=forgery_py.lorem_ipsum.sentences(randint(2,8)),
@@ -271,7 +271,7 @@ class Rec_Moderation(db.Model):
                             timestamp=forgery_py.date.date(True, min_delta=0, max_delta=days_since),
                             recommendation_id=rec_mod.id, action = False)
                         rec_mod.verification = 0
-                        rec_mod.made_private = 1
+                        rec_mod.made_private = True
                         db.session.add(to_add)
                         db.session.add(rec_mod)
                         db.session.commit()
