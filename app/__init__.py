@@ -17,7 +17,8 @@ db = SQLAlchemy(query_class=BaseQuery)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-celery = Celery(__name__, backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
+# celery = Celery(__name__, backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
+celery = Celery(__name__, backend=os.environ['REDIS_URL'], broker=os.environ['REDIS_URL'])
 
 
 def create_app(config_name):

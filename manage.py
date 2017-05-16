@@ -7,8 +7,8 @@ from flask_migrate import Migrate, MigrateCommand
 import os
 
 # app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-app = create_app('deployment')
-# app = create_app('production')
+# app = create_app('deployment')
+app = create_app('production')
 migrate = Migrate(app, db)
 
 @app.url_defaults
