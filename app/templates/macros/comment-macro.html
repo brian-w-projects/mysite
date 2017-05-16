@@ -60,7 +60,7 @@
 
 {% macro insert_comments(d_c, moment, current_user, link=request.url) %}
   <div class='inline-comments'>
-    {% if d_c %}
+    {% if d_c|length > 0 %}
       {% for com in d_c %}
         {{render_comment(com, moment, current_user, link)}}
       {% endfor %}

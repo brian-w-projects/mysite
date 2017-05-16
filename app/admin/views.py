@@ -161,6 +161,6 @@ def admin_splash():
         .outerjoin(Rec_Moderation)\
         .outerjoin(Com_Moderation)\
         .filter(User.role_id == 2)\
-        .group_by(User.username)\
+        .group_by(User.id)\
         .all()
     return render_template('admin/splash.html', data=data)

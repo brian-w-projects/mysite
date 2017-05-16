@@ -89,7 +89,7 @@ def edit(post_id):
                 display_recs[0].verification = form.public.data
                 display_recs[0].timestamp = datetime.utcnow()
                 display_recs[0].text = form.text.data
-                display_recs[0].verification = form.public.data
+                display_recs[0].verification = 1 if form.public.data == True else 0
                 db.session.add(display_recs[0])
                 flash(u'\u2713 Your rec has been edited')
                 for com in display_recs[0].comment:
@@ -137,9 +137,13 @@ def followers(id=-1):
         id = current_user.id
     user = User.query.get_or_404(int(id))
     page = int(request.args.get('page', default=1))
-    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+    
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id)\
         .filter(Recommendation.verification>0)\
-        .group_by(Recommendation.user_id)\
+        .filter(Recommendation.user_id.in_([one.follower for one in user.follower]))\
+        .order_by(Recommendation.user_id)\
+        .order_by(desc(Recommendation.timestamp))\
+        .distinct(Recommendation.user_id)\
         .all()
     Rel = aliased(Relationship)
     display_names = db.session.query(User, Recommendation, Relationship)\
@@ -156,9 +160,8 @@ def followers(id=-1):
         )\
         .filter(User.id.in_([one.follower for one in user.follower]))\
         .order_by(desc(Rel.timestamp))\
-        .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
-    process = [x[1].id for x in display_names.items]
+    process = [x[1].id for x in display_names.items if x[1]]
     task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
@@ -178,9 +181,13 @@ def following(id=-1):
         id = current_user.id
     user = User.query.get_or_404(int(id))
     page = int(request.args.get('page', default=1))
-    last_rec = db.session.query(Recommendation.id, Recommendation.user_id, func.max(Recommendation.timestamp))\
+    
+    last_rec = db.session.query(Recommendation.id, Recommendation.user_id)\
         .filter(Recommendation.verification>0)\
-        .group_by(Recommendation.user_id)\
+        .filter(Recommendation.user_id.in_([one.following for one in user.following]))\
+        .order_by(Recommendation.user_id)\
+        .order_by(desc(Recommendation.timestamp))\
+        .distinct(Recommendation.user_id)\
         .all()
     Rel = aliased(Relationship)
     display_names = db.session.query(User, Recommendation, Relationship)\
@@ -197,9 +204,8 @@ def following(id=-1):
         )\
         .filter(User.id.in_([one.following for one in user.following]))\
         .order_by(desc(Rel.timestamp))\
-        .group_by(User.id)\
         .paginate(page, per_page=current_user.display, error_out=False)
-    process = [x[1].id for x in display_names.items]
+    process = [x[1].id for x in display_names.items if x[1]]
     task = prepare_comments.apply_async([process, current_user.id])
     if request.is_xhr: #ajax request
         to_return = get_template_attribute('macros/relationship-macro.html', 'ajax')
@@ -243,7 +249,7 @@ def post():
     form = PostForm(request.form)
     if request.method == 'POST':
         if form.validate():
-            ver = form.public.data
+            ver = 1 if form.public.data == True else 0
             post = Recommendation(title = form.title.data,
                 text = form.text.data, user_id=current_user.id, verification=ver)
             db.session.add(post)

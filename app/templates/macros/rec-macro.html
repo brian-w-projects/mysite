@@ -34,9 +34,6 @@
         <li>
           {{moment(rec.timestamp).format('MMMM Do YYYY, h:mm:ss a')}}
         </li>
-        <li class='reckoner'>
-          Comments: {{count}}
-        </li>
         {% if current_user.id == rec.user_id and rec.new_comment == True %}
           <li class='reckoner'>
             New Comment!

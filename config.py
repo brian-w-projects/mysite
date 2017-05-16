@@ -54,5 +54,5 @@ config = {
     'development': DevelopmentConfig,
     'deployment': DeploymentConfig,
     'production': ProductionConfig,
-    'default': DevelopmentConfig
+    'default': DeploymentConfig
 }

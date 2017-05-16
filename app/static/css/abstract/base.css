@@ -37,7 +37,7 @@ a{
     text-decoration: none;
 }
 
-a:not(.submenu-link):hover{
+a:not(.submenu-link):not(.icon-link):hover{
     border-bottom: 1px solid black;
 }
 
