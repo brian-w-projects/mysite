@@ -9,10 +9,10 @@ from sendgrid.helpers.mail import *
 def send_email(to, subject, template, **kwargs):
     # app = current_app._get_current_object()
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
-    # from_email = Email(app.config['MAIL_USERNAME'])
-    from_email = Email('brian.w.projects@gmail.com')
-    # to_email = Email(to)
-    to_email = Email('brian.weinfeld@gmail.com')
+    from_email = Email(app.config['MAIL_USERNAME'])
+    # from_email = Email('brian.w.projects@gmail.com')
+    to_email = Email(to)
+    # to_email = Email('brian.weinfeld@gmail.com')
     subject = "Confirm Account"
     # content = Content(render_template(template + '.txt', **kwargs))
     content = Content('text/plain', 'Test')
