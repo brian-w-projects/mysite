@@ -36,6 +36,9 @@ wsgiref==0.1.2
 gunicorn==19.1.1
 psycopg2==2.5.4
 ForgeryPy==0.1
-sendgrid==4.1.0
+appdirs==1.4.3
+packaging==16.8
+pyparsing==2.2.0
 python-http-client==2.2.1
+sendgrid==4.1.0
 six==1.10.0
