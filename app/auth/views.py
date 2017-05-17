@@ -26,8 +26,8 @@ def confirmationsent(username):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     token=current_user.generate_confirmation_token()
-    send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
-        user=username, token=token)
+    # send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm',
+        # user=username, token=token)
     return render_template('auth/confirmation-sent.html')
 
 @auth.route('/forgot-password', methods=['GET', 'POST'])
