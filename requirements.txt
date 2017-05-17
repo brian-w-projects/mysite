@@ -36,3 +36,4 @@ wsgiref==0.1.2
 gunicorn==19.1.1
 psycopg2==2.5.4
 ForgeryPy==0.1
+sendgrid==4.1.0
