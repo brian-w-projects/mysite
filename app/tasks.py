@@ -5,6 +5,10 @@ from sqlalchemy.sql.expression import and_, desc, or_, func
 from . import mail
 from flask import current_app
 from flask_mail import Message
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
+
 
 @celery.task(bind=True)
 def prepare_comments(self, process, id):
