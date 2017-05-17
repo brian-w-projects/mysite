@@ -1,2 +1,2 @@
 web: gunicorn manage:app
-celery: worker -A celery_runner
+celery: worker -A celery_runner.app
