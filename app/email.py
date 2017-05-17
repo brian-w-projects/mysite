@@ -7,7 +7,7 @@ import os
 from sendgrid.helpers.mail import *
 
 def send_email(to, subject, template, **kwargs):
-    app = current_app._get_current_object()
+    # app = current_app._get_current_object()
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
     # from_email = Email(app.config['MAIL_USERNAME'])
     from_email = Email('brian.w.projects@gmail.com')
