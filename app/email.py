@@ -17,7 +17,7 @@ def send_email(to, subject, template, **kwargs):
     # content = Content(render_template(template + '.txt', **kwargs))
     content = Content('Test')
     mail = Mail(from_email, subject, to_email, content)
-    # response = sg.client.mail.send.post(request_body=mail.get())
+    response = sg.client.mail.send.post(request_body=mail.get())
     
     
     
