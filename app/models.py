@@ -462,13 +462,13 @@ class User(UserMixin, db.Model):
     def to_json_following(self):
         json_rec = {}
         json_rec['count'] = self.following.count()
-        json_rec['following'] = {following.id : following.timestamp for following in self.following}
+        json_rec['follow_info'] = {following.id : following.timestamp for following in self.following}
         return json_rec
     
     def to_json_followed(self):
         json_rec = {}
         json_rec['count'] = self.follower.count()
-        json_rec['followed_by'] = {follower.id : follower.timestamp for follower in self.follower}
+        json_rec['follow_info'] = {follower.id : follower.timestamp for follower in self.follower}
         return json_rec
 
     @staticmethod

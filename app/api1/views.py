@@ -35,7 +35,7 @@ def get_rec(id):
     elif to_ret.verification == 0 and to_ret.user_id != g.current_user.id:
         return message(403, 'This is not your rec to view')
     else:
-        return jsonify(to_ret.to_json())
+        return jsonify({to_ret.id: to_ret.to_json()})
 
 @api1.route('/recs/<int:id>', methods=['PUT'])
 @auth_token_required
@@ -156,7 +156,7 @@ def get_comments(id):
         .first()
     if not to_ret:
         return message(404, 'This comment does not exist')
-    return jsonify(to_ret.to_json())
+    return jsonify({to_ret.id: to_ret.to_json()})
 
 @api1.route('/comments/<int:id>', methods=['PUT'])
 @auth_token_required

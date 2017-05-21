@@ -44,8 +44,8 @@
   {{api_macro.render_api([url_for('api1.get_rec', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrieves relevent information about the rec identified by id number.'],
-    '{"author": "cheryl92", "author_id": 64, "comment_count": 2, "id": 2, "text": "Nunc nisl...",
-      "timestamp": "Sat, 14 Jan 2017 00:00:00 GMT", "title": "Donec..."}'
+    '{"2": {"author": "cheryl92", "author_id": 64, "comment_count": 2, "id": 2, "text": "Nunc nisl...",
+      "timestamp": "Sat, 14 Jan 2017 00:00:00 GMT", "title": "Donec..."}}'
   )}}
   {{api_macro.render_api([url_for('api1.put_rec', id=1, _scheme='https', _external='True')],
     'PUT', 'token',
@@ -73,7 +73,7 @@
     'GET', 'token',
     ['Retrieves the comments posted on the rec indicated by id number in quantity set by 
       user. Optional page parameter passed to retrieve following pages'],
-    '{"399": { "author_id": 21, "author_username": "deborah63", "comment": "Morbi...",
+    '{"399": { "author_id": 21, "author_username": "deborah63", "text": "Morbi...",
       "id": 399, "posted_on": 74, "timestamp": "Mon, 13 Feb 2017 00:00:00 GMT"}}'
   )}}
   {{api_macro.render_api([url_for('api1.post_rec_comments', id=1, _scheme='https', _external='True')],
@@ -87,8 +87,8 @@
   {{api_macro.render_api([url_for('api1.get_comments', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrives the comment identified by the id number.'],
-    '{"author_id": 22, "author_username": "sharon70", "comment": "Praesent...",
-      "id": 50, "posted_on": 345, "timestamp": "Sun, 12 Feb 2017 00:00:00 GMT"}',
+    '{"50": {"author_id": 22, "author_username": "sharon70", "text": "Praesent...",
+      "id": 50, "posted_on": 345, "timestamp": "Sun, 12 Feb 2017 00:00:00 GMT"}}',
   )}}
   {{api_macro.render_api([url_for('api1.edit_comments', id=1, _scheme='https', _external='True')],
     'PUT', 'token',
@@ -140,7 +140,7 @@
   {{api_macro.render_api([url_for('api1.get_user_following', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrives the users that the user indicated by id number is following.'],
-    '{"count": 5, "following": { "305": "Fri, 30 Sep 2016 10:50:22 GMT",
+    '{"count": 5, "follow_info": { "305": "Fri, 30 Sep 2016 10:50:22 GMT",
       "331": "Thu, 15 Dec 2016 08:10:30 GMT",
       "4": "Mon, 14 Nov 2016 05:02:05 GMT",
       "467": "Sun, 15 Jan 2017 08:05:22 GMT",
@@ -149,7 +149,7 @@
   {{api_macro.render_api([url_for('api1.get_user_followed_by', id=1, _scheme='https', _external='True')],
     'GET', 'token',
     ['Retrives the users that are following the user indicated by id number'],
-    '{"count": 1, "followed_by": {"280": "Sun, 12 Feb 2017 11:02:23 GMT"}}',
+    '{"count": 1, "follow_info": {"280": "Sun, 12 Feb 2017 11:02:23 GMT"}}',
   )}}
   <h2>/follow</h2>
   <p>Retrieves information related to following and unfollowing users</p>
@@ -270,7 +270,7 @@
       ['Retrieves 10 oldest comments in need of moderation. Use optional page parameter to
         obtain newer comments in need of moderation.'],
       '{"14": { "author_id": 8, "author_username": "annie82",
-        "comment": "Curabi...", "id": 14, "posted_on": 110,
+        "text": "Curabi...", "id": 14, "posted_on": 110,
         "timestamp": "Wed, 08 Mar 2017 00:00:00 GMT"},}'
     )}}
     {{api_macro.render_api([url_for('api1.moderate_comments', id=1, _scheme='https', _external='True')],
