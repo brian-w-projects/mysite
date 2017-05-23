@@ -338,13 +338,13 @@ def get_search_recs(page = 1):
     if 'term' in request.args and request.args.get('term') is not None:
         display_recs = display_recs\
             .filter(Recommendation.title.contains(request.json.get('term')))
-    if request.args.get('user') is not None:
-        display_recs = display_recs\
-            .filter(User.username.contains(request.json.get('user')))
-    if request.args.get('date') is not None:
-        date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
-        display_recs = display_recs\
-            .filter(Recommendation.timestamp<=date)
+    # if request.args.get('user') is not None:
+    #     display_recs = display_recs\
+    #         .filter(User.username.contains(request.json.get('user')))
+    # if request.args.get('date') is not None:
+    #     date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
+    #     display_recs = display_recs\
+    #         .filter(Recommendation.timestamp<=date)
     display_recs = display_recs\
         .order_by(desc(Recommendation.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
