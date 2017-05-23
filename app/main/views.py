@@ -169,6 +169,7 @@ def search_query(page = 1):
             current_user.id == Relationship.follower
             )
         )\
+        .join(User, User.id == Comment.user_id)\
         .filter(Comment.verification > 0)
         if session['search'] != '':
             display_comments = display_comments\
