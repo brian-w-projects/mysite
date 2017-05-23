@@ -335,9 +335,9 @@ def get_search_recs(page = 1):
         .join(User)\
         .filter(Recommendation.verification > 0)
     # if request.get_json(silent=True):
-    if 'term' in request.args and request.args.get('term') is not None:
+    if request.args.get('term', None) is not None:
         display_recs = display_recs\
-            .filter(Recommendation.title.contains(request.json.get('term')))
+            .filter(Recommendation.title.contains(request.args.get('term')))
     # if request.args.get('user') is not None:
     #     display_recs = display_recs\
     #         .filter(User.username.contains(request.json.get('user')))
