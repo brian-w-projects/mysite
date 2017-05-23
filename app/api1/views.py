@@ -357,17 +357,16 @@ def get_search_comments(page = 1):
     display_comments = Comment.query\
         .join(User)\
         .filter(Comment.verification>0)
-    if request.get_json(silent=True):
-        if request.json.get('term') is not None:
-            display_comments = display_comments\
-                .filter(Comment.comment.contains(request.json.get('term')))
-        if request.json.get('user') is not None:
-            display_comments = display_comments\
-                .filter(User.username.contains(request.json.get('user')))
-        if request.json.get('date') is not None:
-            date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
-            display_comments = display_comments\
-                .filter(Comment.timestamp<=date)
+    if request.args.get('term', None) is not None:
+        display_comments = display_comments\
+            .filter(Comment.comment.contains(request.json.get('term')))
+    if request.args.get('user', None) is not None:
+        display_comments = display_comments\
+            .filter(User.username.contains(request.json.get('user')))
+    if request.args.get('date', None) is not None:
+        date =  datetime.strptime(request.json.get('date'), '%m/%d/%Y') + timedelta(days=1)
+        display_comments = display_comments\
+            .filter(Comment.timestamp<=date)
     display_comments = display_comments\
         .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
