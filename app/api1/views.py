@@ -364,9 +364,12 @@ def get_search_comments(page = 1):
         display_comments = display_comments\
             .filter(User.username.contains(request.args.get('user')))
     if request.args.get('date', None) is not None:
-        date =  datetime.strptime(request.args.get('date'), '%m/%d/%Y') + timedelta(days=1)
-        display_comments = display_comments\
-            .filter(Comment.timestamp<=date)
+        try:
+            date =  datetime.strptime(request.args.get('date'), '%m/%d/%Y') + timedelta(days=1)
+            display_comments = display_comments\
+                .filter(Comment.timestamp<=date)
+        except ValueError:
+            pass
     display_comments = display_comments\
         .order_by(desc(Comment.timestamp))\
         .paginate(page, per_page=g.current_user.display, error_out=False)
