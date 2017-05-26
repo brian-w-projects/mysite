@@ -359,7 +359,7 @@ def get_search_comments(page = 1):
         .filter(Comment.verification>0)
     if request.args.get('term', None) is not None:
         display_comments = display_comments\
-            .filter(Comment.comment.contains(request.args.get('term')))
+            .filter(Comment.text.contains(request.args.get('term')))
     if request.args.get('user', None) is not None:
         display_comments = display_comments\
             .filter(User.username.contains(request.args.get('user')))
