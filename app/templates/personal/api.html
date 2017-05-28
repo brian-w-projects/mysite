@@ -155,12 +155,7 @@
   <p>Retrieves information related to following and unfollowing users</p>
   {{api_macro.render_api([url_for('api1.put_follower', id=1, _scheme='https', _external='True')],
     'POST', 'token',
-    ['Adds user indicated by id number to requesting user\'s following list'],
-    ''
-  )}}
-  {{api_macro.render_api([url_for('api1.delete_follow', id=1, _scheme='https', _external='True')],
-    'DELETE', 'token',
-    ['Removes user indicated by id number from requesting user\'s following list'],
+    ['Adds/Removes user indicated by id number to requesting user\'s following list'],
     ''
   )}}
   <h2>/search</h2>

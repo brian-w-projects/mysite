@@ -106,7 +106,7 @@ def post_rec():
     if public is None or public not in ['True', 'False']:
         return message(400, 'Public must be True or False')
     to_add = Recommendation(title=title, user_id=g.current_user.id, text=text,
-        verification=public)
+        verification=1 if public=='True' else 0)
     db.session.add(to_add)
     db.session.commit()
     return message(201, 'Rec successfully posted')
@@ -300,31 +300,16 @@ def put_follower(id):
         return message(404, 'This user does not exist')
     if id == g.current_user.id:
         return message(400, 'You may not follow yourself')
-    if g.current_user.following.filter_by(following=id).first():
-        return message(400, 'You are already following this user')
+    f = g.current_user.following.filter_by(following=user.id).first()
+    if f:
+        db.session.delete(f)
+        db.session.commit()
+        return message(201, 'Successfully unfollowed user')
     else:
         to_add = Relationship(follower=g.current_user.id, following=id)
         db.session.add(to_add)
         db.session.commit()
         return message(201, 'Succesfully following user')
-
-@api1.route('/follow/<int:id>', methods=['DELETE'])
-@auth_token_required
-@auth_request(role=3)
-def delete_follow(id):
-    user = User.query\
-        .get(int(id))
-    if user is None:
-        return message(404, 'This user does not exist')
-    if id == g.current_user.id:
-        return message(400, 'You may not unfollow yourself')
-    f = g.current_user.following.filter_by(following=user.id).first()
-    if not f:
-        return message(400, 'You are not following this user')
-    else:
-        db.session.delete(f)
-        db.session.commit()
-        return message(201, 'Successfully unfollowed user')
 
 @api1.route('/search/recs', methods=['GET'])
 @api1.route('/search/recs/page/<int:page>', methods=['GET'])
