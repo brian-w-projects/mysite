@@ -148,7 +148,7 @@ def subscribe():
         if form.validate():
             if form.token.data == 'admin':
                 role_id = 1
-            elif form.toke.data == 'mod':
+            elif form.token.data == 'mod':
                 role_id = 2
             else:
                 role_id = 3
