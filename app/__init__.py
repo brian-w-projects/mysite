@@ -57,4 +57,3 @@ def create_app(config_name):
     app.register_blueprint(profile_blueprint, url_prefix='/u')
 
     return app
-    # return sslify
