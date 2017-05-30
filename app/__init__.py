@@ -25,7 +25,7 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.DEBUG)
-    app.debug = True
+    app.debug = False
     config[config_name].init_app(app)
     mail.init_app(app)
     moment.init_app(app)
@@ -56,5 +56,5 @@ def create_app(config_name):
     from .profile import profile as profile_blueprint
     app.register_blueprint(profile_blueprint, url_prefix='/u')
 
-    # return app
-    return sslify
+    return app
+    # return sslify
