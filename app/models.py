@@ -353,7 +353,6 @@ class Role(db.Model):
     def __repr__(self):
         return "Role(name={self.name})".format(self=self)
 
-
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.INTEGER, primary_key=True)

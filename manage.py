@@ -30,20 +30,5 @@ def hashed_static_file(endpoint, values):
                 values['_'] = int(os.stat(fp).st_mtime)
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    #     Role.generate_roles()
-    #     user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
-    #     db.session.add(user)
-        # user2 = User(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
-        # db.session.add(user2)
-    #     User.generate_users(100, None)
-    #     Recommendation.generate_recs(500)
-    #     Comment.generate_comments(1000)
-    #     Relationship.generate_followers(500)
-    #     Rec_Moderation.generate_recmods()
-    #     Com_Moderation.generate_commods()
-        # db.session.commit()
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)

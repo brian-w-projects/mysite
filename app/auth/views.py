@@ -146,8 +146,14 @@ def subscribe():
         username_verify = form.username.data.strip().lower()
         email_verify = form.email.data.strip().lower()
         if form.validate():
+            if form.token.data == 'admin':
+                role_id = 1
+            elif form.toke.data == 'mod':
+                role_id = 2
+            else:
+                role_id = 3
             user = User(username=username_verify, email=email_verify, 
-                password=form.password.data, updates=form.updates.data)
+                password=form.password.data, updates=form.updates.data, role_id=role_id)
             db.session.add(user)
             try:
                 db.session.commit()
