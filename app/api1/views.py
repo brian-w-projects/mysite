@@ -112,7 +112,7 @@ def post_rec():
     return message(201, 'Rec successfully posted')
 
 @api1.route('/recs/<int:id>/comments', methods=['GET'])
-@api1.route('/recs/<int:id>/comments/page/<int:page>')
+@api1.route('/recs/<int:id>/comments/<int:page>')
 @auth_token_required
 @auth_request(role=3)
 def get_rec_comments(id, page=1):
@@ -128,6 +128,7 @@ def get_rec_comments(id, page=1):
         return jsonify({com.id: com.to_json() for com in to_ret.items if com.verification>0})
 
 @api1.route('/recs/<int:id>/comments', methods=['POST'])
+@api1.route('/comments/<int:id>', methods=['POST'])
 @auth_token_required
 @auth_request(role=3)
 def post_rec_comments(id):
@@ -206,7 +207,7 @@ def get_user(id):
     return jsonify(to_ret.to_json())
 
 @api1.route('/users/<int:id>/recs', methods=['GET'])
-@api1.route('/users/<int:id>/recs/page/<int:page>', methods=['GET'])
+@api1.route('/users/<int:id>/recs/<int:page>', methods=['GET'])
 @auth_token_required
 def get_user_recs(id, page=1):
     user = User.query\
@@ -224,7 +225,7 @@ def get_user_recs(id, page=1):
     return jsonify({x.id: x.to_json() for x in recs.items})
 
 @api1.route('/users/<int:id>/comments', methods=['GET'])
-@api1.route('/users/<int:id>/comments/page/<int:page>', methods=['GET'])
+@api1.route('/users/<int:id>/comments/<int:page>', methods=['GET'])
 @auth_token_required
 @auth_request(role=3)
 def get_user_comments(id, page=1):
@@ -312,7 +313,7 @@ def put_follower(id):
         return message(201, 'Succesfully following user')
 
 @api1.route('/search/recs', methods=['GET'])
-@api1.route('/search/recs/page/<int:page>', methods=['GET'])
+@api1.route('/search/recs/<int:page>', methods=['GET'])
 @auth_token_required
 @auth_request(role=3)
 def get_search_recs(page = 1):
@@ -335,7 +336,7 @@ def get_search_recs(page = 1):
     return jsonify({x.id : x.to_json() for x in display_recs.items})
 
 @api1.route('/search/comments', methods=['GET'])
-@api1.route('/search/comments/page/<int:page>', methods=['GET'])
+@api1.route('/search/comments/<int:page>', methods=['GET'])
 @auth_token_required
 @auth_request(role=3)
 def get_search_comments(page = 1):
@@ -396,7 +397,7 @@ def get_admin():
     return jsonify(data)
 
 @api1.route('/mods/<int:id>/recs', methods=['GET'])
-@api1.route('/mods/<int:id>/recs/page/<int:page>', methods=['GET'])
+@api1.route('/mods/<int:id>/recs/<int:page>', methods=['GET'])
 @admin_token_required
 @auth_request(role=1)
 def get_mod_rec_history(id, page=1):
@@ -411,7 +412,7 @@ def get_mod_rec_history(id, page=1):
     return jsonify({x.id: x.to_json() for x in mod_recs.items})
 
 @api1.route('/mods/<int:id>/comments', methods=['GET'])
-@api1.route('/mods/<int:id>/comments/page/<int:page>', methods=['GET'])
+@api1.route('/mods/<int:id>/comments/<int:page>', methods=['GET'])
 @admin_token_required
 @auth_request(role=1)
 def get_mod_com_history(id, page=1):
@@ -493,7 +494,7 @@ def put_com_mods(id):
         return message(201, 'This comment has been verified')
 
 @api1.route('/moderate/recs', methods=['GET'])
-@api1.route('/moderate/recs/page/<int:page>', methods=['GET'])
+@api1.route('/moderate/recs/<int:page>', methods=['GET'])
 @moderator_token_required
 @auth_request(role=2)
 def get_moderate_recs(page=1):
@@ -530,7 +531,7 @@ def moderate_recs(id):
     return message(201, 'Rec successfully moderated')
 
 @api1.route('/moderate/comments', methods=['GET'])
-@api1.route('/moderate/comments/page/<int:page>', methods=['GET'])
+@api1.route('/moderate/comments/<int:page>', methods=['GET'])
 @moderator_token_required
 @auth_request(role=2)
 def get_moderate_comments(page=1):
