@@ -17,7 +17,7 @@ db = SQLAlchemy(query_class=BaseQuery)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-celery = Celery(__name__, backend=os.environ['REDIS_URL'], broker=os.environ['REDIS_URL'])
+# celery = Celery(__name__, backend=os.environ['REDIS_URL'], broker=os.environ['REDIS_URL'])
 
 
 def create_app(config_name):
@@ -33,7 +33,7 @@ def create_app(config_name):
     login_manager.init_app(app)
 
     
-    sslify = SSLify(app)
+    # sslify = SSLify(app)
 
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')

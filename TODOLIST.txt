@@ -1,12 +1,3 @@
-1. incorporate sslify to keep links secure and remove external from url_for
-
-- clean up code
-- add token
-    - admin
-    - moderator
-    - user
-
-
 Formatting:
     - CSS, URLS, FILENAMES: Hyphens
     - JS, PYTHON, JINJA: Underscores
@@ -15,10 +6,6 @@ with app.app_context():
     db.drop_all()
     db.create_all()
     Role.generate_roles()
-    user = User(username='njpsychopath', email='njpsychopath@gmail.com', password='123456789', confirmed=True, role_id = 1)
-    db.session.add(user)
-    user2 = User(username='njpsy', email='example@example.com', password='123456789', confirmed=True, role_id = 2)
-    db.session.add(user2)
     User.generate_users(100, None)
     Recommendation.generate_recs(500)
     Comment.generate_comments(1000)

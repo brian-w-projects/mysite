@@ -124,6 +124,7 @@ def get_rec_comments(id, page=1):
         return message(403, 'This is not your rec to view')
     else:
         to_ret = rec.comment\
+            .order_by(desc(Comment.timestamp))\
             .paginate(page, per_page=g.current_user.display, error_out=False)
         return jsonify({com.id: com.to_json() for com in to_ret.items if com.verification>0})
 
